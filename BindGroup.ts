@@ -1,0 +1,45 @@
+import type { BGLayout, MapToGPUBindGroupEntry } from './BindgroupLayout';
+import type { RenderBundleEncoder } from './RenderbundleEncoder';
+import { TextureView } from './TextureView';
+
+export class BindGroup<L extends BGLayout = BGLayout> {
+  #dirty = true;
+  #bindGroup?: GPUBindGroup;
+  readonly #renderBundles: Set<RenderBundleEncoder> = new Set();
+  getForRenderBundle(renderBundleEncoder: RenderBundleEncoder) {
+    this.#renderBundles.add(renderBundleEncoder);
+    return this.bindGroup;
+  }
+  destroy() {
+    this.#renderBundles.forEach((bundle) => bundle.destroy());
+    this.#dirty = true;
+  }
+  //TODO: set private
+  get bindGroup(): GPUBindGroup {
+    if (this.#dirty || !this.#bindGroup) {
+      const entries = this.entriesf(this);
+      this.#bindGroup = this.layout.gpu.createBindGroup({
+        entries: Object.values(entries).map((entry, i) => {
+          return {
+            binding: i,
+            resource:
+              entry instanceof TextureView
+                ? entry.getTextureBinding(this)
+                : entry,
+          };
+        }),
+        label: this.label,
+        layout: this.layout.layout,
+      });
+      this.#dirty = false;
+    }
+    return this.#bindGroup;
+  }
+  constructor(
+    public layout: L,
+    private label: string,
+    private entriesf: (
+      bindGroup: BindGroup,
+    ) => Readonly<MapToGPUBindGroupEntry<L['entries']>>,
+  ) {}
+}
