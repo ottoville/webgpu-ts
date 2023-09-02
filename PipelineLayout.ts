@@ -26,7 +26,7 @@ export class PipelineLayout<
   }
 }
 
-class RenderPipelineLayout<
+export class RenderPipelineLayout<
   B extends readonly BGLayout[] = readonly BGLayout[],
 > extends PipelineLayout<B> {
   renderPipeLines: Set<RenderPipeline> = new Set();

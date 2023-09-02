@@ -170,7 +170,8 @@ new RenderPipeline({
   vertexShader,
 });
 
-const r = createRenderPipeline({
+//this should be ok
+createRenderPipeline({
   colorRenderTargets,
   fragmentEntry: 'main',
   fragmentShader,
@@ -194,7 +195,8 @@ const vertexShader_missing_texture_2d = vertexshaderfunction
   )
   .build('label', gpu);
 
-const r2 = createRenderPipeline({
+//This will return never
+createRenderPipeline({
   colorRenderTargets,
   fragmentEntry: 'main',
   fragmentShader,

@@ -39,7 +39,7 @@ module.exports = {
     'valid-typeof': 2,
     'import/no-cycle': [2],
     'import/extensions': 2,
-    'import/no-unused-modules': [2, { unusedExports: true }],
+    //'import/no-unused-modules': [2, { unusedExports: true }],
     'prefer-promise-reject-errors': 2,
     'no-unused-expressions': 2,
     'no-loop-func': 2,

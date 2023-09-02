@@ -3,9 +3,6 @@ import type { Struct } from './Struct';
 import type { TEXTURE_BINDING_TEXTURE, Texture, TextureSize } from './Texture';
 import type { TextureView } from './TextureView';
 
-interface GPUBindGroupTextureEntry {
-  texture: GPUTextureBindingLayout;
-}
 export type MapToGPUBindGroupEntry<
   T extends { [index: string]: BindGroupLayoutEntry },
 > = {
@@ -25,12 +22,6 @@ export type MapToGPUBindGroupEntry<
     : T[K] extends BufLayout
     ? GPUBufferBinding
     : GPUBindingResource;
-};
-type GPUBindGroupLayoutEntryBuffer = Omit<
-  GPUBindGroupLayoutEntry,
-  'binding'
-> & {
-  buffer: GPUBufferBindingLayout & { minBindingSize: GPUSize64 };
 };
 
 interface BindGroupLayoutEntryProps<V extends ShaderStage = ShaderStage>
@@ -183,7 +174,7 @@ export class TextLayout<
 
 type SamplerFormats = 'sampler' | 'sampler_comparison';
 
-class SampLayout<
+export class SampLayout<
   V extends ShaderStage,
   F extends SamplerFormats,
 > extends BindGroupLayoutEntry<V, F> {
