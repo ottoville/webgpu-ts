@@ -39,3 +39,4 @@ export {
 } from './renderTargets/ColorRenderTarget.js';
 
 export { TextureView } from './TextureView.js';
+export { MSAARenderTarget } from './renderTargets/MSAARenderTarget.js';
