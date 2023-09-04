@@ -1,12 +1,12 @@
-import type { BindGroup } from './BindGroup';
-import { Bindable } from './Bindable';
-import type { Renderpass } from './Renderpass';
+import type { BindGroup } from './BindGroup.js';
+import { Bindable } from './Bindable.js';
+import type { Renderpass } from './Renderpass.js';
 import type {
   STORAGE_BINDING_TEXTURE,
   TEXTURE_BINDING_TEXTURE,
   Texture,
   TextureUsageEnums,
-} from './Texture';
+} from './Texture.js';
 
 let n = 0;
 export class TextureView<

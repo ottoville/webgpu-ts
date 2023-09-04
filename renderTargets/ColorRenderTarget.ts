@@ -1,13 +1,16 @@
-import {
+import type {
   RENDER_TARGET_FORMAT,
   RENDER_TARGET_TEXTURE,
   RenderTargetSize,
   STORAGE_BINDING_TEXTURE,
   TextureParams,
-} from '../Texture';
-import { RenderPassTarget, RenderPassTargetOptions } from './RenderpassTarget';
+} from '../Texture.js';
+import {
+  RenderPassTarget,
+  type RenderPassTargetOptions,
+} from './RenderpassTarget.js';
 
-type ColorRenderTargetParams = {
+export type ColorRenderTargetParams = {
   clearValue: GPUColor;
   blend: GPUBlendState | undefined;
 };

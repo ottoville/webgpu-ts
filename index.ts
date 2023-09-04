@@ -7,8 +7,13 @@ export {
   Texture,
   TextureUsageEnums,
   RenderTarget,
-  RENDER_TARGET_FORMAT,
-  TEXTURE_BINDING_TEXTURE,
+  type TextureParams,
+  type RENDER_TARGET_FORMAT,
+  type TEXTURE_BINDING_TEXTURE,
+  type DEPTH_FORMATS,
+  type RENDER_TARGET_TEXTURE,
+  type STORAGE_BINDING_TEXTURE,
+  type Texture2dSize,
 } from './Texture.js';
 export { ShaderStage, type ShaderParams, Shader } from './shaders/Shader.js';
 export { OutputShader } from './shaders/OutputShader.js';
@@ -28,3 +33,9 @@ export {
   StorageTextLayout,
   type MapToGPUBindGroupEntry,
 } from './BindgroupLayout.js';
+export {
+  ColorRenderTarget,
+  ColorRenderTargetParams,
+} from './renderTargets/ColorRenderTarget.js';
+
+export { TextureView } from './TextureView.js';
