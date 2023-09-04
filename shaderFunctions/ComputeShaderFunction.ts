@@ -1,5 +1,5 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import { ShaderStage } from '../Shader';
+import { ShaderStage } from '../shaders/Shader';
 import type { ComputeShaderBuilder } from '../ShaderBuilder';
 import type {
   FilteredBindEntrys,

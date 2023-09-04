@@ -1,7 +1,7 @@
-import { type BindGroupLayoutEntry, BufLayout } from './BindgroupLayout.js';
-import type { PipelineLayout } from './PipelineLayout.js';
-import type { Struct } from './Struct.js';
-import type { AbstractShaderFunction } from './Utilities.js';
+import { type BindGroupLayoutEntry, BufLayout } from '../BindgroupLayout.js';
+import type { PipelineLayout } from '../PipelineLayout.js';
+import type { Struct } from '../Struct.js';
+import type { AbstractShaderFunction } from '../Utilities.js';
 
 export const enum ShaderStage {
   VERTEX = 1,

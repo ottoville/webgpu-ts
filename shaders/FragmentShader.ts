@@ -1,7 +1,7 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import { OutputShader } from '../OutputShader';
+import { OutputShader } from './OutputShader';
 import type { PipelineLayout } from '../PipelineLayout';
-import { type ShaderParams, ShaderStage } from '../Shader';
+import { type ShaderParams, ShaderStage } from './Shader';
 import type { FilteredBindgroupEntrys } from '../Utilities';
 import type { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
 

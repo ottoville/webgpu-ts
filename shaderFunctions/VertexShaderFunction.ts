@@ -1,8 +1,8 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import type { ShaderStage } from '../Shader';
-import { VertexShaderBuilder } from '../ShaderBuilder';
+import type { ShaderStage } from '../shaders/Shader';
+import type { VertexShaderBuilder } from '../ShaderBuilder';
 import type { Struct } from '../Struct';
-import {
+import type {
   FilteredBindEntrys,
   LayoutEntries,
   RemoveIndexSignature,

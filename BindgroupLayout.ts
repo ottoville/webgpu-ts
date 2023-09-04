@@ -1,4 +1,4 @@
-import type { ShaderStage } from './Shader';
+import type { ShaderStage } from './shaders/Shader';
 import type { Struct } from './Struct';
 import type { TEXTURE_BINDING_TEXTURE, Texture, TextureSize } from './Texture';
 import type { TextureView } from './TextureView';

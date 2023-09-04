@@ -1,5 +1,5 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import type { ShaderStage } from '../Shader';
+import type { ShaderStage } from '../shaders/Shader';
 import type { FragmentShaderBuilder } from '../ShaderBuilder';
 import type { Struct } from '../Struct';
 import type {

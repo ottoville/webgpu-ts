@@ -2,7 +2,7 @@
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { FragmentShader } from '../shaders/FragmentShader';
 import { PipelineLayout } from '../PipelineLayout';
-import { ShaderStage } from '../Shader';
+import { ShaderStage } from '../shaders/Shader';
 import { FragmentShaderBuilder } from '../ShaderBuilder';
 import { position_vec2f32, UI_Input, diffuseOutput } from '../Struct';
 import { textureLoad } from '../std_functions';

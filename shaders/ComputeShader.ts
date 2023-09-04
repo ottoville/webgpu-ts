@@ -1,7 +1,7 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout';
 import type { ComputeShaderFunction } from '../shaderFunctions/ComputeShaderFunction';
 import type { PipelineLayout } from '../PipelineLayout';
-import { Shader, type ShaderParams, ShaderStage } from '../Shader';
+import { Shader, type ShaderParams, ShaderStage } from './Shader';
 import type { FilteredBindgroupEntrys } from '../Utilities';
 
 export type ComputeEntry = BindGroupLayoutEntry<

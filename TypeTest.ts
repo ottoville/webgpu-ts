@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from './BindgroupLayout';
 import { RenderPipeline, createRenderPipeline } from './RenderPipeline';
-import { ShaderStage } from './Shader';
+import { ShaderStage } from './shaders/Shader';
 import {
   position_vec2,
   position_vec2f32,

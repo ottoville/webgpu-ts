@@ -1,17 +1,11 @@
-import type { BindGroupLayoutEntry } from './BindgroupLayout';
-import { FragmentShaderFunction } from './shaderFunctions/FragmentShaderFunction';
-import { Shader, type ShaderParams, type ShaderStage } from './Shader';
-import type { Struct } from './Struct';
-import type { VertexShaderFunction } from './shaderFunctions/VertexShaderFunction';
-import type { VertexBufferLayout2 } from './shaders/VertexShader';
-import { PipelineLayout } from './PipelineLayout';
+import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
+import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction.js';
+import { Shader, type ShaderParams, type ShaderStage } from './Shader.js';
+import type { Struct } from '../Struct.js';
+import type { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
+import { PipelineLayout } from '../PipelineLayout.js';
 
-type outputShaderFunction =
-  | VertexShaderFunction<
-      readonly { [index: string]: BindGroupLayoutEntry<ShaderStage.VERTEX> }[],
-      readonly VertexBufferLayout2[] | readonly []
-    >
-  | FragmentShaderFunction;
+type outputShaderFunction = VertexShaderFunction | FragmentShaderFunction;
 
 /**
  * Shader that have output, use with vertex and fragment shader.
@@ -20,6 +14,7 @@ export abstract class OutputShader<
   E extends Readonly<{ [index: string]: outputShaderFunction }> = Readonly<{
     [index: string]: outputShaderFunction;
   }>,
+  //TODO: use renderpipelinelayout
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
 > extends Shader<E> {
   constructor(

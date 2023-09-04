@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
-import { PipelineLayout } from '../PipelineLayout';
-import { ShaderStage } from '../Shader';
+import { PipelineLayout, RenderPipelineLayout } from '../PipelineLayout';
+import { ShaderStage } from '../shaders/Shader';
 import { VertexShaderBuilder } from '../ShaderBuilder';
 import { Struct, position_vec2f32, UI_Input } from '../Struct';
 import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction';
 import { VertexBufferLayout2, VertexShader } from '../shaders/VertexShader';
 
 declare const pipelineLayouts: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     readonly [
       BGLayout<{
         uniforms: BufLayout<ShaderStage.VERTEX, typeof position_vec2f32>;
@@ -16,7 +16,7 @@ declare const pipelineLayouts: readonly [
       }>,
     ]
   >,
-  PipelineLayout<
+  RenderPipelineLayout<
     readonly [
       BGLayout<{
         uniforms: BufLayout<ShaderStage.VERTEX, typeof position_vec2f32>;
