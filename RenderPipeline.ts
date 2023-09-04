@@ -30,10 +30,9 @@ export class RenderPipeline<
     Get intersection of vertex and fragment pipelinelayouts and
     use first layout from that intersection as layout for renderpipeline
    */
-    const [pipelineLayout] = new Set([
-      ...props.vertexShader.props.pipelineLayouts,
-      ...props.fragmentShader.props.pipelineLayouts,
-    ]);
+    const [pipelineLayout] = props.vertexShader.props.pipelineLayouts.filter(
+      (p) => props.fragmentShader.props.pipelineLayouts.includes(p),
+    );
     if (!pipelineLayout) {
       throw new Error('pipelineLayout not found');
     }

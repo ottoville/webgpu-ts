@@ -19,7 +19,7 @@ export class PipelineLayout<
     Object.freeze(bindGroupLayouts);
     this.gpu = bindGroupLayouts[0].gpu;
     this.bindGroupLayouts = bindGroupLayouts;
-    this.layout = bindGroupLayouts[0].gpu.createPipelineLayout({
+    this.layout = this.gpu.createPipelineLayout({
       bindGroupLayouts: bindGroupLayouts.map((b) => b.layout),
       label,
     });

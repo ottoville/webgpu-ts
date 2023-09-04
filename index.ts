@@ -40,3 +40,4 @@ export {
 
 export { TextureView } from './TextureView.js';
 export { MSAARenderTarget } from './renderTargets/MSAARenderTarget.js';
+export { type RenderPipeline, createRenderPipeline } from './RenderPipeline.js';
