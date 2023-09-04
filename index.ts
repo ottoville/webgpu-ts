@@ -2,6 +2,7 @@ export {
   VertexShader,
   type VertexBufferLayout2,
 } from './shaders/VertexShader.js';
+export { FragmentShader } from './shaders/FragmentShader.js';
 export {
   Texture,
   TextureUsageEnums,
@@ -15,6 +16,7 @@ export {
   VertexShaderFunction,
   type AnyVertexStage,
 } from './shaderFunctions/VertexShaderFunction.js';
+export { FragmentShaderFunction } from './shaderFunctions/FragmentShaderFunction.js';
 export {
   BufLayout,
   BGLayout,
@@ -22,4 +24,5 @@ export {
   SampLayout,
   TextLayout,
   StorageTextLayout,
+  type MapToGPUBindGroupEntry,
 } from './BindgroupLayout.js';

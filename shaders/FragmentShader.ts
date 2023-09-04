@@ -1,9 +1,9 @@
-import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import { OutputShader } from './OutputShader';
-import type { PipelineLayout } from '../PipelineLayout';
-import { type ShaderParams, ShaderStage } from './Shader';
-import type { FilteredBindgroupEntrys } from '../Utilities';
-import type { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
+import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
+import { OutputShader } from './OutputShader.js';
+import type { PipelineLayout } from '../PipelineLayout.js';
+import { type ShaderParams, ShaderStage } from './Shader.js';
+import type { FilteredBindgroupEntrys } from '../Utilities.js';
+import type { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction.js';
 
 export type FragmentEntry = BindGroupLayoutEntry<
   | ShaderStage.FRAGMENT
