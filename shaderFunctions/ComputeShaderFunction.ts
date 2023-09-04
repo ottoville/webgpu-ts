@@ -1,12 +1,12 @@
-import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import { ShaderStage } from '../shaders/Shader';
-import type { ComputeShaderBuilder } from '../ShaderBuilder';
+import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
+import type { ShaderStage } from '../shaders/Shader.js';
+import type { ComputeShaderBuilder } from '../ShaderBuilder.js';
 import type {
   FilteredBindEntrys,
   LayoutEntries,
   RemoveIndexSignature,
-} from '../Utilities';
-import type { ComputeEntry } from '../shaders/ComputeShader';
+} from '../Utilities.js';
+import type { ComputeEntry } from '../shaders/ComputeShader.js';
 
 type AnyComputeStage =
   | ShaderStage.COMPUTE

@@ -36,7 +36,7 @@ export type FilteredBindEntrys<
   };
 }>;
 
-export type AbstractShaderFunction =
+export type ShaderFunction =
   | VertexShaderFunction
   | FragmentShaderFunction
   | ComputeShaderFunction;

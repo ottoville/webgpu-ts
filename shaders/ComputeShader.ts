@@ -1,8 +1,8 @@
-import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import type { ComputeShaderFunction } from '../shaderFunctions/ComputeShaderFunction';
-import type { PipelineLayout } from '../PipelineLayout';
-import { Shader, type ShaderParams, ShaderStage } from './Shader';
-import type { FilteredBindgroupEntrys } from '../Utilities';
+import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
+import type { ComputeShaderFunction } from '../shaderFunctions/ComputeShaderFunction.js';
+import type { PipelineLayout } from '../PipelineLayout.js';
+import { Shader, type ShaderParams, ShaderStage } from './Shader.js';
+import type { FilteredBindgroupEntrys } from '../Utilities.js';
 
 export type ComputeEntry = BindGroupLayoutEntry<
   | ShaderStage.COMPUTE

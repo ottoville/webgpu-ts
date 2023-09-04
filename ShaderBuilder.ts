@@ -9,10 +9,10 @@ import type {
 } from './shaderFunctions/VertexShaderFunction';
 import { BindGroupLayoutEntry } from './BindgroupLayout';
 import { ComputeShader } from './shaders/ComputeShader';
-import type { AbstractShaderFunction } from './Utilities';
+import type { ShaderFunction } from './Utilities';
 
 abstract class ShaderBuilder<
-  E extends { [index: string]: AbstractShaderFunction },
+  E extends { [index: string]: ShaderFunction },
   P extends readonly PipelineLayout[],
 > {
   entryPoints: E = {} as E;

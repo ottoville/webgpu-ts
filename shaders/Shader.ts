@@ -1,7 +1,7 @@
 import { type BindGroupLayoutEntry, BufLayout } from '../BindgroupLayout.js';
 import type { PipelineLayout } from '../PipelineLayout.js';
 import type { Struct } from '../Struct.js';
-import type { AbstractShaderFunction } from '../Utilities.js';
+import type { ShaderFunction } from '../Utilities.js';
 
 export const enum ShaderStage {
   VERTEX = 1,
@@ -14,8 +14,8 @@ export const enum ShaderStage {
 }
 
 export type ShaderParams<
-  E extends Readonly<{ [index: string]: AbstractShaderFunction }> = Readonly<{
-    [index: string]: AbstractShaderFunction;
+  E extends Readonly<{ [index: string]: ShaderFunction }> = Readonly<{
+    [index: string]: ShaderFunction;
   }>,
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
 > = {
@@ -26,8 +26,8 @@ export type ShaderParams<
 };
 
 export abstract class Shader<
-  E extends { [index: string]: AbstractShaderFunction } = {
-    [index: string]: AbstractShaderFunction;
+  E extends { [index: string]: ShaderFunction } = {
+    [index: string]: ShaderFunction;
   },
 > {
   module: GPUShaderModule;

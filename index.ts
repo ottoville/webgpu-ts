@@ -17,6 +17,8 @@ export {
   type AnyVertexStage,
 } from './shaderFunctions/VertexShaderFunction.js';
 export { FragmentShaderFunction } from './shaderFunctions/FragmentShaderFunction.js';
+export { ComputeShader } from './shaders/ComputeShader.js';
+export { ComputeShaderFunction } from './shaderFunctions/ComputeShaderFunction.js';
 export {
   BufLayout,
   BGLayout,
