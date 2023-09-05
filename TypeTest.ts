@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from './BindgroupLayout';
-import { RenderPipeline, createRenderPipeline } from './RenderPipeline';
 import { ShaderStage } from './shaders/Shader';
 import {
   position_vec2,
@@ -17,6 +16,7 @@ import { VertexShaderFunction } from './shaderFunctions/VertexShaderFunction';
 import { FragmentShaderBuilder, VertexShaderBuilder } from './ShaderBuilder';
 import { ColorRenderTarget } from './renderTargets/ColorRenderTarget';
 import { TextureUsageEnums } from './Texture';
+import { RenderPipelineBuilder } from './RenderPipelineBuilder';
 
 declare const gpu: GPUDevice;
 
@@ -137,8 +137,8 @@ vertexShader.props.entryPoints.main.output;
 
 vertexShader.props.pipelineLayouts;
 
-const colorRenderTargets = {
-  todo: new ColorRenderTarget(
+const colorRenderTargets = [
+  new ColorRenderTarget(
     {
       format: 'bgra8unorm',
       gpu,
@@ -160,33 +160,48 @@ const colorRenderTargets = {
       },
     },
   ),
-};
+];
 
-new RenderPipeline({
-  colorRenderTargets,
-  fragmentEntry: 'main',
+new RenderPipelineBuilder({
   fragmentShader,
-  vertexEntry: 'main',
   vertexShader,
+}).build({
+  fragment: {
+    entryPoint: 'main',
+    targets: colorRenderTargets,
+  },
+  vertex: {
+    entryPoint: 'main',
+  },
 });
 
 //this should be ok
-createRenderPipeline({
-  colorRenderTargets,
-  fragmentEntry: 'main',
+new RenderPipelineBuilder({
   fragmentShader,
-  vertexEntry: 'main',
   vertexShader,
+}).build({
+  fragment: {
+    entryPoint: 'main',
+    targets: colorRenderTargets,
+  },
+  vertex: {
+    entryPoint: 'main',
+  },
 });
 
-createRenderPipeline({
-  colorRenderTargets,
-  //@ts-expect-error FragmentEntry does not exists
-  fragmentEntry: 'noExits',
+new RenderPipelineBuilder({
   fragmentShader,
-  //@ts-expect-error VertexEntry does not exists
-  vertexEntry: 'noExits',
   vertexShader,
+}).build({
+  fragment: {
+    //@ts-expect-error Entrypoint does not exists
+    entryPoint: 'noExists',
+    targets: colorRenderTargets,
+  },
+  vertex: {
+    //@ts-expect-error Entrypoint does not exists
+    entryPoint: 'noExists',
+  },
 });
 const vertexShader_missing_texture_2d = vertexshaderfunction
   .addToShaderBuilder(
@@ -195,11 +210,17 @@ const vertexShader_missing_texture_2d = vertexshaderfunction
   )
   .build('label', gpu);
 
-//This will return never
-createRenderPipeline({
-  colorRenderTargets,
-  fragmentEntry: 'main',
+const renderpipelinebuilder = new RenderPipelineBuilder({
   fragmentShader,
-  vertexEntry: 'main',
   vertexShader: vertexShader_missing_texture_2d,
+});
+//@ts-expect-error Vertex and fragment shader does not have common pipelinelayout
+renderpipelinebuilder.build({
+  fragment: {
+    entryPoint: 'main',
+    targets: colorRenderTargets,
+  },
+  vertex: {
+    entryPoint: 'main',
+  },
 });

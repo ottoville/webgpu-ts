@@ -40,3 +40,13 @@ export type ShaderFunction =
   | VertexShaderFunction
   | FragmentShaderFunction
   | ComputeShaderFunction;
+
+/**
+ * Intersection of two array's of pipelinelayout.
+ */
+export type PipelineIntersection<
+  T extends readonly PipelineLayout[],
+  U extends readonly PipelineLayout[],
+> = {
+  [K in keyof T]: T[K] extends U[number] ? T[K] : never;
+}[number];

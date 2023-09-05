@@ -1,6 +1,5 @@
 import type { BindGroup } from './BindGroup';
 import type { BGLayout } from './BindgroupLayout';
-import type { RenderPipeline } from './RenderPipeline';
 
 type PipeLineLayoutProps<B extends readonly BGLayout[]> = {
   label: string;
@@ -29,7 +28,7 @@ export class PipelineLayout<
 export class RenderPipelineLayout<
   B extends readonly BGLayout[] = readonly BGLayout[],
 > extends PipelineLayout<B> {
-  renderPipeLines: Set<RenderPipeline> = new Set();
+  renderPipeLines: Set<GPURenderPipeline> = new Set();
   subBindGroups: RenderPipelineLayout[] = [];
   bindGroupLayout: BGLayout;
 
