@@ -1,21 +1,21 @@
 import type {
   AnyComputeStage,
   ComputeShaderFunction,
-} from './shaderFunctions/ComputeShaderFunction';
-import { FragmentShader } from './shaders/FragmentShader';
+} from './shaderFunctions/ComputeShaderFunction.js';
+import { FragmentShader } from './shaders/FragmentShader.js';
 import type {
   AnyFragmentStage,
   FragmentShaderFunction,
-} from './shaderFunctions/FragmentShaderFunction';
-import type { PipelineLayout } from './PipelineLayout';
-import { VertexShader } from './shaders/VertexShader';
+} from './shaderFunctions/FragmentShaderFunction.js';
+import type { PipelineLayout } from './PipelineLayout.js';
+import { VertexShader } from './shaders/VertexShader.js';
 import type {
   AnyVertexStage,
   VertexShaderFunction,
-} from './shaderFunctions/VertexShaderFunction';
-import type { BindGroupLayoutEntry } from './BindgroupLayout';
-import { ComputeShader } from './shaders/ComputeShader';
-import type { LayoutEntries, ShaderFunction } from './Utilities';
+} from './shaderFunctions/VertexShaderFunction.js';
+import type { BindGroupLayoutEntry } from './BindgroupLayout.js';
+import { ComputeShader } from './shaders/ComputeShader.js';
+import type { LayoutEntries, ShaderFunction } from './Utilities.js';
 
 abstract class ShaderBuilder<
   E extends { [index: string]: ShaderFunction },

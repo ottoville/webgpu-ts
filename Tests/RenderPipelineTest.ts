@@ -1,22 +1,22 @@
 /* eslint-disable no-unused-expressions */
-import { BGLayout, BufLayout, TextLayout } from './BindgroupLayout';
-import { ShaderStage } from './shaders/Shader';
+import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
+import { ShaderStage } from '../shaders/Shader';
 import {
   position_vec2,
   position_vec2f32,
   UI_Input,
   diffuseOutput,
-} from './Struct';
-import { position_uv_attrs } from './Tests/VertexShaderTypeTest';
-import { VertexBufferLayout2 } from './shaders/VertexShader';
-import { textureLoad } from './std_functions';
-import { FragmentShaderFunction } from './shaderFunctions/FragmentShaderFunction';
-import { PipelineLayout } from './PipelineLayout';
-import { VertexShaderFunction } from './shaderFunctions/VertexShaderFunction';
-import { FragmentShaderBuilder, VertexShaderBuilder } from './ShaderBuilder';
-import { ColorRenderTarget } from './renderTargets/ColorRenderTarget';
-import { TextureUsageEnums } from './Texture';
-import { RenderPipelineBuilder } from './RenderPipelineBuilder';
+} from '../Struct';
+import { position_uv_attrs } from './VertexShaderTypeTest';
+import { VertexBufferLayout2 } from '../shaders/VertexShader';
+import { textureLoad } from '../std_functions';
+import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
+import { PipelineLayout, RenderPipelineLayout } from '../PipelineLayout';
+import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction';
+import { FragmentShaderBuilder, VertexShaderBuilder } from '../ShaderBuilder';
+import { ColorRenderTarget } from '../renderTargets/ColorRenderTarget';
+import { TextureUsageEnums } from '../Texture';
+import { createRenderPipelineBuilder } from '../RenderPipelineBuilder';
 
 declare const gpu: GPUDevice;
 
@@ -35,10 +35,10 @@ type BGLayout_secondUniforms = BGLayout<{
 }>;
 
 declare const pipelineLayouts_different_fragment: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     readonly [BGLayout_UIUniforms_texture2d, BGLayout_secondUniforms]
   >,
-  PipelineLayout<
+  RenderPipelineLayout<
     readonly [BGLayout_UIUniforms_texture2d_array, BGLayout_secondUniforms]
   >,
 ];
@@ -159,7 +159,7 @@ const colorRenderTargets = [
   ),
 ];
 
-new RenderPipelineBuilder(vertexShader, fragmentShader).build({
+createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main',
     targets: colorRenderTargets,
@@ -170,7 +170,7 @@ new RenderPipelineBuilder(vertexShader, fragmentShader).build({
 });
 
 //this should be ok
-new RenderPipelineBuilder(vertexShader, fragmentShader).build({
+createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main',
     targets: colorRenderTargets,
@@ -180,7 +180,7 @@ new RenderPipelineBuilder(vertexShader, fragmentShader).build({
   },
 });
 
-new RenderPipelineBuilder(vertexShader, fragmentShader).build({
+createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     //@ts-expect-error Entrypoint does not exists
     entryPoint: 'noExists',
@@ -198,10 +198,11 @@ const vertexShader_missing_texture_2d = new VertexShaderBuilder(
   .addFunction('main', vertexshaderfunction)
   .build('label', gpu);
 
-const renderpipelinebuilder = new RenderPipelineBuilder(
+const renderpipelinebuilder = createRenderPipelineBuilder(
   vertexShader_missing_texture_2d,
   fragmentShader,
 );
+
 //@ts-expect-error Vertex and fragment shader does not have common pipelinelayout
 renderpipelinebuilder.build({
   fragment: {
