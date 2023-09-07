@@ -36,25 +36,23 @@ export class ComputeShader<
     );
   }
   createComputePipeline(entryPoint: keyof E) {
-    return this.props.gpu
-      .createComputePipelineAsync({
-        compute: {
-          entryPoint: entryPoint as string,
-          module: this.module,
+    return this.props.pipelineLayouts[0]!.gpu.createComputePipelineAsync({
+      compute: {
+        entryPoint: entryPoint as string,
+        module: this.module,
+      },
+      label: this.module.label + ' ' + (entryPoint as string),
+      layout: this.props.pipelineLayouts[0]!.layout,
+    }).catch((err: unknown) => {
+      throw new Error(
+        'createComputePipelineAsync failed on ' +
+          this.module.label +
+          ' , wgsl:' +
+          this.wgsl,
+        {
+          cause: err,
         },
-        label: this.module.label + ' ' + (entryPoint as string),
-        layout: this.props.pipelineLayouts[0]!.layout,
-      })
-      .catch((err: unknown) => {
-        throw new Error(
-          'createComputePipelineAsync failed on ' +
-            this.module.label +
-            ' , wgsl:' +
-            this.wgsl,
-          {
-            cause: err,
-          },
-        );
-      });
+      );
+    });
   }
 }

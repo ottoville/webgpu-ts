@@ -87,7 +87,6 @@ new VertexShader({
   entryPoints: {
     main: vertexshaderfunction,
   },
-  gpu,
   label: 'UI.vert',
   pipelineLayouts,
 });
@@ -113,7 +112,6 @@ new VertexShader({
     //VertexShaderFunction is missing uniforms, skipping bindgroup should be allowed
     main: vertexshaderfunction_no_uniforms,
   },
-  gpu,
   label: 'UI.vert',
   pipelineLayouts,
 });

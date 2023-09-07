@@ -55,7 +55,7 @@ export class RenderPipelineBuilder<
       };
     },
   ) {
-    const gpu = this.vertexShader.props.gpu;
+    const gpu = this.vertexShader.props.pipelineLayouts[0]!.gpu;
     return gpu.createRenderPipelineAsync({
       ...descriptor,
       fragment: {

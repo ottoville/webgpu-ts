@@ -88,7 +88,6 @@ new FragmentShader({
   entryPoints: {
     main: fragmentshaderfunction,
   },
-  gpu,
   label: 'UI.vert',
   pipelineLayouts,
 });
@@ -138,4 +137,4 @@ shaderBuilder.entryPoints.entry_array.output;
 //@ts-expect-error entry does not exists
 shaderBuilder.entryPoints.noExists.output;
 
-shaderBuilder.build('label', gpu);
+shaderBuilder.build('label');

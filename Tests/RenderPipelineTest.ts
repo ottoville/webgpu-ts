@@ -122,12 +122,12 @@ const shaderB = new VertexShaderBuilder(
   pipelineLayouts_different_fragment,
 ).addFunction('main', vertexshaderfunction);
 //Should be fine
-const vertexShader = shaderB.build('label', gpu);
+const vertexShader = shaderB.build('label');
 const fragmentShader = new FragmentShaderBuilder(
   pipelineLayouts_different_vertex,
 )
   .addFunction('main', fragmentshaderfunction)
-  .build('label', gpu);
+  .build('label');
 
 fragmentShader.props.entryPoints.main.output;
 vertexShader.props.entryPoints.main.output;
@@ -196,7 +196,7 @@ const vertexShader_missing_texture_2d = new VertexShaderBuilder(
   pipelineLayouts_missing_texture_2d,
 )
   .addFunction('main', vertexshaderfunction)
-  .build('label', gpu);
+  .build('label');
 
 const renderpipelinebuilder = createRenderPipelineBuilder(
   vertexShader_missing_texture_2d,

@@ -33,10 +33,9 @@ export class FragmentShaderBuilder<
   constructor(p: P) {
     super(p);
   }
-  build(label: string, gpu: GPUDevice) {
+  build(label: string) {
     return new FragmentShader({
       entryPoints: this.entryPoints,
-      gpu,
       label,
       pipelineLayouts: this.pipelineLayouts,
     });
@@ -70,10 +69,9 @@ export class VertexShaderBuilder<
   constructor(p: P) {
     super(p);
   }
-  build(label: string, gpu: GPUDevice) {
+  build(label: string) {
     return new VertexShader({
       entryPoints: this.entryPoints,
-      gpu,
       label,
       pipelineLayouts: this.pipelineLayouts,
     });
@@ -107,10 +105,9 @@ export class ComputeShaderBuilder<
   constructor(p: P) {
     super(p);
   }
-  build(label: string, gpu: GPUDevice) {
+  build(label: string) {
     return new ComputeShader({
       entryPoints: this.entryPoints,
-      gpu,
       label,
       pipelineLayouts: this.pipelineLayouts,
     });

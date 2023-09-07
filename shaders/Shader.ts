@@ -22,7 +22,6 @@ export type ShaderParams<
   entryPoints: E;
   label: string;
   readonly pipelineLayouts: P;
-  gpu: GPUDevice;
 };
 
 export abstract class Shader<
@@ -101,7 +100,8 @@ export abstract class Shader<
         (pipelineLayout) => pipelineLayout.layout,
       );
     }
-    this.module = this.props.gpu.createShaderModule({
+    const gpu = this.props.pipelineLayouts[0]!.gpu;
+    this.module = gpu.createShaderModule({
       code: this.wgsl,
       hints: pipelineLayouts,
       label: this.props.label,
