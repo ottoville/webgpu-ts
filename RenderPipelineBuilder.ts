@@ -2,25 +2,21 @@ import type { PipelineIntersection } from './Utilities';
 import type { ColorRenderTarget } from './renderTargets/ColorRenderTarget';
 import type { FragmentShader } from './shaders/FragmentShader';
 import type { VertexShader } from './shaders/VertexShader';
-type RenderPipelineBuilderProps<
-  V extends VertexShader,
-  F extends FragmentShader,
-> = {
-  vertexShader: V;
-  fragmentShader: F;
-};
 export class RenderPipelineBuilder<
   V extends VertexShader = VertexShader,
   F extends FragmentShader = FragmentShader,
 > {
   pipelineLayout: GPUPipelineLayout;
-  constructor(private props: RenderPipelineBuilderProps<V, F>) {
+  constructor(
+    private vertexShader: V,
+    private fragmentShader: F,
+  ) {
     /*
     Get intersection of vertex and fragment pipelinelayouts and
     use first layout from that intersection as layout for renderpipeline
    */
-    const [pipelineLayout] = props.vertexShader.props.pipelineLayouts.filter(
-      (p) => props.fragmentShader.props.pipelineLayouts.includes(p),
+    const [pipelineLayout] = this.vertexShader.props.pipelineLayouts.filter(
+      (p) => this.fragmentShader.props.pipelineLayouts.includes(p),
     );
     if (!pipelineLayout) {
       throw new Error('pipelineLayout not found');
@@ -48,12 +44,12 @@ export class RenderPipelineBuilder<
           };
         },
   ) {
-    const gpu = this.props.vertexShader.props.gpu;
+    const gpu = this.vertexShader.props.gpu;
     return gpu.createRenderPipelineAsync({
       ...descriptor,
       fragment: {
         ...descriptor.fragment,
-        module: this.props.fragmentShader.module,
+        module: this.fragmentShader.module,
         targets: descriptor.fragment.targets.map((target) => {
           if (target === null) return null;
           const state: GPUColorTargetState = {
@@ -68,10 +64,9 @@ export class RenderPipelineBuilder<
       vertex: {
         ...descriptor.vertex,
         buffers:
-          this.props.vertexShader.props.entryPoints[
-            descriptor.vertex.entryPoint
-          ]!.buffers,
-        module: this.props.vertexShader.module,
+          this.vertexShader.props.entryPoints[descriptor.vertex.entryPoint]!
+            .buffers,
+        module: this.vertexShader.module,
       },
     });
   }

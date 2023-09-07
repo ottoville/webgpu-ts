@@ -118,10 +118,10 @@ new VertexShader({
   pipelineLayouts,
 });
 
-vertexshaderfunction.addToShaderBuilder(
-  'main',
+new VertexShaderBuilder(pipelineLayouts_missing_uniforms).addFunction(
   //@ts-expect-error pipelinelayout is missing vertex uniforms bindgroup.
-  new VertexShaderBuilder(pipelineLayouts_missing_uniforms),
+  'main',
+  vertexshaderfunction,
 );
 
 //No buffers
@@ -187,18 +187,18 @@ declare const pipelineLayouts4: readonly [
 declare const vertexShaderfunctionTest: VertexShaderFunction<
   readonly [{ a: s; b: s; c: s }]
 >;
-vertexShaderfunctionTest.addToShaderBuilder(
+new VertexShaderBuilder(pipelineLayouts4).addFunction(
   'main',
-  new VertexShaderBuilder(pipelineLayouts4),
+  vertexShaderfunctionTest,
 );
 
 declare const vertexShaderfunctionTest2: VertexShaderFunction<
   readonly [{ a: s; b: s }]
 >;
 //Bglayouts is missing one entry from pipelinelayout, should be ok
-vertexShaderfunctionTest2.addToShaderBuilder(
+new VertexShaderBuilder(pipelineLayouts4).addFunction(
   'main',
-  new VertexShaderBuilder(pipelineLayouts4),
+  vertexShaderfunctionTest2,
 );
 
 declare const vertexShaderfunctionTest3: VertexShaderFunction<
@@ -219,12 +219,11 @@ declare const pipelineLayouts5: readonly [
   >,
 ];
 const shaderBuilder2 = new VertexShaderBuilder(pipelineLayouts5);
-vertexShaderfunctionTest4.addToShaderBuilder('main', shaderBuilder2);
-
-vertexShaderfunctionTest4.addToShaderBuilder(
-  'main',
+shaderBuilder2.addFunction('main', vertexShaderfunctionTest4);
+new VertexShaderBuilder(pipelineLayouts4).addFunction(
   //@ts-expect-error Pipelinelayout is missing second group
-  new VertexShaderBuilder(pipelineLayouts4),
+  'main',
+  vertexShaderfunctionTest4,
 );
 
 //Pipelinelayouts Fragment bindings dont interfere
@@ -235,30 +234,22 @@ declare const pipelineLayouts6: readonly [
 declare const vertexShaderfunctionTestS1: VertexShaderFunction<
   readonly [{ a: s; b: s }]
 >;
-vertexShaderfunctionTestS1.addToShaderBuilder(
+new VertexShaderBuilder(pipelineLayouts6).addFunction(
   'main',
-  new VertexShaderBuilder(pipelineLayouts6),
+  vertexShaderfunctionTestS1,
 );
 
 //Two different functions
-const shaderBuilderWithTwoEntries =
-  vertexShaderfunctionTest2.addToShaderBuilder(
-    'main',
-    vertexShaderfunctionTest.addToShaderBuilder(
-      'other',
-      new VertexShaderBuilder(pipelineLayouts4),
-    ),
-  );
+const shaderBuilderWithTwoEntries = new VertexShaderBuilder(pipelineLayouts4)
+  .addFunction('main', vertexShaderfunctionTest2)
+  .addFunction('other', vertexShaderfunctionTest);
+
 shaderBuilderWithTwoEntries.entryPoints.main.buffers;
 shaderBuilderWithTwoEntries.entryPoints.other.buffers;
 //@ts-expect-error No such entrypoint
-shaderBuilderWithTwoEntries.entryPoints.noexists.buffers;
+shaderBuilderWithTwoEntries.entryPoints.noexists;
 
-vertexShaderfunctionTest3.addToShaderBuilder(
-  'main',
+new VertexShaderBuilder(pipelineLayouts4)
   //@ts-expect-error D is missing from pipelinelayout
-  vertexShaderfunctionTest.addToShaderBuilder(
-    'other',
-    new VertexShaderBuilder(pipelineLayouts4),
-  ),
-);
+  .addFunction('main', vertexShaderfunctionTest3)
+  .addFunction('other', vertexShaderfunctionTest);

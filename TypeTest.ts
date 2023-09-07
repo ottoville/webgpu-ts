@@ -118,18 +118,15 @@ const vertexshaderfunction = new VertexShaderFunction(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any
 >;
-
-const shaderB = vertexshaderfunction.addToShaderBuilder(
-  'main',
-  new VertexShaderBuilder(pipelineLayouts_different_fragment),
-);
+const shaderB = new VertexShaderBuilder(
+  pipelineLayouts_different_fragment,
+).addFunction('main', vertexshaderfunction);
 //Should be fine
 const vertexShader = shaderB.build('label', gpu);
-const fragmentShader = fragmentshaderfunction
-  .addToShaderBuilder(
-    'main',
-    new FragmentShaderBuilder(pipelineLayouts_different_vertex),
-  )
+const fragmentShader = new FragmentShaderBuilder(
+  pipelineLayouts_different_vertex,
+)
+  .addFunction('main', fragmentshaderfunction)
   .build('label', gpu);
 
 fragmentShader.props.entryPoints.main.output;
@@ -162,10 +159,7 @@ const colorRenderTargets = [
   ),
 ];
 
-new RenderPipelineBuilder({
-  fragmentShader,
-  vertexShader,
-}).build({
+new RenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main',
     targets: colorRenderTargets,
@@ -176,10 +170,7 @@ new RenderPipelineBuilder({
 });
 
 //this should be ok
-new RenderPipelineBuilder({
-  fragmentShader,
-  vertexShader,
-}).build({
+new RenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main',
     targets: colorRenderTargets,
@@ -189,10 +180,7 @@ new RenderPipelineBuilder({
   },
 });
 
-new RenderPipelineBuilder({
-  fragmentShader,
-  vertexShader,
-}).build({
+new RenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     //@ts-expect-error Entrypoint does not exists
     entryPoint: 'noExists',
@@ -203,17 +191,17 @@ new RenderPipelineBuilder({
     entryPoint: 'noExists',
   },
 });
-const vertexShader_missing_texture_2d = vertexshaderfunction
-  .addToShaderBuilder(
-    'main',
-    new VertexShaderBuilder(pipelineLayouts_missing_texture_2d),
-  )
+
+const vertexShader_missing_texture_2d = new VertexShaderBuilder(
+  pipelineLayouts_missing_texture_2d,
+)
+  .addFunction('main', vertexshaderfunction)
   .build('label', gpu);
 
-const renderpipelinebuilder = new RenderPipelineBuilder({
+const renderpipelinebuilder = new RenderPipelineBuilder(
+  vertexShader_missing_texture_2d,
   fragmentShader,
-  vertexShader: vertexShader_missing_texture_2d,
-});
+);
 //@ts-expect-error Vertex and fragment shader does not have common pipelinelayout
 renderpipelinebuilder.build({
   fragment: {

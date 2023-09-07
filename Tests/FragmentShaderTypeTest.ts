@@ -80,11 +80,9 @@ const fragmentshaderfunction_array = new FragmentShaderFunction<
 );
 
 //Should be fine
+const fragmentShaderBuilder = new FragmentShaderBuilder(pipelineLayouts);
 
-fragmentshaderfunction.addToShaderBuilder(
-  'main',
-  new FragmentShaderBuilder(pipelineLayouts),
-);
+fragmentShaderBuilder.addFunction('main', fragmentshaderfunction);
 
 new FragmentShader({
   entryPoints: {
@@ -110,30 +108,30 @@ const vertexshaderfunction_no_texture = new FragmentShaderFunction<
 );
 
 //FragmentShaderFunction is missing texture, should be ok
-vertexshaderfunction_no_texture.addToShaderBuilder(
+new FragmentShaderBuilder(pipelineLayouts).addFunction(
   'main',
-  new FragmentShaderBuilder(pipelineLayouts),
+  vertexshaderfunction_no_texture,
 );
 
-fragmentshaderfunction.addToShaderBuilder(
+new FragmentShaderBuilder(pipelineLayouts_missing_texture).addFunction(
   'main',
+  vertexshaderfunction_no_texture,
+);
+
+new FragmentShaderBuilder(
+  pipelineLayouts_missing_texture,
   //@ts-expect-error pipelinelayout is missing texture bindgroup.
-  new FragmentShaderBuilder(pipelineLayouts_missing_texture),
-);
+).addFunction2('main', fragmentshaderfunction);
 
-fragmentshaderfunction_array.addToShaderBuilder(
-  'main',
+new FragmentShaderBuilder(pipelineLayouts).addFunction(
   //@ts-expect-error Type '"texture_2d<f32>"' is not assignable to type '"texture_2d_array<f32>"'.
-  new FragmentShaderBuilder(pipelineLayouts),
+  'main',
+  fragmentshaderfunction_array,
 );
 
-const shaderBuilder = vertexshaderfunction_no_texture.addToShaderBuilder(
-  'entry_array',
-  fragmentshaderfunction.addToShaderBuilder(
-    'main',
-    new FragmentShaderBuilder(pipelineLayouts),
-  ),
-);
+const shaderBuilder = new FragmentShaderBuilder(pipelineLayouts)
+  .addFunction('main', fragmentshaderfunction)
+  .addFunction('entry_array', vertexshaderfunction_no_texture);
 
 shaderBuilder.entryPoints.main.output;
 shaderBuilder.entryPoints.entry_array.output;

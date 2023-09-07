@@ -1,12 +1,7 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout';
 import type { ShaderStage } from '../shaders/Shader';
-import type { VertexShaderBuilder } from '../ShaderBuilder';
 import type { Struct } from '../Struct';
-import type {
-  FilteredBindEntrys,
-  LayoutEntries,
-  RemoveIndexSignature,
-} from '../Utilities';
+import type { FilteredBindEntrys } from '../Utilities';
 import type { VertexBufferLayout2, VertexEntry } from '../shaders/VertexShader';
 
 export type AnyVertexStage =
@@ -47,34 +42,6 @@ export class VertexShaderFunction<
         attributes: Object.values(layout.attributes2),
       };
     });
-  }
-  addToShaderBuilder<
-    E extends string,
-    BUILDER extends VertexShaderBuilder<
-      {
-        [index: string]: VertexShaderFunction<
-          readonly {
-            [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
-          }[],
-          readonly VertexBufferLayout2[] | readonly []
-        >;
-      },
-      readonly LayoutEntries<B>[]
-    >,
-  >(entryPoint: E, shaderBuilder: BUILDER) {
-    if (entryPoint in shaderBuilder.entryPoints) {
-      console.warn('Overriding existing shaderfunction in shaderbuilder.');
-    }
-    shaderBuilder.entryPoints[entryPoint] = this;
-    return shaderBuilder as unknown as BUILDER extends VertexShaderBuilder<
-      infer EE,
-      infer L
-    >
-      ? VertexShaderBuilder<
-          RemoveIndexSignature<EE & Record<typeof entryPoint, this>>,
-          L
-        >
-      : never;
   }
   createCode(bindGroups: FilteredBindEntrys<B, VertexEntry>, name: string) {
     const variableNames = this.vertexBufferLayout.map((buffer) => {

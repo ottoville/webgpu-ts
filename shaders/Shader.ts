@@ -21,7 +21,7 @@ export type ShaderParams<
 > = {
   entryPoints: E;
   label: string;
-  pipelineLayouts: P;
+  readonly pipelineLayouts: P;
   gpu: GPUDevice;
 };
 
@@ -95,7 +95,6 @@ export abstract class Shader<
       {};
     for (const key in props.entryPoints) {
       const entryPoint = props.entryPoints[key]!;
-      //@ts-expect-error
       this.wgsl += entryPoint.createCode(entries, key);
       //@ts-expect-error https://github.com/gpuweb/gpuweb/issues/4233
       pipelineLayouts[key] = this.props.pipelineLayouts.map(

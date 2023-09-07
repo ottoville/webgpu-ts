@@ -42,3 +42,8 @@ export { TextureView } from './TextureView.js';
 export { MSAARenderTarget } from './renderTargets/MSAARenderTarget.js';
 export { RenderPipelineBuilder } from './RenderPipelineBuilder.js';
 export { PipelineLayout } from './PipelineLayout.js';
+export {
+  VertexShaderBuilder,
+  FragmentShaderBuilder,
+  ComputeShaderBuilder,
+} from './ShaderBuilder.js';

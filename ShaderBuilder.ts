@@ -1,15 +1,21 @@
-import { ComputeShaderFunction } from './shaderFunctions/ComputeShaderFunction';
+import type {
+  AnyComputeStage,
+  ComputeShaderFunction,
+} from './shaderFunctions/ComputeShaderFunction';
 import { FragmentShader } from './shaders/FragmentShader';
-import type { FragmentShaderFunction } from './shaderFunctions/FragmentShaderFunction';
+import type {
+  AnyFragmentStage,
+  FragmentShaderFunction,
+} from './shaderFunctions/FragmentShaderFunction';
 import type { PipelineLayout } from './PipelineLayout';
-import { VertexBufferLayout2, VertexShader } from './shaders/VertexShader';
+import { VertexShader } from './shaders/VertexShader';
 import type {
   AnyVertexStage,
   VertexShaderFunction,
 } from './shaderFunctions/VertexShaderFunction';
-import { BindGroupLayoutEntry } from './BindgroupLayout';
+import type { BindGroupLayoutEntry } from './BindgroupLayout';
 import { ComputeShader } from './shaders/ComputeShader';
-import type { ShaderFunction } from './Utilities';
+import type { LayoutEntries, ShaderFunction } from './Utilities';
 
 abstract class ShaderBuilder<
   E extends { [index: string]: ShaderFunction },
@@ -18,8 +24,10 @@ abstract class ShaderBuilder<
   entryPoints: E = {} as E;
   constructor(public pipelineLayouts: P) {}
 }
+
 export class FragmentShaderBuilder<
-  E extends { [index: string]: FragmentShaderFunction },
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  E extends {},
   P extends readonly PipelineLayout[],
 > extends ShaderBuilder<E, P> {
   constructor(p: P) {
@@ -33,16 +41,30 @@ export class FragmentShaderBuilder<
       pipelineLayouts: this.pipelineLayouts,
     });
   }
+  addFunction<
+    S extends string,
+    F extends readonly {
+      [index: string]: BindGroupLayoutEntry<AnyFragmentStage>;
+    }[],
+  >(
+    entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
+    shaderFunction: FragmentShaderFunction<F>,
+  ) {
+    const newBuilder = new FragmentShaderBuilder<
+      E & Record<S, typeof shaderFunction>,
+      P
+    >(this.pipelineLayouts);
+    //@ts-expect-error
+    newBuilder.entryPoints = {
+      ...this.entryPoints,
+      [entryPoint]: shaderFunction,
+    };
+    return newBuilder;
+  }
 }
 export class VertexShaderBuilder<
-  E extends {
-    [index: string]: VertexShaderFunction<
-      readonly {
-        [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
-      }[],
-      readonly VertexBufferLayout2[] | readonly []
-    >;
-  },
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  E extends {},
   P extends readonly PipelineLayout[],
 > extends ShaderBuilder<E, P> {
   constructor(p: P) {
@@ -56,9 +78,30 @@ export class VertexShaderBuilder<
       pipelineLayouts: this.pipelineLayouts,
     });
   }
+  addFunction<
+    S extends string,
+    F extends readonly {
+      [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
+    }[],
+  >(
+    entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
+    shaderFunction: VertexShaderFunction<F>,
+  ) {
+    const newBuilder = new VertexShaderBuilder<
+      E & Record<S, typeof shaderFunction>,
+      P
+    >(this.pipelineLayouts);
+    //@ts-expect-error
+    newBuilder.entryPoints = {
+      ...this.entryPoints,
+      [entryPoint]: shaderFunction,
+    };
+    return newBuilder;
+  }
 }
 export class ComputeShaderBuilder<
-  E extends { [index: string]: ComputeShaderFunction },
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  E extends {},
   P extends readonly PipelineLayout[],
 > extends ShaderBuilder<E, P> {
   constructor(p: P) {
@@ -71,5 +114,25 @@ export class ComputeShaderBuilder<
       label,
       pipelineLayouts: this.pipelineLayouts,
     });
+  }
+  addFunction<
+    S extends string,
+    F extends readonly {
+      [index: string]: BindGroupLayoutEntry<AnyComputeStage>;
+    }[],
+  >(
+    entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
+    shaderFunction: ComputeShaderFunction<F>,
+  ) {
+    const newBuilder = new ComputeShaderBuilder<
+      E & Record<S, typeof shaderFunction>,
+      P
+    >(this.pipelineLayouts);
+    //@ts-expect-error
+    newBuilder.entryPoints = {
+      ...this.entryPoints,
+      [entryPoint]: shaderFunction,
+    };
+    return newBuilder;
   }
 }

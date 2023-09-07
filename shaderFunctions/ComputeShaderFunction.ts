@@ -1,14 +1,9 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import type { ShaderStage } from '../shaders/Shader.js';
-import type { ComputeShaderBuilder } from '../ShaderBuilder.js';
-import type {
-  FilteredBindEntrys,
-  LayoutEntries,
-  RemoveIndexSignature,
-} from '../Utilities.js';
+import type { FilteredBindEntrys } from '../Utilities.js';
 import type { ComputeEntry } from '../shaders/ComputeShader.js';
 
-type AnyComputeStage =
+export type AnyComputeStage =
   | ShaderStage.COMPUTE
   | ShaderStage.COMPUTE_AND_FRAGMENT
   | ShaderStage.COMPUTE_AND_VERTEX
@@ -34,27 +29,6 @@ export class ComputeShaderFunction<
     code: (args: FilteredBindEntrys<B, ComputeEntry>) => string,
   ) {
     this.#code = code;
-  }
-  addToShaderBuilder<
-    E extends string,
-    S extends ComputeShaderBuilder<
-      { [index: string]: ComputeShaderFunction },
-      readonly LayoutEntries<B>[]
-    >,
-  >(entryPoint: E, shaderBuilder: S) {
-    if (entryPoint in shaderBuilder.entryPoints) {
-      console.warn('Overriding existing shaderfunction in shaderbuilder.');
-    }
-    shaderBuilder.entryPoints[entryPoint] = this;
-    return shaderBuilder as unknown as S extends ComputeShaderBuilder<
-      infer EE,
-      infer L
-    >
-      ? ComputeShaderBuilder<
-          RemoveIndexSignature<EE & Record<typeof entryPoint, this>>,
-          L
-        >
-      : never;
   }
   createCode(bindGroups: FilteredBindEntrys<B, ComputeEntry>, name: string) {
     const wgsl = /* wgsl */ `
