@@ -59,4 +59,5 @@ export {
   BufferUsageEnums,
   type VERTEX_BUFFER,
   type INDEX_BUFFER,
+  type INDIRECT_BUFFER,
 } from './Buffer2.js';

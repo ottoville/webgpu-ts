@@ -12,6 +12,8 @@ export const enum BufferUsageEnums {
   VERTEX = 32,
   UNIFORM = 64,
   STORAGE = 128,
+  INDIRECT = 256,
+  QUERY_RESOLVE = 512,
   'MAP_READ|COPY_DST' = BufferUsageEnums.MAP_READ | BufferUsageEnums.COPY_DST,
   'STORAGE|COPY_SRC' = BufferUsageEnums.STORAGE | BufferUsageEnums.COPY_SRC,
   'STORAGE|COPY_DST' = BufferUsageEnums.STORAGE | BufferUsageEnums.COPY_DST,
@@ -41,6 +43,8 @@ export const enum BufferUsageEnums {
     BufferUsageEnums.STORAGE |
     BufferUsageEnums.COPY_SRC |
     BufferUsageEnums.COPY_DST,
+
+  'INDIRECT|COPY_DST' = BufferUsageEnums.INDIRECT | BufferUsageEnums.COPY_DST,
 }
 type MAP_READ_BUFFER =
   | (typeof BufferUsageEnums)['MAP_READ']
@@ -63,7 +67,8 @@ type COPY_DST_BUFFER =
   | (typeof BufferUsageEnums)['STORAGE|COPY_SRC|COPY_DST']
   | (typeof BufferUsageEnums)['UNIFORM|COPY_DST']
   | (typeof BufferUsageEnums)['UNIFORM|STORAGE|COPY_DST']
-  | (typeof BufferUsageEnums)['UNIFORM|STORAGE|COPY_SRC|COPY_DST'];
+  | (typeof BufferUsageEnums)['UNIFORM|STORAGE|COPY_SRC|COPY_DST']
+  | (typeof BufferUsageEnums)['INDIRECT|COPY_DST'];
 type STORAGE_BUFFER =
   | (typeof BufferUsageEnums)['STORAGE']
   | (typeof BufferUsageEnums)['STORAGE|COPY_SRC']
@@ -92,6 +97,10 @@ export type INDEX_BUFFER =
   | (typeof BufferUsageEnums)['INDEX']
   | (typeof BufferUsageEnums)['INDEX|STORAGE|COPY_SRC'];
 
+export type INDIRECT_BUFFER =
+  | (typeof BufferUsageEnums)['INDIRECT']
+  | (typeof BufferUsageEnums)['INDIRECT|COPY_DST'];
+
 export type BufferProps<U extends BufferUsageEnums> = {
   gpu: GPUDevice;
   size: number;
@@ -104,7 +113,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
   readonly #buffer: GPUBuffer;
   constructor(
     public props: BufferProps<U>,
-    mappedAtCreation?: (buff: GPUBuffer, gpu: GPUDevice) => void,
+    mappedAtCreation?: (buff: GPUBuffer, buffer: Buffer2<U>) => void,
   ) {
     if (props.size <= 0) throw new Error('Cannot create zero sized buffer');
     if (props.size > 268435456) {
@@ -137,7 +146,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
       });
     }
     if (mappedAtCreation) {
-      mappedAtCreation(this.#buffer, props.gpu);
+      mappedAtCreation(this.#buffer, this);
       this.#buffer.unmap();
     }
   }
@@ -182,17 +191,17 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
   copyFrom(
     this: Buffer2<COPY_DST_BUFFER>,
     commandEncoder: GPUCommandEncoder,
-    from: GPUBuffer,
+    from: Buffer2<COPY_SRC_BUFFER>,
     sourceOffset: GPUSize64 = 0,
     destinationOffset: GPUSize64 = 0,
     copySize?: GPUSize64,
   ) {
     commandEncoder.copyBufferToBuffer(
-      from, // source buffer
+      from.#buffer, // source buffer
       sourceOffset,
       this.#buffer, //destination buffer
       destinationOffset,
-      copySize ?? this.#buffer.size,
+      copySize ?? Math.min(from.#buffer.size, this.#buffer.size),
     );
   }
 
@@ -206,7 +215,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
   ) {
     buffer.copyFrom(
       commandEncoder,
-      this.#buffer,
+      this,
       sourceOffset,
       destinationOffset,
       copySize,
@@ -254,6 +263,13 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
   }
   getIndexBinding(
     this: Buffer2<INDEX_BUFFER>,
+    renderBundle?: RenderBundleEncoder,
+  ) {
+    if (renderBundle) this.renderBundles.add(renderBundle);
+    return this.#buffer;
+  }
+  getIndirectBinding(
+    this: Buffer2<INDIRECT_BUFFER>,
     renderBundle?: RenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
