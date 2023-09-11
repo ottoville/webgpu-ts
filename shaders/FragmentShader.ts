@@ -1,6 +1,6 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import { OutputShader } from './OutputShader.js';
-import type { PipelineLayout } from '../PipelineLayout.js';
+import type { RenderPipelineLayout } from '../PipelineLayout.js';
 import { type ShaderParams, ShaderStage } from './Shader.js';
 import type { FilteredBindgroupEntrys } from '../Utilities.js';
 import type { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction.js';
@@ -17,7 +17,7 @@ export class FragmentShader<
   }> = Readonly<{
     [index: string]: FragmentShaderFunction;
   }>,
-  P extends readonly PipelineLayout[] = readonly PipelineLayout[],
+  P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends OutputShader<E, P> {
   constructor(
     props: ShaderParams<E, P>,

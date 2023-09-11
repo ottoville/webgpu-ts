@@ -11,7 +11,7 @@ import { position_uv_attrs } from './VertexShaderTypeTest';
 import { VertexBufferLayout2 } from '../shaders/VertexShader';
 import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
-import { PipelineLayout, RenderPipelineLayout } from '../PipelineLayout';
+import { RenderPipelineLayout } from '../PipelineLayout';
 import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction';
 import { FragmentShaderBuilder, VertexShaderBuilder } from '../ShaderBuilder';
 import { ColorRenderTarget } from '../renderTargets/ColorRenderTarget';
@@ -43,7 +43,7 @@ declare const pipelineLayouts_different_fragment: readonly [
   >,
 ];
 declare const pipelineLayouts_different_vertex: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     readonly [
       BGLayout<{
         uniforms: BufLayout<ShaderStage.VERTEX, typeof position_vec2>;
@@ -52,13 +52,13 @@ declare const pipelineLayouts_different_vertex: readonly [
       BGLayout_secondUniforms,
     ]
   >,
-  PipelineLayout<
+  RenderPipelineLayout<
     readonly [BGLayout_UIUniforms_texture2d, BGLayout_secondUniforms]
   >,
 ];
 
 declare const pipelineLayouts_missing_texture_2d: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     [
       BGLayout<{
         uniforms: BufLayout<ShaderStage.VERTEX, typeof position_vec2f32>;
@@ -66,7 +66,7 @@ declare const pipelineLayouts_missing_texture_2d: readonly [
       BGLayout_secondUniforms,
     ]
   >,
-  PipelineLayout<
+  RenderPipelineLayout<
     [BGLayout_UIUniforms_texture2d_array, BGLayout_secondUniforms]
   >,
 ];

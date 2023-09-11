@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
-import { PipelineLayout, RenderPipelineLayout } from '../PipelineLayout';
+import { RenderPipelineLayout } from '../PipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
 import { VertexShaderBuilder } from '../ShaderBuilder';
 import { Struct, position_vec2f32, UI_Input } from '../Struct';
@@ -27,14 +27,14 @@ declare const pipelineLayouts: readonly [
 ];
 
 declare const pipelineLayouts_missing_uniforms: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     [
       BGLayout<{
         texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
       }>,
     ]
   >,
-  PipelineLayout<
+  RenderPipelineLayout<
     [
       BGLayout<{
         texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d_array<f32>'>;
@@ -180,7 +180,7 @@ type s2 = BufLayout<
 
 //Exactly same bglayout and pipelinelayout, should be ok
 declare const pipelineLayouts4: readonly [
-  PipelineLayout<readonly [BGLayout<{ a: s; b: s; c: s }>]>,
+  RenderPipelineLayout<readonly [BGLayout<{ a: s; b: s; c: s }>]>,
 ];
 declare const vertexShaderfunctionTest: VertexShaderFunction<
   readonly [{ a: s; b: s; c: s }]
@@ -212,7 +212,7 @@ declare const vertexShaderfunctionTest4: VertexShaderFunction<
   readonly [{ a: s; b: s }, { a: s; b: s }]
 >;
 declare const pipelineLayouts5: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     [BGLayout<{ a: s; b: s; c: s }>, BGLayout<{ a: s; b: s; c: s }>]
   >,
 ];
@@ -226,8 +226,8 @@ new VertexShaderBuilder(pipelineLayouts4).addFunction(
 
 //Pipelinelayouts Fragment bindings dont interfere
 declare const pipelineLayouts6: readonly [
-  PipelineLayout<readonly [BGLayout<{ a: s; b: s; c: s1 }>]>,
-  PipelineLayout<readonly [BGLayout<{ a: s; b: s; c: s2 }>]>,
+  RenderPipelineLayout<readonly [BGLayout<{ a: s; b: s; c: s1 }>]>,
+  RenderPipelineLayout<readonly [BGLayout<{ a: s; b: s; c: s2 }>]>,
 ];
 declare const vertexShaderfunctionTestS1: VertexShaderFunction<
   readonly [{ a: s; b: s }]

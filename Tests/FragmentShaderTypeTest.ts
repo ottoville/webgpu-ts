@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { FragmentShader } from '../shaders/FragmentShader';
-import { PipelineLayout } from '../PipelineLayout';
+import { RenderPipelineLayout } from '../PipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
 import { FragmentShaderBuilder } from '../ShaderBuilder';
 import { position_vec2f32, UI_Input, diffuseOutput } from '../Struct';
@@ -9,7 +9,7 @@ import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
 
 declare const pipelineLayouts: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     [
       BGLayout<{
         uniforms1: BufLayout<ShaderStage.VERTEX, typeof position_vec2f32>;
@@ -17,7 +17,7 @@ declare const pipelineLayouts: readonly [
       }>,
     ]
   >,
-  PipelineLayout<
+  RenderPipelineLayout<
     [
       BGLayout<{
         uniforms2: BufLayout<ShaderStage.VERTEX, typeof position_vec2f32>;
@@ -28,7 +28,7 @@ declare const pipelineLayouts: readonly [
 ];
 
 declare const pipelineLayouts_missing_texture: readonly [
-  PipelineLayout<
+  RenderPipelineLayout<
     [
       BGLayout<{
         uniforms: BufLayout<ShaderStage.VERTEX, typeof position_vec2f32>;

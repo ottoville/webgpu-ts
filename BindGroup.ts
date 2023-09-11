@@ -1,6 +1,6 @@
-import type { BGLayout, MapToGPUBindGroupEntry } from './BindgroupLayout';
-import type { RenderBundleEncoder } from './RenderbundleEncoder';
-import { TextureView } from './TextureView';
+import type { BGLayout, MapToGPUBindGroupEntry } from './BindgroupLayout.js';
+import type { RenderBundleEncoder } from './RenderbundleEncoder.js';
+import { TextureView } from './TextureView.js';
 
 export class BindGroup<L extends BGLayout = BGLayout> {
   #dirty = true;

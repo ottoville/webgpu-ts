@@ -7,7 +7,7 @@ import type {
   AnyFragmentStage,
   FragmentShaderFunction,
 } from './shaderFunctions/FragmentShaderFunction.js';
-import type { PipelineLayout } from './PipelineLayout.js';
+import type { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
 import { VertexShader } from './shaders/VertexShader.js';
 import type {
   AnyVertexStage,
@@ -28,7 +28,7 @@ abstract class ShaderBuilder<
 export class FragmentShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends {},
-  P extends readonly PipelineLayout[],
+  P extends readonly RenderPipelineLayout[],
 > extends ShaderBuilder<E, P> {
   constructor(p: P) {
     super(p);
@@ -64,7 +64,7 @@ export class FragmentShaderBuilder<
 export class VertexShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends {},
-  P extends readonly PipelineLayout[],
+  P extends readonly RenderPipelineLayout[],
 > extends ShaderBuilder<E, P> {
   constructor(p: P) {
     super(p);

@@ -1,5 +1,5 @@
-import type { BindGroup } from './BindGroup';
 import type { BGLayout } from './BindgroupLayout';
+import { RenderPipelineBuilder } from './RenderPipelineBuilder';
 
 type PipeLineLayoutProps<B extends readonly BGLayout[]> = {
   label: string;
@@ -28,52 +28,10 @@ export class PipelineLayout<
 export class RenderPipelineLayout<
   B extends readonly BGLayout[] = readonly BGLayout[],
 > extends PipelineLayout<B> {
-  renderPipeLines: Set<GPURenderPipeline> = new Set();
-  subBindGroups: RenderPipelineLayout[] = [];
-  bindGroupLayout: BGLayout;
+  renderPipeLines: Set<RenderPipelineBuilder> = new Set();
 
-  constructor(
-    props: PipeLineLayoutProps<B>,
-    public sharedBindgroup?: BindGroup | undefined,
-  ) {
+  constructor(props: PipeLineLayoutProps<B>) {
     super(Object.freeze(props));
-    this.bindGroupLayout = props.bindGroupLayouts.at(-1)!;
   }
   renderPipelineListeners: Set<() => void> = new Set();
-  createSharedLayout<T extends BGLayout>(label: string, layout: T) {
-    const p = new RenderPipelineLayout({
-      bindGroupLayouts: [...this.bindGroupLayouts, layout] as [...B, T],
-      label,
-    });
-    this.subBindGroups.push(p);
-    return p;
-  }
-  createAppendedLayout<T extends BGLayout>(label: string, layout: T) {
-    const p = new RenderPipelineLayout({
-      bindGroupLayouts: [...this.bindGroupLayouts, layout] as [...B, T],
-      label,
-    });
-    this.subBindGroups.push(p);
-    return p;
-  }
-  /*
-        Bind group is shared with sub-bindgroups
-    */
-  addChildBindGroupLayout<T extends BindGroup>(
-    label: string,
-    sharedBindgroup: T,
-  ) {
-    const p = new RenderPipelineLayout(
-      {
-        bindGroupLayouts: [
-          ...this.bindGroupLayouts,
-          sharedBindgroup.layout,
-        ] as [...B, T extends BindGroup<infer X> ? X : never],
-        label,
-      },
-      sharedBindgroup,
-    );
-    this.subBindGroups.push(p);
-    return p;
-  }
 }

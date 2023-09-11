@@ -1,6 +1,6 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import { OutputShader } from './OutputShader.js';
-import type { PipelineLayout } from '../PipelineLayout.js';
+import type { RenderPipelineLayout } from '../PipelineLayout.js';
 import { type ShaderParams, ShaderStage } from './Shader.js';
 import type { FilteredBindgroupEntrys } from '../Utilities.js';
 import type { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
@@ -33,7 +33,7 @@ export class VertexShader<
     [index: string]: VertexShaderFunction;
   }>,
   //TODO: use renderpipelinelayout
-  P extends readonly PipelineLayout[] = readonly PipelineLayout[],
+  P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends OutputShader<E, P> {
   constructor(
     props: ShaderParams<E, P>,

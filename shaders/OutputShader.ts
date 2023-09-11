@@ -3,7 +3,7 @@ import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunctio
 import { Shader, type ShaderParams, type ShaderStage } from './Shader.js';
 import type { Struct } from '../Struct.js';
 import type { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
-import { PipelineLayout } from '../PipelineLayout.js';
+import type { RenderPipelineLayout } from '../PipelineLayout.js';
 
 type outputShaderFunction = VertexShaderFunction | FragmentShaderFunction;
 
@@ -15,7 +15,7 @@ export abstract class OutputShader<
     [index: string]: outputShaderFunction;
   }>,
   //TODO: use renderpipelinelayout
-  P extends readonly PipelineLayout[] = readonly PipelineLayout[],
+  P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends Shader<E> {
   constructor(
     public override props: ShaderParams<E, P>,
