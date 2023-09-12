@@ -1,6 +1,6 @@
 import type { BindGroup } from './BindGroup.js';
 import { BGLayout } from './BindgroupLayout.js';
-import type { RenderPipelineBuilder } from './RenderPipelineBuilder.js';
+import type { RenderPipelineBuilder } from './renderPipeline/RenderPipelineBuilder.js';
 type BindGroupRef = {
   readonly bindGroup: BindGroup;
   readonly offsets?: number[];

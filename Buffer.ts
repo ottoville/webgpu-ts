@@ -108,12 +108,12 @@ export type BufferProps<U extends BufferUsageEnums> = {
   label: string;
 };
 
-export class Buffer2<U extends BufferUsageEnums> extends Bindable {
+export class Buffer<U extends BufferUsageEnums> extends Bindable {
   renderBundles: Set<RenderBundleEncoder> = new Set();
   readonly #buffer: GPUBuffer;
   constructor(
     public props: BufferProps<U>,
-    mappedAtCreation?: (buff: GPUBuffer, buffer: Buffer2<U>) => void,
+    mappedAtCreation?: (buff: GPUBuffer, buffer: Buffer<U>) => void,
   ) {
     if (props.size <= 0) throw new Error('Cannot create zero sized buffer');
     if (props.size > 268435456) {
@@ -151,7 +151,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
     }
   }
   copyFromTexture(
-    this: Buffer2<COPY_DST_BUFFER>,
+    this: Buffer<COPY_DST_BUFFER>,
     commandEncoder: GPUCommandEncoder,
     from: Texture<GPUTextureFormat, COPY_SRC_TEXTURE>,
     sourceDetails: Omit<GPUImageCopyTexture, 'texture'>,
@@ -171,7 +171,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
     );
   }
   async read(
-    this: Buffer2<MAP_READ_BUFFER>,
+    this: Buffer<MAP_READ_BUFFER>,
     callback: (buff: ArrayBuffer) => Promise<void> | void,
   ) {
     await this.#buffer.mapAsync(GPUMapMode.READ);
@@ -180,7 +180,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
     this.#buffer.unmap();
   }
   async readAndDestroy(
-    this: Buffer2<MAP_READ_BUFFER>,
+    this: Buffer<MAP_READ_BUFFER>,
     callback: (buff: ArrayBuffer) => Promise<void> | void,
   ): Promise<void> {
     await this.#buffer.mapAsync(GPUMapMode.READ);
@@ -189,9 +189,9 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
     this.destroy();
   }
   copyFrom(
-    this: Buffer2<COPY_DST_BUFFER>,
+    this: Buffer<COPY_DST_BUFFER>,
     commandEncoder: GPUCommandEncoder,
-    from: Buffer2<COPY_SRC_BUFFER>,
+    from: Buffer<COPY_SRC_BUFFER>,
     sourceOffset: GPUSize64 = 0,
     destinationOffset: GPUSize64 = 0,
     copySize?: GPUSize64,
@@ -206,9 +206,9 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
   }
 
   copyTo(
-    this: Buffer2<COPY_SRC_BUFFER>,
+    this: Buffer<COPY_SRC_BUFFER>,
     commandEncoder: GPUCommandEncoder,
-    buffer: Buffer2<COPY_DST_BUFFER>,
+    buffer: Buffer<COPY_DST_BUFFER>,
     sourceOffset?: GPUSize64,
     destinationOffset?: GPUSize64,
     copySize?: GPUSize64,
@@ -239,7 +239,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
     return obj;
   }
   getStorageBinding(
-    this: Buffer2<STORAGE_BUFFER>,
+    this: Buffer<STORAGE_BUFFER>,
     bindGroup: BindGroup,
     offset = 0,
     bindingSize?: GPUSize64,
@@ -247,7 +247,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
     return this.#bufferBinding('STORAGE', bindGroup, offset, bindingSize);
   }
   getUniformBinding(
-    this: Buffer2<UNIFORM_BUFFER>,
+    this: Buffer<UNIFORM_BUFFER>,
     bindGroup: BindGroup,
     offset?: GPUSize64,
     bindingSize?: GPUSize64,
@@ -255,31 +255,28 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
     return this.#bufferBinding('UNIFORM', bindGroup, offset, bindingSize);
   }
   getVertexBinding(
-    this: Buffer2<VERTEX_BUFFER>,
+    this: Buffer<VERTEX_BUFFER>,
     renderBundle?: RenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
     return this.#buffer;
   }
   getIndexBinding(
-    this: Buffer2<INDEX_BUFFER>,
+    this: Buffer<INDEX_BUFFER>,
     renderBundle?: RenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
     return this.#buffer;
   }
   getIndirectBinding(
-    this: Buffer2<INDIRECT_BUFFER>,
+    this: Buffer<INDIRECT_BUFFER>,
     renderBundle?: RenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
     return this.#buffer;
   }
-  createCopy(
-    this: Buffer2<COPY_SRC_BUFFER>,
-    commandEncoder: GPUCommandEncoder,
-  ) {
-    const dst = new Buffer2({
+  createCopy(this: Buffer<COPY_SRC_BUFFER>, commandEncoder: GPUCommandEncoder) {
+    const dst = new Buffer({
       ...this.props,
       usages: BufferUsageEnums['MAP_READ|COPY_DST'],
     });
@@ -294,7 +291,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
   /**
    * @deprecated This method will invalidate the internal buffer
    */
-  resize(this: Buffer2<COPY_SRC_BUFFER>, size: number) {
+  resize(this: Buffer<COPY_SRC_BUFFER>, size: number) {
     try {
       const commandEncoder = this.props.gpu.createCommandEncoder({
         label: 'bufferResizeEncoder',
@@ -325,7 +322,7 @@ export class Buffer2<U extends BufferUsageEnums> extends Bindable {
    * @deprecated Use something with commandencoder
    */
   write(
-    this: Buffer2<COPY_DST_BUFFER>,
+    this: Buffer<COPY_DST_BUFFER>,
     bufferOffset: GPUSize64,
     data: BufferSource | SharedArrayBuffer,
     dataOffset?: GPUSize64,

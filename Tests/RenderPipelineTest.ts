@@ -16,7 +16,7 @@ import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction';
 import { FragmentShaderBuilder, VertexShaderBuilder } from '../ShaderBuilder';
 import { ColorRenderTarget } from '../renderTargets/ColorRenderTarget';
 import { TextureUsageEnums } from '../Texture';
-import { createRenderPipelineBuilder } from '../RenderPipelineBuilder';
+import { createRenderPipelineBuilder } from '../renderPipeline/RenderPipelineBuilder';
 
 declare const gpu: GPUDevice;
 

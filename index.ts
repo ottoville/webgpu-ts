@@ -43,8 +43,8 @@ export { MSAARenderTarget } from './renderTargets/MSAARenderTarget.js';
 export {
   createRenderPipelineBuilder,
   type RenderPipelineBuilder,
-  type RenderPipeline,
-} from './RenderPipelineBuilder.js';
+} from './renderPipeline/RenderPipelineBuilder.js';
+export type { RenderPipeline } from './renderPipeline/RenderPipeline.js';
 export { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
 export {
   VertexShaderBuilder,
@@ -54,13 +54,13 @@ export {
 export { RenderBundleEncoder } from './RenderbundleEncoder.js';
 export { BindGroup } from './BindGroup.js';
 export {
-  Buffer2,
+  Buffer,
   type BufferProps,
   BufferUsageEnums,
   type VERTEX_BUFFER,
   type INDEX_BUFFER,
   type INDIRECT_BUFFER,
-} from './Buffer2.js';
+} from './Buffer.js';
 
 export { DepthRenderTarget } from './renderTargets/DepthRenderTarget.js';
 
