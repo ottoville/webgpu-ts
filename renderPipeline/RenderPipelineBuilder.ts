@@ -40,8 +40,8 @@ export class RenderPipelineBuilder<
 > {
   pipelineLayout: GPUPipelineLayout;
   constructor(
-    private vertexShader: V,
-    private fragmentShader: F,
+    public vertexShader: V,
+    public fragmentShader: F,
     renderPipelineLayout: RenderPipelineLayout,
   ) {
     this.pipelineLayout = renderPipelineLayout.layout;
@@ -67,30 +67,73 @@ export class RenderPipelineBuilder<
   ) {
     const gpu = this.vertexShader.props.pipelineLayouts[0]!.gpu;
 
-    const renderPipeline = await gpu.createRenderPipelineAsync({
-      ...descriptor,
-      fragment: {
-        ...descriptor.fragment,
-        module: this.fragmentShader.module,
-        targets: descriptor.fragment.targets.map((target) => {
-          if (target === null) return null;
-          const state: GPUColorTargetState = {
-            format: target.texture.format,
-            writeMask: target.renderTargetOptions.writeMask,
-          };
-          if (target.blend) state.blend = target.blend;
-          return state;
-        }),
-      },
-      layout: this.pipelineLayout,
-      vertex: {
-        ...descriptor.vertex,
-        buffers:
-          this.vertexShader.props.entryPoints[descriptor.vertex.entryPoint]!
-            .buffers,
-        module: this.vertexShader.module,
-      },
-    });
+    const renderPipeline = await gpu
+      .createRenderPipelineAsync({
+        ...descriptor,
+        fragment: {
+          ...descriptor.fragment,
+          module: this.fragmentShader.module,
+          targets: descriptor.fragment.targets.map((target) => {
+            if (target === null) return null;
+            const state: GPUColorTargetState = {
+              format: target.texture.format,
+              writeMask: target.renderTargetOptions.writeMask,
+            };
+            if (target.blend) state.blend = target.blend;
+            return state;
+          }),
+        },
+        layout: this.pipelineLayout,
+        vertex: {
+          ...descriptor.vertex,
+          buffers:
+            this.vertexShader.props.entryPoints[descriptor.vertex.entryPoint]!
+              .buffers,
+          module: this.vertexShader.module,
+        },
+      })
+      .catch((err: unknown) => {
+        if (err instanceof DOMException) {
+          if (err.message.includes(this.vertexShader.module.label)) {
+            console.error(
+              'createRenderPipelineAsync failed, vertex',
+              this.vertexShader.module.label,
+              'wgsl:',
+              this.vertexShader.wgsl,
+              {
+                cause: err,
+              },
+            );
+          } else if (err.message.includes(this.fragmentShader.module.label)) {
+            console.error(
+              'createRenderPipelineAsync failed, fragment',
+              this.fragmentShader.module.label,
+              'wgsl:',
+              this.fragmentShader.wgsl,
+              {
+                cause: err,
+              },
+            );
+          } else {
+            console.error(
+              'createRenderPipelineAsync failed, vertex',
+              this.vertexShader.module.label,
+              ' wgsl:',
+              this.vertexShader.wgsl,
+              'fragment',
+              this.fragmentShader.module,
+              ' wgsl:',
+              this.fragmentShader.wgsl,
+              {
+                cause: err,
+              },
+            );
+          }
+        }
+        throw new Error('createRenderPipelineAsync failed', {
+          cause: err,
+        });
+      });
     return new RenderPipeline<L, B>(renderPipeline);
   }
 }
