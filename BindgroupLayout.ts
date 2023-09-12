@@ -194,7 +194,6 @@ export class BGLayout<
   },
 > {
   layout: GPUBindGroupLayout;
-  dynamicIndices = false;
   entries: Readonly<T>;
   constructor(
     public gpu: GPUDevice,
@@ -212,11 +211,5 @@ export class BGLayout<
       label,
     });
     this.entries = entries;
-    for (const e of entriesArr) {
-      if (e.entry.buffer && e.entry.buffer.hasDynamicOffset) {
-        this.dynamicIndices = true;
-        break;
-      }
-    }
   }
 }
