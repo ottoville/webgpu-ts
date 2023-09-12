@@ -63,3 +63,5 @@ export {
 } from './Buffer2.js';
 
 export { DepthRenderTarget } from './renderTargets/DepthRenderTarget.js';
+
+export { textureLoad } from './std_functions.js';

@@ -4,11 +4,11 @@ import type {
   STORAGE_BINDING_TEXTURE,
   Texture2dSize,
   TextureParams,
-} from '../Texture';
+} from '../Texture.js';
 import {
   RenderPassTarget,
   type RenderPassTargetOptions,
-} from './RenderpassTarget';
+} from './RenderpassTarget.js';
 
 export class DepthRenderTarget<
   F extends DEPTH_FORMATS = DEPTH_FORMATS,
