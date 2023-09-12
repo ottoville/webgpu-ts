@@ -61,3 +61,5 @@ export {
   type INDEX_BUFFER,
   type INDIRECT_BUFFER,
 } from './Buffer2.js';
+
+export { DepthRenderTarget } from './renderTargets/DepthRenderTarget.js';
