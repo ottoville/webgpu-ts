@@ -32,6 +32,20 @@ export function createRenderPipelineBuilder<
   );
 }
 
+export type RenderPipelineBuilderDesc<
+  V extends VertexShader = VertexShader,
+  F extends FragmentShader = FragmentShader,
+> = Omit<GPURenderPipelineDescriptor, 'vertex' | 'fragment' | 'layout'> & {
+  vertex: Omit<GPUProgrammableStage, 'module'> & {
+    entryPoint: V extends VertexShader<infer E> ? keyof E & string : never;
+  };
+} & {
+  fragment: Omit<GPUProgrammableStage, 'module' | 'targets'> & {
+    entryPoint: F extends FragmentShader<infer E> ? keyof E & string : never;
+    targets: (ColorRenderTarget | null)[];
+  };
+};
+
 export class RenderPipelineBuilder<
   V extends VertexShader = VertexShader,
   F extends FragmentShader = FragmentShader,
@@ -48,23 +62,7 @@ export class RenderPipelineBuilder<
     renderPipelineLayout.renderPipeLines.add(this);
     renderPipelineLayout.renderPipelineListeners.forEach((cb) => cb());
   }
-  async build(
-    descriptor: Omit<
-      GPURenderPipelineDescriptor,
-      'vertex' | 'fragment' | 'layout'
-    > & {
-      vertex: Omit<GPUProgrammableStage, 'module'> & {
-        entryPoint: V extends VertexShader<infer E> ? keyof E & string : never;
-      };
-    } & {
-      fragment: Omit<GPUProgrammableStage, 'module' | 'targets'> & {
-        entryPoint: F extends FragmentShader<infer E>
-          ? keyof E & string
-          : never;
-        targets: (ColorRenderTarget | null)[];
-      };
-    },
-  ) {
+  async build(descriptor: RenderPipelineBuilderDesc<V, F>) {
     const gpu = this.vertexShader.props.pipelineLayouts[0]!.gpu;
 
     const renderPipeline = await gpu

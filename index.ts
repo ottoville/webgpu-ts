@@ -43,6 +43,7 @@ export { MSAARenderTarget } from './renderTargets/MSAARenderTarget.js';
 export {
   createRenderPipelineBuilder,
   type RenderPipelineBuilder,
+  type RenderPipelineBuilderDesc,
 } from './renderPipeline/RenderPipelineBuilder.js';
 export type { RenderPipeline } from './renderPipeline/RenderPipeline.js';
 export { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
