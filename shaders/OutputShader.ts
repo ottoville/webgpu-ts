@@ -1,7 +1,7 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction.js';
 import { Shader, type ShaderParams, type ShaderStage } from './Shader.js';
-import type { Struct } from '../Struct.js';
+import { Struct } from '../Struct.js';
 import type { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
 import type { RenderPipelineLayout } from '../PipelineLayout.js';
 
@@ -28,11 +28,12 @@ export abstract class OutputShader<
         ) => string)
       | undefined,
   ) {
-    const outputs: Set<Struct> = new Set();
+    const outputStructs: Set<Struct> = new Set();
     for (const key in props.entryPoints) {
       const entryPoint = props.entryPoints[key]!;
-      outputs.add(entryPoint.output);
+      if (entryPoint.output instanceof Struct)
+        outputStructs.add(entryPoint.output);
     }
-    super(props, shaderFlag, constantCode, outputs);
+    super(props, shaderFlag, constantCode, outputStructs);
   }
 }

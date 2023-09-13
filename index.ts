@@ -71,3 +71,5 @@ export { DepthRenderTarget } from './renderTargets/DepthRenderTarget.js';
 export { textureLoad } from './std_functions.js';
 
 export { Renderpass, type RenderpassProps } from './Renderpass.js';
+
+export { Struct, type wgslType } from './Struct.js';

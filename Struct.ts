@@ -1,15 +1,36 @@
 /* eslint-disable sort-keys */
 
+type IntergerTypes = 'i32' | 'u32';
+type FloatingPointTypes = 'f16' | 'f32';
+type dimensions = '2' | '3' | '4';
+type Vectors = `vec${dimensions}`;
+type VectorTypes = `${Vectors}<${IntergerTypes | FloatingPointTypes}>`;
+type Matrices = `mat${dimensions}x${dimensions}`;
+type MatrixTypes = `${Matrices}<${FloatingPointTypes}>`;
+type ArrayType = `array<${string}>`;
+
+export type wgslType =
+  | IntergerTypes
+  | FloatingPointTypes
+  | VectorTypes
+  | MatrixTypes
+  | ArrayType;
+
 export class Struct<
   const T extends {
-    [index: string]: readonly [properties: string, type: string];
-  } = { [index: string]: readonly [size: string, type: string] },
+    [index: string]: readonly [properties: string, type: wgslType];
+  } = { [index: string]: readonly [size: string, type: wgslType] },
 > {
+  readonly properties: T;
+  readonly depedencies?: readonly Struct[];
   constructor(
-    public name: string,
-    public properties: T,
-    public depedencies?: Struct[],
-  ) {}
+    public readonly name: string,
+    properties: T,
+    depedencies?: Struct[],
+  ) {
+    this.properties = Object.freeze(properties);
+    if (depedencies) this.depedencies = Object.freeze(depedencies);
+  }
   getPropertiesAsString() {
     let properties = '';
     for (const property in this.properties) {
