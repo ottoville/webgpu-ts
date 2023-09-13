@@ -45,7 +45,10 @@ export {
   type RenderPipelineBuilder,
   type RenderPipelineBuilderDesc,
 } from './renderPipeline/RenderPipelineBuilder.js';
-export type { RenderPipeline } from './renderPipeline/RenderPipeline.js';
+export {
+  RenderPipeline,
+  type Drawable,
+} from './renderPipeline/RenderPipeline.js';
 export { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
 export {
   VertexShaderBuilder,
@@ -66,3 +69,5 @@ export {
 export { DepthRenderTarget } from './renderTargets/DepthRenderTarget.js';
 
 export { textureLoad } from './std_functions.js';
+
+export { Renderpass, type RenderpassProps } from './Renderpass.js';

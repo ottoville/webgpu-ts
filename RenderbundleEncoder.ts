@@ -28,7 +28,7 @@ export class RenderBundleEncoder {
     private record: (renderBundleEncoder: RenderBundleEncoder) => void,
   ) {
     this.GPURenderBundleEncoderDescriptor = {
-      colorFormats: Object.values(renderPass.colorRenderTargets).map(
+      colorFormats: Object.values(renderPass.props.colorRenderTargets).map(
         (rt) => rt.texture.format,
       ),
       label: renderPass.props.label,

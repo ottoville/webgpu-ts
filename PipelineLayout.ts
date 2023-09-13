@@ -1,10 +1,10 @@
-import type { BindGroup } from './BindGroup.js';
+import type { BindGroup, BindGroupRef } from './BindGroup.js';
 import { BGLayout } from './BindgroupLayout.js';
+import { RenderBundleEncoder } from './RenderbundleEncoder.js';
+import { Renderpass } from './Renderpass.js';
+import { RenderPipeline } from './renderPipeline/RenderPipeline.js';
 import type { RenderPipelineBuilder } from './renderPipeline/RenderPipelineBuilder.js';
-type BindGroupRef = {
-  readonly bindGroup: BindGroup;
-  readonly offsets?: number[];
-};
+
 type PipeLineLayoutProps<B extends readonly BGLayout[]> = {
   label: string;
   bindGroupLayouts: B;
@@ -40,7 +40,63 @@ export class RenderPipelineLayout<
   ) {
     super(Object.freeze(props));
   }
-  renderPipelineListeners: Set<() => void> = new Set();
+
+  render(
+    renderBundleEncoder: RenderBundleEncoder,
+    renderpass: Renderpass,
+    bindGroupStartIndex: number,
+  ): number {
+    let meshesDrawn = 0;
+    this.sharedBindgroups.forEach((sharedBindgroup) => {
+      renderBundleEncoder.renderBundleEncoder.setBindGroup(
+        bindGroupStartIndex++,
+        sharedBindgroup.bindGroup.getForRenderBundle(renderBundleEncoder),
+        sharedBindgroup.offsets,
+      );
+    });
+    this.renderPipeLines.forEach((renderPipeline) => {
+      const variant = renderpass.renderPipelines.get(renderPipeline);
+      if (variant instanceof RenderPipeline) {
+        var drawables = variant.drawables;
+        if (!drawables || drawables.size == 0) {
+          console.warn(
+            'No drawables has been set for renderpass',
+            renderpass.props.label,
+            ', wont draw anything',
+          );
+          return;
+        }
+        renderBundleEncoder.renderBundleEncoder.setPipeline(variant.pipeline);
+        drawables.forEach((drawable) => {
+          drawable.bindGroups.forEach((bindGroup, i) => {
+            renderBundleEncoder.renderBundleEncoder.setBindGroup(
+              i + bindGroupStartIndex,
+              bindGroup.bindGroup.getForRenderBundle(renderBundleEncoder),
+              bindGroup.offsets,
+            );
+          });
+          drawable.vertexBuffers.forEach((buffer, index) =>
+            renderBundleEncoder.renderBundleEncoder.setVertexBuffer(
+              index,
+              buffer.buffer.getVertexBinding(renderBundleEncoder),
+              buffer.offset,
+              buffer.size,
+            ),
+          );
+          drawable.render(renderBundleEncoder);
+          meshesDrawn++;
+        });
+      }
+    });
+    this.subBindGroups.forEach((subBindGroup) => {
+      meshesDrawn += subBindGroup.render(
+        renderBundleEncoder,
+        renderpass,
+        bindGroupStartIndex,
+      );
+    });
+    return meshesDrawn;
+  }
 
   /**
    * Appends bindgroups or bindgrouplayouts for a bindgroup layout.

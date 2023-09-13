@@ -1,28 +1,28 @@
 import { RenderBundleEncoder } from './RenderbundleEncoder';
-import { RENDER_TARGET_FORMAT, RENDER_TARGET_TEXTURE } from './Texture';
+import { RenderPipeline } from './renderPipeline/RenderPipeline';
+import { RenderPipelineBuilder } from './renderPipeline/RenderPipelineBuilder';
 import { ColorRenderTarget } from './renderTargets/ColorRenderTarget';
 
-type RenderPassProps<U> = {
+export type RenderpassProps<U> = Readonly<{
   colorRenderTargets: U;
   gpu: GPUDevice;
   label: string;
   sampleCount: 1 | 4;
-};
+}>;
 export class Renderpass<
   U extends {
-    [index: string]: ColorRenderTarget<
-      RENDER_TARGET_FORMAT,
-      RENDER_TARGET_TEXTURE
-    >;
+    [index: string]: ColorRenderTarget;
   } = {
-    [index: string]: ColorRenderTarget<
-      RENDER_TARGET_FORMAT,
-      RENDER_TARGET_TEXTURE
-    >;
+    [index: string]: ColorRenderTarget;
   },
 > {
+  readonly renderPipelines: Map<
+    Readonly<RenderPipelineBuilder>,
+    RenderPipeline | Promise<RenderPipeline>
+  > = new Map();
   readonly bundles: RenderBundleEncoder[] = [];
-  readonly colorRenderTargets = {} as U;
-
-  constructor(public props: RenderPassProps<U>) {}
+  public readonly props: RenderpassProps<U>;
+  constructor(props: RenderpassProps<U>) {
+    this.props = Object.freeze(props);
+  }
 }

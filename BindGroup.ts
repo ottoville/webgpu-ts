@@ -2,6 +2,11 @@ import type { BGLayout, MapToGPUBindGroupEntry } from './BindgroupLayout.js';
 import type { RenderBundleEncoder } from './RenderbundleEncoder.js';
 import { TextureView } from './TextureView.js';
 
+export type BindGroupRef = {
+  readonly bindGroup: BindGroup;
+  readonly offsets?: readonly number[];
+};
+
 export class BindGroup<L extends BGLayout = BGLayout> {
   #dirty = true;
   #bindGroup?: GPUBindGroup;
