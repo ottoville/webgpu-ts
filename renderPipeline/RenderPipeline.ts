@@ -25,10 +25,10 @@ export class RenderPipeline<
 > {
   constructor(public readonly pipeline: GPURenderPipeline) {}
 
-  readonly drawables: Set<Drawable<L, B>> = new Set();
+  readonly drawables: Drawable<L, B>[] = [];
   readonly onDrawableChange: Set<() => void> = new Set();
   addDrawable(drawable: Drawable<L, B>) {
-    this.drawables.add(drawable);
+    this.drawables.push(drawable);
     this.onDrawableChange.forEach((cb) => cb());
     return this.drawables;
   }

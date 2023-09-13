@@ -58,7 +58,7 @@ export class RenderPipelineLayout<
       const variant = renderpass.renderPipelines.get(renderPipeline);
       if (variant instanceof RenderPipeline) {
         var drawables = variant.drawables;
-        if (!drawables || drawables.size == 0) {
+        if (!drawables || drawables.length == 0) {
           console.warn(
             'No drawables has been set for renderpass',
             renderpass.props.label,
