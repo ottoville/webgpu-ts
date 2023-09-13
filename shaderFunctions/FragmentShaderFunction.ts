@@ -1,6 +1,6 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout';
 import type { ShaderStage } from '../shaders/Shader';
-import type { Struct, wgslType } from '../Struct';
+import { Struct, wgslType } from '../Struct';
 import type { FilteredBindEntrys } from '../Utilities';
 import type { FragmentEntry } from '../shaders/FragmentShader';
 
@@ -21,7 +21,7 @@ export class FragmentShaderFunction<
   constructor(
     public output: [properties: string, type: wgslType] | Struct,
     /* TODO: use struct array from vertex shader output */
-    private inputs: Struct | undefined,
+    private inputs: [properties: string, type: wgslType] | Struct | undefined,
     code: (args: FilteredBindEntrys<B, FragmentEntry>) => string,
   ) {
     this.#code = code;
@@ -30,10 +30,16 @@ export class FragmentShaderFunction<
     const wgsl = /* wgsl */ `
                 @fragment
                 fn ${name}(
-                    ${this.inputs?.getPropertiesAsString() ?? ''}
-                    ) -> this.output instanceof Struct
-                    ? this.output.name
-                    : this.output.concat(' ')
+                    ${
+                      this.inputs instanceof Struct
+                        ? this.inputs.getPropertiesAsString()
+                        : this.inputs?.concat(' ') ?? ''
+                    }
+                    ) -> ${
+                      this.output instanceof Struct
+                        ? this.output.name
+                        : this.output.concat(' ')
+                    }
                     {
                         ${this.#code(bindGroups)}
                     }`;
