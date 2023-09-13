@@ -60,7 +60,6 @@ export class RenderPipelineBuilder<
   ) {
     this.pipelineLayout = renderPipelineLayout.layout;
     renderPipelineLayout.renderPipeLines.add(this);
-    renderPipelineLayout.renderPipelineListeners.forEach((cb) => cb());
   }
   async build(descriptor: RenderPipelineBuilderDesc<V, F>) {
     const gpu = this.vertexShader.props.pipelineLayouts[0]!.gpu;

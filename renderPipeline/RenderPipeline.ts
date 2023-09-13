@@ -2,6 +2,22 @@ import type { BindGroup } from '../BindGroup.js';
 import type { BGLayout } from '../BindgroupLayout.js';
 import type { Buffer, VERTEX_BUFFER } from '../Buffer.js';
 import { RenderBundleEncoder } from '../RenderbundleEncoder.js';
+export type Drawable<
+  L extends readonly BGLayout[] = readonly BGLayout[],
+  B extends readonly GPUVertexBufferLayout[] = readonly GPUVertexBufferLayout[],
+> = {
+  bindGroups: {
+    [K in keyof L]: { bindGroup: BindGroup; offsets?: number[] };
+  };
+  vertexBuffers: {
+    [K in keyof B]: {
+      buffer: Buffer<VERTEX_BUFFER>;
+      offset?: GPUSize64 | undefined;
+      size?: GPUSize64 | undefined;
+    };
+  };
+  render: (renderEncoder: RenderBundleEncoder | GPURenderPassEncoder) => void;
+};
 
 export class RenderPipeline<
   L extends readonly BGLayout[] = readonly BGLayout[],
@@ -9,19 +25,13 @@ export class RenderPipeline<
 > {
   constructor(public pipeline: GPURenderPipeline) {}
 
-  drawables: {
-    bindGroups: {
-      [K in keyof L]: { bindGroup: BindGroup; offsets?: number[] };
-    };
-    vertexBuffers: {
-      [K in keyof B]: {
-        buffer: Buffer<VERTEX_BUFFER> | null;
-        offset?: GPUSize64 | undefined;
-        size?: GPUSize64 | undefined;
-      };
-    };
-    render: (renderEncoder: RenderBundleEncoder | GPURenderPassEncoder) => void;
-  }[] = [];
+  drawables: Set<Drawable<L, B>> = new Set();
+  onDrawableChange: Set<() => void> = new Set();
+  addDrawable(drawable: Drawable<L, B>) {
+    this.drawables.add(drawable);
+    this.onDrawableChange.forEach((cb) => cb());
+    return this.drawables;
+  }
 
   draw(
     renderEncoder: RenderBundleEncoder | GPURenderPassEncoder,
