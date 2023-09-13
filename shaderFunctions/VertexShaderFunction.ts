@@ -1,8 +1,11 @@
-import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import type { ShaderStage } from '../shaders/Shader';
-import type { Struct } from '../Struct';
-import type { FilteredBindEntrys } from '../Utilities';
-import type { VertexBufferLayout2, VertexEntry } from '../shaders/VertexShader';
+import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
+import type { ShaderStage } from '../shaders/Shader.js';
+import { Struct, type wgslType } from '../Struct.js';
+import type { FilteredBindEntrys } from '../Utilities.js';
+import type {
+  VertexBufferLayout2,
+  VertexEntry,
+} from '../shaders/VertexShader.js';
 
 export type AnyVertexStage =
   | ShaderStage.VERTEX
@@ -23,7 +26,7 @@ export class VertexShaderFunction<
   readonly vertexBufferLayout: V;
   buffers: GPUVertexBufferLayout[] = [];
   constructor(
-    public output: Struct,
+    public output: [properties: string, type: wgslType] | Struct,
     vertexBufferLayout: V,
     code: (
       args: FilteredBindEntrys<B, VertexEntry>,
@@ -64,7 +67,11 @@ export class VertexShaderFunction<
             fn ${name}(
                 ${this.inputs}
                 ${attributesString}
-                ) -> ${this.output.name} {
+                ) -> ${
+                  this.output instanceof Struct
+                    ? this.output.name
+                    : this.output.concat(' ')
+                } {
                     ${this.#code(bindGroups, variableNames)}
                 }`;
     return wgsl;
