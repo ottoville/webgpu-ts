@@ -1,6 +1,6 @@
 {
   "name": "webgpu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,6 @@
     "eslint-plugin-prettier": "5.0.0",
     "eslint-plugin-promise": "6.1.1"
   },
-  "author": "",
+  "author": "Otto-Ville Lamminpää",
   "license": "ISC"
 }
