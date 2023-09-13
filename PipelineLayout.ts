@@ -7,37 +7,31 @@ import type { RenderPipelineBuilder } from './renderPipeline/RenderPipelineBuild
 
 type PipeLineLayoutProps<B extends readonly BGLayout[]> = {
   label: string;
-  bindGroupLayouts: B | GPUDevice;
+  bindGroupLayouts: B;
 };
 export class PipelineLayout<
   B extends readonly BGLayout[] = readonly BGLayout[],
 > {
+  static CreateEmptyLayout(gpu: GPUDevice): PipelineLayout<readonly []> {
+    return {
+      bindGroupLayouts: [],
+      gpu,
+      layout: gpu.createPipelineLayout({ bindGroupLayouts: [] }),
+    };
+  }
   bindGroupLayouts: B;
   layout: GPUPipelineLayout;
   gpu: GPUDevice;
   constructor({ label, bindGroupLayouts }: PipeLineLayoutProps<B>) {
-    /*
-      Empty layout
-    */
-    if (bindGroupLayouts instanceof GPUDevice) {
-      this.gpu = bindGroupLayouts;
-      this.bindGroupLayouts = [] as unknown as B;
-      this.layout = this.gpu.createPipelineLayout({
-        bindGroupLayouts: [],
-        label,
-      });
-    } else {
-      if (!bindGroupLayouts[0]) {
-        throw new Error('pipelineLayout needs bindgrouplayouts');
-      }
-      this.gpu = bindGroupLayouts[0].gpu;
-      Object.freeze(bindGroupLayouts);
-      this.bindGroupLayouts = bindGroupLayouts;
-      this.layout = this.gpu.createPipelineLayout({
-        bindGroupLayouts: bindGroupLayouts.map((b) => b.layout),
-        label,
-      });
+    if (!bindGroupLayouts[0]) {
+      throw new Error('pipelineLayout needs bindgrouplayouts');
     }
+    this.gpu = bindGroupLayouts[0].gpu;
+    this.bindGroupLayouts = Object.freeze(bindGroupLayouts);
+    this.layout = this.gpu.createPipelineLayout({
+      bindGroupLayouts: bindGroupLayouts.map((b) => b.layout),
+      label,
+    });
   }
 }
 
