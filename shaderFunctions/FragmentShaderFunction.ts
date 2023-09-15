@@ -1,8 +1,8 @@
-import type { BindGroupLayoutEntry } from '../BindgroupLayout';
-import type { ShaderStage } from '../shaders/Shader';
-import { Struct, wgslType } from '../Struct';
-import type { FilteredBindEntrys } from '../Utilities';
-import type { FragmentEntry } from '../shaders/FragmentShader';
+import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
+import type { ShaderStage } from '../shaders/Shader.js';
+import { Struct, type wgslType } from '../Struct.js';
+import type { FilteredBindEntrys } from '../Utilities.js';
+import type { FragmentEntry } from '../shaders/FragmentShader.js';
 
 export type AnyFragmentStage =
   | ShaderStage.FRAGMENT

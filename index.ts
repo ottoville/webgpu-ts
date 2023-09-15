@@ -51,9 +51,10 @@ export {
 } from './renderPipeline/RenderPipeline.js';
 export { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
 export {
-  VertexShaderBuilder,
-  FragmentShaderBuilder,
-  ComputeShaderBuilder,
+  ShaderBuilder,
+  type VertexShaderBuilder,
+  type FragmentShaderBuilder,
+  type ComputeShaderBuilder,
 } from './ShaderBuilder.js';
 export { RenderBundleEncoder } from './RenderbundleEncoder.js';
 export { BindGroup } from './BindGroup.js';

@@ -21,7 +21,6 @@ export class FragmentShader<
 > extends OutputShader<E, P> {
   constructor(
     props: ShaderParams<E, P>,
-    // Use bindgrouplayot of fist entrypoint to type constantCode bindgrouplayout
     constantCode?: (
       args: FilteredBindgroupEntrys<
         P[number]['bindGroupLayouts'],

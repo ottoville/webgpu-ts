@@ -3,7 +3,7 @@ import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { FragmentShader } from '../shaders/FragmentShader';
 import { RenderPipelineLayout } from '../PipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
-import { FragmentShaderBuilder } from '../ShaderBuilder';
+import { ShaderBuilder } from '../ShaderBuilder';
 import { position_vec2f32, UI_Input, diffuseOutput } from '../Struct';
 import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
@@ -80,7 +80,7 @@ const fragmentshaderfunction_array = new FragmentShaderFunction<
 );
 
 //Should be fine
-const fragmentShaderBuilder = new FragmentShaderBuilder(pipelineLayouts);
+const fragmentShaderBuilder = new ShaderBuilder(pipelineLayouts);
 
 fragmentShaderBuilder.addFunction('main', fragmentshaderfunction);
 
@@ -107,28 +107,28 @@ const vertexshaderfunction_no_texture = new FragmentShaderFunction<
 );
 
 //FragmentShaderFunction is missing texture, should be ok
-new FragmentShaderBuilder(pipelineLayouts).addFunction(
+new ShaderBuilder(pipelineLayouts).addFunction(
   'main',
   vertexshaderfunction_no_texture,
 );
 
-new FragmentShaderBuilder(pipelineLayouts_missing_texture).addFunction(
+new ShaderBuilder(pipelineLayouts_missing_texture).addFunction(
   'main',
   vertexshaderfunction_no_texture,
 );
 
-new FragmentShaderBuilder(
+new ShaderBuilder(
   pipelineLayouts_missing_texture,
   //@ts-expect-error pipelinelayout is missing texture bindgroup.
 ).addFunction2('main', fragmentshaderfunction);
 
-new FragmentShaderBuilder(pipelineLayouts).addFunction(
+new ShaderBuilder(pipelineLayouts).addFunction(
   //@ts-expect-error Type '"texture_2d<f32>"' is not assignable to type '"texture_2d_array<f32>"'.
   'main',
   fragmentshaderfunction_array,
 );
 
-const shaderBuilder = new FragmentShaderBuilder(pipelineLayouts)
+const shaderBuilder = new ShaderBuilder(pipelineLayouts)
   .addFunction('main', fragmentshaderfunction)
   .addFunction('entry_array', vertexshaderfunction_no_texture);
 

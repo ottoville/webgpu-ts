@@ -1,16 +1,16 @@
 /* eslint-disable sort-keys */
 
-type IntergerTypes = 'i32' | 'u32';
+type IntegerTypes = 'i32' | 'u32';
 type FloatingPointTypes = 'f16' | 'f32';
 type dimensions = '2' | '3' | '4';
 type Vectors = `vec${dimensions}`;
-type VectorTypes = `${Vectors}<${IntergerTypes | FloatingPointTypes}>`;
+type VectorTypes = `${Vectors}<${IntegerTypes | FloatingPointTypes}>`;
 type Matrices = `mat${dimensions}x${dimensions}`;
 type MatrixTypes = `${Matrices}<${FloatingPointTypes}>`;
 type ArrayType = `array<${string}>`;
 
 export type wgslType =
-  | IntergerTypes
+  | IntegerTypes
   | FloatingPointTypes
   | VectorTypes
   | MatrixTypes

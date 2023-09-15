@@ -32,7 +32,6 @@ export class VertexShader<
   }> = Readonly<{
     [index: string]: VertexShaderFunction;
   }>,
-  //TODO: use renderpipelinelayout
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends OutputShader<E, P> {
   constructor(

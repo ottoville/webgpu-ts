@@ -14,7 +14,7 @@ export type AnyVertexStage =
   | ShaderStage.COMPUTE_AND_VERTEX_AND_FRAGMENT;
 
 export class VertexShaderFunction<
-  B extends readonly {
+  const B extends readonly {
     [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
   }[] = readonly { [index: string]: BindGroupLayoutEntry<AnyVertexStage> }[],
   const V extends readonly VertexBufferLayout2[] | readonly [] =

@@ -5,7 +5,6 @@ import type { ColorRenderTarget } from '../renderTargets/ColorRenderTarget.js';
 import type { FragmentShader } from '../shaders/FragmentShader.js';
 import type { VertexShader } from '../shaders/VertexShader.js';
 import { RenderPipeline } from './RenderPipeline.js';
-
 export function createRenderPipelineBuilder<
   V extends VertexShader = VertexShader,
   F extends FragmentShader = FragmentShader,

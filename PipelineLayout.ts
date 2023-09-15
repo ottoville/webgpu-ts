@@ -16,7 +16,10 @@ export class PipelineLayout<
     return {
       bindGroupLayouts: [],
       gpu,
-      layout: gpu.createPipelineLayout({ bindGroupLayouts: [] }),
+      layout: gpu.createPipelineLayout({
+        bindGroupLayouts: [],
+        label: 'Empty pipelinelayout',
+      }),
     };
   }
   bindGroupLayouts: B;

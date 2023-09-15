@@ -13,7 +13,7 @@ import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
 import { RenderPipelineLayout } from '../PipelineLayout';
 import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction';
-import { FragmentShaderBuilder, VertexShaderBuilder } from '../ShaderBuilder';
+import { ShaderBuilder } from '../ShaderBuilder';
 import { ColorRenderTarget } from '../renderTargets/ColorRenderTarget';
 import { TextureUsageEnums } from '../Texture';
 import { createRenderPipelineBuilder } from '../renderPipeline/RenderPipelineBuilder';
@@ -118,14 +118,12 @@ const vertexshaderfunction = new VertexShaderFunction(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any
 >;
-const shaderB = new VertexShaderBuilder(
+const shaderB = new ShaderBuilder(
   pipelineLayouts_different_fragment,
 ).addFunction('main', vertexshaderfunction);
 //Should be fine
 const vertexShader = shaderB.build('label');
-const fragmentShader = new FragmentShaderBuilder(
-  pipelineLayouts_different_vertex,
-)
+const fragmentShader = new ShaderBuilder(pipelineLayouts_different_vertex)
   .addFunction('main', fragmentshaderfunction)
   .build('label');
 
@@ -168,7 +166,6 @@ createRenderPipelineBuilder(vertexShader, fragmentShader).build({
     entryPoint: 'main',
   },
 });
-
 //this should be ok
 createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
@@ -192,7 +189,7 @@ createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   },
 });
 
-const vertexShader_missing_texture_2d = new VertexShaderBuilder(
+const vertexShader_missing_texture_2d = new ShaderBuilder(
   pipelineLayouts_missing_texture_2d,
 )
   .addFunction('main', vertexshaderfunction)
