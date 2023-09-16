@@ -69,7 +69,7 @@ export {
 
 export { DepthRenderTarget } from './renderTargets/DepthRenderTarget.js';
 
-export { textureLoad } from './std_functions.js';
+export { textureLoad, textureStore } from './std_functions.js';
 
 export { Renderpass, type RenderpassProps } from './Renderpass.js';
 

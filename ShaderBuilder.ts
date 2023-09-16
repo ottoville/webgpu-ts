@@ -20,7 +20,7 @@ import type { BindGroupLayoutEntry } from './BindgroupLayout.js';
 export class ShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends {},
-  P extends readonly PipelineLayout[],
+  const P extends readonly PipelineLayout[],
 > {
   entryPoints: E = {} as E;
   constructor(public pipelineLayouts: P) {}
@@ -51,12 +51,12 @@ export class ShaderBuilder<
     F extends readonly {
       [index: string]: BindGroupLayoutEntry<AnyComputeStage>;
     }[],
-    RP extends readonly RenderPipelineLayout[],
+    PL extends readonly PipelineLayout[],
   >(
-    this: ShaderBuilder<E, RP>,
+    this: ShaderBuilder<E, PL>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
     shaderFunction: ComputeShaderFunction<F>,
-  ): ComputeShaderBuilder<E & Record<S, typeof shaderFunction>, RP>;
+  ): ComputeShaderBuilder<E & Record<S, typeof shaderFunction>, PL>;
   addFunction<
     S extends string,
     F extends
