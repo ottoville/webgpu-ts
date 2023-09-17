@@ -63,31 +63,33 @@ export class RenderPipelineBuilder<
   async build(descriptor: RenderPipelineBuilderDesc<V, F>) {
     const gpu = this.vertexShader.props.pipelineLayouts[0]!.gpu;
 
+    const RenderPipelineDescriptor: GPURenderPipelineDescriptor = {
+      ...descriptor,
+      fragment: {
+        ...descriptor.fragment,
+        module: this.fragmentShader.module,
+        targets: descriptor.fragment.targets.map((target) => {
+          if (target === null) return null;
+          const state: GPUColorTargetState = {
+            format: target.texture.format,
+            writeMask: target.renderTargetOptions.writeMask,
+          };
+          if (target.blend) state.blend = target.blend;
+          return state;
+        }),
+      },
+      layout: this.pipelineLayout,
+      vertex: {
+        ...descriptor.vertex,
+        buffers:
+          this.vertexShader.props.entryPoints[descriptor.vertex.entryPoint]!
+            .buffers,
+        module: this.vertexShader.module,
+      },
+    };
+    console.debug('create pipeline', RenderPipelineDescriptor);
     const renderPipeline = await gpu
-      .createRenderPipelineAsync({
-        ...descriptor,
-        fragment: {
-          ...descriptor.fragment,
-          module: this.fragmentShader.module,
-          targets: descriptor.fragment.targets.map((target) => {
-            if (target === null) return null;
-            const state: GPUColorTargetState = {
-              format: target.texture.format,
-              writeMask: target.renderTargetOptions.writeMask,
-            };
-            if (target.blend) state.blend = target.blend;
-            return state;
-          }),
-        },
-        layout: this.pipelineLayout,
-        vertex: {
-          ...descriptor.vertex,
-          buffers:
-            this.vertexShader.props.entryPoints[descriptor.vertex.entryPoint]!
-              .buffers,
-          module: this.vertexShader.module,
-        },
-      })
+      .createRenderPipelineAsync(RenderPipelineDescriptor)
       .catch((err: unknown) => {
         if (err instanceof DOMException) {
           if (err.message.includes(this.vertexShader.module.label)) {
