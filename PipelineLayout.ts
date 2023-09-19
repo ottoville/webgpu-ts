@@ -41,6 +41,19 @@ export class PipelineLayout<
 export class RenderPipelineLayout<
   B extends readonly BGLayout[] = readonly BGLayout[],
 > extends PipelineLayout<B> {
+  static override CreateEmptyLayout(
+    gpu: GPUDevice,
+  ): RenderPipelineLayout<readonly []> {
+    return Object.assign(
+      {
+        renderPipeLines: new Set(),
+        sharedBindgroups: [],
+        subBindGroups: [],
+        ...super.CreateEmptyLayout(gpu),
+      },
+      RenderPipelineLayout.prototype,
+    );
+  }
   renderPipeLines: Set<RenderPipelineBuilder> = new Set();
   subBindGroups: RenderPipelineLayout[] = [];
   constructor(
