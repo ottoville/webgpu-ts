@@ -84,14 +84,19 @@ export class RenderPipelineLayout<
               bindGroup.offsets,
             );
           });
-          drawable.vertexBuffers.forEach((buffer, index) =>
+          drawable.vertexBuffers.forEach((buffer, index) => {
+            console.debug(
+              'set vertexBuffer index',
+              index,
+              buffer.buffer.props.label,
+            );
             renderBundleEncoder.renderBundleEncoder.setVertexBuffer(
               index,
               buffer.buffer.getVertexBinding(renderBundleEncoder),
               buffer.offset,
               buffer.size,
-            ),
-          );
+            );
+          });
           drawable.render(renderBundleEncoder);
           meshesDrawn++;
         });
