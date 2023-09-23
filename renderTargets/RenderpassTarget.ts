@@ -2,36 +2,54 @@ import { TextureView } from '../TextureView.js';
 import {
   type RENDER_TARGET_FORMAT,
   type RENDER_TARGET_TEXTURE,
-  RenderTarget,
   type STORAGE_BINDING_TEXTURE,
-  type Texture,
-  type Texture2dSize,
+  Texture,
   type TextureParams,
-  RenderTargetSize,
 } from '../Texture.js';
+import type { RenderTargetSize } from '../RenderTargetTexture.js';
 
-export type RenderPassTargetOptions = {
+export type RenderpassTargetTextureParams<
+  F extends RENDER_TARGET_FORMAT = RENDER_TARGET_FORMAT,
+  U extends Exclude<RENDER_TARGET_TEXTURE, STORAGE_BINDING_TEXTURE> = Exclude<
+    RENDER_TARGET_TEXTURE,
+    STORAGE_BINDING_TEXTURE
+  >,
+  S extends RenderTargetSize = RenderTargetSize,
+> = TextureParams<F, U, S>;
+
+export type RenderpassTargetOptions<
+  T extends
+    | { context: GPUCanvasContext; format: RENDER_TARGET_FORMAT }
+    | RenderpassTargetTextureParams =
+    | { context: GPUCanvasContext; format: RENDER_TARGET_FORMAT }
+    | RenderpassTargetTextureParams,
+> = {
   textureViewDescriptor?: GPUTextureViewDescriptor | undefined;
   writeMask: GPUColorWriteFlags;
-  context: GPUCanvasContext | undefined;
+  context: T;
 };
-export class RenderPassTarget<
-  F extends RENDER_TARGET_FORMAT = RENDER_TARGET_FORMAT,
-  U extends RENDER_TARGET_TEXTURE = RENDER_TARGET_TEXTURE,
-> extends RenderTarget<F, U> {
-  public view: TextureView<Texture<F, U, Texture2dSize>>;
-  constructor(
-    textureOptions: TextureParams<
-      F,
-      Exclude<U, STORAGE_BINDING_TEXTURE>,
-      RenderTargetSize
-    >,
-    public renderTargetOptions: RenderPassTargetOptions,
-  ) {
-    super(textureOptions);
-    this.view = new TextureView(
-      this,
-      renderTargetOptions.textureViewDescriptor,
-    );
+export class RenderpassTarget<T extends RenderpassTargetOptions> {
+  public renderTarget: T extends RenderpassTargetOptions<infer TX>
+    ? TX extends RenderpassTargetTextureParams<infer XF, infer XU, infer XS>
+      ? TextureView<Texture<XF, XU, XS>>
+      : GPUCanvasContext
+    : never;
+
+  constructor(public renderTargetOptions: T) {
+    if ('context' in renderTargetOptions.context) {
+      //@ts-expect-error
+      this.renderTarget = renderTargetOptions.context.context;
+    } else {
+      const renderTarget = new Texture(renderTargetOptions.context);
+      //@ts-expect-error
+      this.renderTarget = new TextureView(
+        renderTarget,
+        renderTargetOptions.textureViewDescriptor,
+      );
+    }
+  }
+  resize(size: { width: number; height: number }, sampleCount: 1 | 4) {
+    if (this.renderTarget instanceof TextureView)
+      this.renderTarget.texture.resize(size, sampleCount);
   }
 }

@@ -1,28 +1,19 @@
-import type {
-  DEPTH_FORMATS,
-  RENDER_TARGET_TEXTURE,
-  STORAGE_BINDING_TEXTURE,
-  Texture2dSize,
-  TextureParams,
-} from '../Texture.js';
+import type { DEPTH_FORMATS } from '../Texture.js';
 import {
-  RenderPassTarget,
-  type RenderPassTargetOptions,
+  RenderpassTarget,
+  RenderpassTargetTextureParams,
+  type RenderpassTargetOptions,
 } from './RenderpassTarget.js';
 
 export class DepthRenderTarget<
-  F extends DEPTH_FORMATS = DEPTH_FORMATS,
-  U extends RENDER_TARGET_TEXTURE = RENDER_TARGET_TEXTURE,
-> extends RenderPassTarget<F, U> {
+  T extends RenderpassTargetOptions<
+    RenderpassTargetTextureParams<DEPTH_FORMATS>
+  > = RenderpassTargetOptions<RenderpassTargetTextureParams<DEPTH_FORMATS>>,
+> extends RenderpassTarget<T> {
   constructor(
     public clearValue: number,
-    textureOptions: TextureParams<
-      F,
-      Exclude<U, STORAGE_BINDING_TEXTURE>,
-      Texture2dSize
-    >,
-    renderTargetOptions: RenderPassTargetOptions,
+    renderTargetOptions: T,
   ) {
-    super(textureOptions, renderTargetOptions);
+    super(renderTargetOptions);
   }
 }

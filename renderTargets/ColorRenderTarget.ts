@@ -1,13 +1,6 @@
-import type {
-  RENDER_TARGET_FORMAT,
-  RENDER_TARGET_TEXTURE,
-  RenderTargetSize,
-  STORAGE_BINDING_TEXTURE,
-  TextureParams,
-} from '../Texture.js';
 import {
-  RenderPassTarget,
-  type RenderPassTargetOptions,
+  RenderpassTarget,
+  type RenderpassTargetOptions,
 } from './RenderpassTarget.js';
 
 export type ColorRenderTargetParams = {
@@ -16,21 +9,12 @@ export type ColorRenderTargetParams = {
 };
 
 export class ColorRenderTarget<
-  F extends RENDER_TARGET_FORMAT = RENDER_TARGET_FORMAT,
-  U extends RENDER_TARGET_TEXTURE = RENDER_TARGET_TEXTURE,
-> extends RenderPassTarget<F, U> {
+  T extends RenderpassTargetOptions = RenderpassTargetOptions,
+> extends RenderpassTarget<T> {
   #clearValue: GPUColor;
   public blend: GPUBlendState | undefined;
-  constructor(
-    textureOptions: TextureParams<
-      F,
-      Exclude<U, STORAGE_BINDING_TEXTURE>,
-      RenderTargetSize
-    >,
-    renderTargetOptions: RenderPassTargetOptions,
-    options: ColorRenderTargetParams,
-  ) {
-    super(textureOptions, renderTargetOptions);
+  constructor(renderTargetOptions: T, options: ColorRenderTargetParams) {
+    super(renderTargetOptions);
     this.#clearValue = options.clearValue;
     this.blend = options.blend;
   }
@@ -41,9 +25,10 @@ export class ColorRenderTarget<
       clearValue: this.#clearValue,
       loadOp: 'clear',
       storeOp: 'store',
-      view: this.renderTargetOptions.context
-        ? this.renderTargetOptions.context.getCurrentTexture().createView()
-        : this.view.view,
+      view:
+        this.renderTarget instanceof GPUCanvasContext
+          ? this.renderTarget.getCurrentTexture().createView()
+          : this.renderTarget.view,
     };
     return obj;
   }

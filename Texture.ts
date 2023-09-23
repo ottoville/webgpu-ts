@@ -1,14 +1,12 @@
+import type {
+  RenderTargetSize,
+  RenderTargetTexture,
+} from './RenderTargetTexture';
 import { TextureView } from './TextureView';
 
 export type Texture2dSize = {
   readonly width: GPUIntegerCoordinate;
   readonly height: GPUIntegerCoordinate;
-};
-
-export type RenderTargetSize = {
-  readonly width: GPUIntegerCoordinate;
-  readonly height: GPUIntegerCoordinate;
-  readonly depthOrArrayLayers?: GPUIntegerCoordinate;
 };
 
 export type TextureSize =
@@ -21,7 +19,7 @@ export type TextureSize =
 export type TextureParams<
   F extends GPUTextureFormat,
   U extends Exclude<TextureUsageEnums, STORAGE_BINDING_TEXTURE>,
-  S extends TextureSize,
+  S extends TextureSize = TextureSize,
 > = {
   gpu: GPUDevice;
   format: F;
@@ -175,13 +173,13 @@ export class Texture<
     F extends STORAGE_FORMATS & RENDER_TARGET_FORMAT,
     U extends RENDER_TARGET_TEXTURE & STORAGE_BINDING_TEXTURE,
     S extends RenderTargetSize = RenderTargetSize,
-  >(props: TextureParamsStorage<F, U, S>): RenderTarget<F, U, S>;
+  >(props: TextureParamsStorage<F, U, S>): RenderTargetTexture<F, U, S>;
   //RenderTarget
   static create<
     F extends RENDER_TARGET_FORMAT,
     U extends Exclude<RENDER_TARGET_TEXTURE, STORAGE_BINDING_TEXTURE>,
     S extends RenderTargetSize = RenderTargetSize,
-  >(props: TextureParams<F, U, S>): RenderTarget<F, U, S>;
+  >(props: TextureParams<F, U, S>): RenderTargetTexture<F, U, S>;
   //STORAGE
   static create<
     F extends STORAGE_FORMATS,
@@ -201,15 +199,9 @@ export class Texture<
     U extends Exclude<TextureUsageEnums, STORAGE_BINDING_TEXTURE>,
     S extends TextureSize = TextureSize,
   >(props: TextureParams<F, U, S>) {
-    if (props.usages & TextureUsageEnums['RENDER_ATTACHMENT']) {
-      //@ts-expect-error
-      return new RenderTarget<F, RENDER_TARGET_TEXTURE, RenderTargetSize>(
-        props,
-      );
-    }
     return new Texture<F, U, S>(props);
   }
-
+  bytes_per_fixel: number;
   texture: GPUTexture;
   views: Set<TextureView<typeof this>> = new Set();
   protected initialSampleCount: 1 | 4 = 1;
@@ -220,6 +212,20 @@ export class Texture<
       | TextureParamsStorage<F, U, S>,
   ) {
     this.texture = this.createTexture(props.initialSampleCount);
+    switch (props.format) {
+      case 'r32uint':
+      case 'bgra8unorm':
+      case 'rgba8unorm':
+      case 'rgba8snorm':
+      case 'depth32float':
+        this.bytes_per_fixel = 4;
+        break;
+      case 'rgba32float':
+        this.bytes_per_fixel = 16;
+        break;
+      default:
+        throw new Error('unknown format ' + props.format);
+    }
   }
   copyTo(
     this: Texture<GPUTextureFormat, COPY_SRC_TEXTURE>,
@@ -300,34 +306,8 @@ export class Texture<
 
     return this.texture;
   }
-}
-
-export class RenderTarget<
-  F extends RENDER_TARGET_FORMAT = RENDER_TARGET_FORMAT,
-  U extends RENDER_TARGET_TEXTURE = RENDER_TARGET_TEXTURE,
-  S extends RenderTargetSize = RenderTargetSize,
-> extends Texture<F, U, S> {
-  bytes_per_fixel: number;
-  constructor(
-    //@ts-expect-error Might alse be TextureParamsStorage but we dont make validation here but in Texture.create
-    textureOptions: TextureParams<F, U, S>,
-  ) {
-    super(textureOptions);
-    switch (textureOptions.format) {
-      case 'r32uint':
-      case 'bgra8unorm':
-      case 'rgba8unorm':
-      case 'depth32float':
-        this.bytes_per_fixel = 4;
-        break;
-      case 'rgba32float':
-        this.bytes_per_fixel = 16;
-        break;
-      default:
-        throw new Error('unknown renderTarget format ' + textureOptions.format);
-    }
-  }
   copyFromExternalImage(
+    this: RenderTargetTexture,
     source: GPUImageCopyExternalImage,
     destination: Omit<GPUImageCopyTextureTagged, 'texture'> & {
       origin?: GPUOrigin3DDict;
@@ -362,7 +342,7 @@ export class RenderTarget<
       copySize,
     );
   }
-  async toBitmap(depth = 0) {
+  async toBitmap(this: RenderTargetTexture, depth = 0) {
     /*  if (this.renderPass.sampleCount > 1 && !this.resolveTexture) {
               throw (new Error('Printing MSAA swap target is not supported'))
           }*/
@@ -437,7 +417,7 @@ export class RenderTarget<
     }
     return data;
   }
-  async print_bitmap() {
+  async print_bitmap(this: RenderTargetTexture) {
     let bytesPerRow = this.props.size.width * this.bytes_per_fixel;
     const missAlignment = bytesPerRow % 256;
     if (missAlignment !== 0) {

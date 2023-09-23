@@ -71,7 +71,7 @@ export class RenderPipelineBuilder<
         targets: descriptor.fragment.targets.map((target) => {
           if (target === null) return null;
           const state: GPUColorTargetState = {
-            format: target.texture.format,
+            format: target.renderTargetOptions.context.format,
             writeMask: target.renderTargetOptions.writeMask,
           };
           if (target.blend) state.blend = target.blend;

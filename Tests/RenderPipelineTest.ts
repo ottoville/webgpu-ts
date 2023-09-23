@@ -135,14 +135,13 @@ vertexShader.props.pipelineLayouts;
 const colorRenderTargets = [
   new ColorRenderTarget(
     {
-      format: 'bgra8unorm',
-      gpu,
-      label: 'label',
-      size: { height: 300, width: 300 },
-      usages: TextureUsageEnums.RENDER_ATTACHMENT,
-    },
-    {
-      context: undefined,
+      context: {
+        format: 'bgra8unorm',
+        gpu,
+        label: 'label',
+        size: { height: 300, width: 300 },
+        usages: TextureUsageEnums.RENDER_ATTACHMENT,
+      },
       writeMask: 0xf,
     },
     {

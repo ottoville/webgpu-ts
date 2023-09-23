@@ -6,7 +6,6 @@ export { FragmentShader } from './shaders/FragmentShader.js';
 export {
   Texture,
   TextureUsageEnums,
-  RenderTarget,
   type TextureParams,
   type RENDER_TARGET_FORMAT,
   type TEXTURE_BINDING_TEXTURE,
@@ -74,3 +73,14 @@ export { textureLoad, textureStore } from './std_functions.js';
 export { Renderpass, type RenderpassProps } from './Renderpass.js';
 
 export { Struct, type wgslType } from './Struct.js';
+
+export type {
+  RenderTargetTexture,
+  RenderTargetSize,
+} from './RenderTargetTexture.js';
+
+export {
+  RenderpassTarget,
+  type RenderpassTargetOptions,
+  type RenderpassTargetTextureParams,
+} from './renderTargets/RenderpassTarget.js';

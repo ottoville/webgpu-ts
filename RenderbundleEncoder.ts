@@ -1,4 +1,4 @@
-import type { Renderpass } from './Renderpass';
+import type { Renderpass } from './Renderpass.js';
 
 export class RenderBundleEncoder {
   #renderBundle: GPURenderBundle | undefined;
@@ -29,12 +29,18 @@ export class RenderBundleEncoder {
   ) {
     this.GPURenderBundleEncoderDescriptor = {
       colorFormats: Object.values(renderPass.props.colorRenderTargets).map(
-        (rt) => rt.texture.format,
+        (rt) => {
+          return rt.renderTargetOptions.context.format;
+        },
       ),
       label: renderPass.props.label,
       sampleCount: renderPass.props.sampleCount,
       ...renderBundleEncoderDescriptor,
     };
+    console.log(
+      'renderbundle formats',
+      this.GPURenderBundleEncoderDescriptor.colorFormats,
+    );
     this.renderBundleEncoder =
       this.renderPass.props.gpu.createRenderBundleEncoder(
         this.GPURenderBundleEncoderDescriptor,
