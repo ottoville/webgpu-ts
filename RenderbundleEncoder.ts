@@ -34,7 +34,7 @@ export class RenderBundleEncoder {
         },
       ),
       label: renderPass.props.label,
-      sampleCount: renderPass.props.sampleCount,
+      sampleCount: renderPass.props.sampleCount ?? 1,
       ...renderBundleEncoderDescriptor,
     };
     console.log(

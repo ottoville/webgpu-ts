@@ -11,7 +11,7 @@ export type RenderpassProps<
   colorRenderTargets: U;
   gpu: GPUDevice;
   label: string;
-  sampleCount: 1 | 4;
+  sampleCount?: 1 | 4;
 }>;
 export class Renderpass<
   U extends {
