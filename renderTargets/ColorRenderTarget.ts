@@ -13,7 +13,7 @@ export const enum ColorWriteEnum {
 
 export type ColorRenderTargetParams = {
   clearValue: GPUColor;
-  blend: GPUBlendState | undefined;
+  blend?: GPUBlendState;
 };
 
 export class ColorRenderTarget<

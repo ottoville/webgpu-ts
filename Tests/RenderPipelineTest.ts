@@ -144,7 +144,6 @@ const colorRenderTargets = [
       },
     },
     {
-      blend: undefined,
       clearValue: {
         a: 1.0,
         b: 0.0,
