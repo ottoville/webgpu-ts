@@ -7,6 +7,7 @@ import {
   type TextureParams,
 } from '../Texture.js';
 import type { RenderTargetSize } from '../RenderTargetTexture.js';
+import type { ColorWriteEnum } from './ColorRenderTarget.js';
 
 export type RenderpassTargetTextureParams<
   F extends RENDER_TARGET_FORMAT = RENDER_TARGET_FORMAT,
@@ -25,7 +26,7 @@ export type RenderpassTargetOptions<
     | RenderpassTargetTextureParams,
 > = {
   textureViewDescriptor?: GPUTextureViewDescriptor | undefined;
-  writeMask: GPUColorWriteFlags;
+  writeMask?: ColorWriteEnum;
   context: T;
 };
 export class RenderpassTarget<T extends RenderpassTargetOptions> {

@@ -3,6 +3,14 @@ import {
   type RenderpassTargetOptions,
 } from './RenderpassTarget.js';
 
+export const enum ColorWriteEnum {
+  RED = 0x1,
+  GREEN = 0x2,
+  BLUE = 0x4,
+  ALPHA = 0x8,
+  ALL = 0xf,
+}
+
 export type ColorRenderTargetParams = {
   clearValue: GPUColor;
   blend: GPUBlendState | undefined;

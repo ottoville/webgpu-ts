@@ -142,7 +142,6 @@ const colorRenderTargets = [
         size: { height: 300, width: 300 },
         usages: TextureUsageEnums.RENDER_ATTACHMENT,
       },
-      writeMask: 0xf,
     },
     {
       blend: undefined,

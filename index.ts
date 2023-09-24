@@ -34,7 +34,8 @@ export {
 } from './BindgroupLayout.js';
 export {
   ColorRenderTarget,
-  ColorRenderTargetParams,
+  type ColorRenderTargetParams,
+  ColorWriteEnum,
 } from './renderTargets/ColorRenderTarget.js';
 
 export { TextureView } from './TextureView.js';

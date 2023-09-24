@@ -1,7 +1,10 @@
 import { BGLayout } from '../BindgroupLayout.js';
 import type { RenderPipelineLayout } from '../PipelineLayout.js';
 import type { PipelineIntersection } from '../Utilities.js';
-import type { ColorRenderTarget } from '../renderTargets/ColorRenderTarget.js';
+import {
+  ColorWriteEnum,
+  type ColorRenderTarget,
+} from '../renderTargets/ColorRenderTarget.js';
 import type { FragmentShader } from '../shaders/FragmentShader.js';
 import type { VertexShader } from '../shaders/VertexShader.js';
 import { RenderPipeline } from './RenderPipeline.js';
@@ -72,7 +75,8 @@ export class RenderPipelineBuilder<
           if (target === null) return null;
           const state: GPUColorTargetState = {
             format: target.renderTargetOptions.context.format,
-            writeMask: target.renderTargetOptions.writeMask,
+            writeMask:
+              target.renderTargetOptions.writeMask ?? ColorWriteEnum.ALL,
           };
           if (target.blend) state.blend = target.blend;
           return state;
