@@ -1,9 +1,10 @@
 {
-  "name": "webgpu",
+  "name": "webgpu-ts",
   "version": "1.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
+    "install": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
