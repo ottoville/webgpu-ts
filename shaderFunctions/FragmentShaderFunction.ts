@@ -38,7 +38,7 @@ export class FragmentShaderFunction<
                     ) -> ${
                       this.output instanceof Struct
                         ? this.output.name
-                        : this.output.concat(' ')
+                        : this.output.join(' ')
                     }
                     {
                         ${this.#code(bindGroups)}
