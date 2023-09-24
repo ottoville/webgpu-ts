@@ -3,7 +3,11 @@ import { RenderPipeline } from './renderPipeline/RenderPipeline';
 import { RenderPipelineBuilder } from './renderPipeline/RenderPipelineBuilder';
 import { ColorRenderTarget } from './renderTargets/ColorRenderTarget';
 
-export type RenderpassProps<U> = Readonly<{
+export type RenderpassProps<
+  U extends {
+    [index: string]: ColorRenderTarget;
+  },
+> = Readonly<{
   colorRenderTargets: U;
   gpu: GPUDevice;
   label: string;
