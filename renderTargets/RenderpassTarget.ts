@@ -49,7 +49,7 @@ export class RenderpassTarget<T extends RenderpassTargetOptions> {
       );
     }
   }
-  resize(size: { width: number; height: number }, sampleCount: 1 | 4) {
+  resize(size: { width: number; height: number }, sampleCount: 1 | 4 = 1) {
     if (this.renderTarget instanceof TextureView)
       this.renderTarget.texture.resize(size, sampleCount);
   }
