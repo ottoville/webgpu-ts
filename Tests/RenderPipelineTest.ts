@@ -12,7 +12,10 @@ import { VertexBufferLayout2 } from '../shaders/VertexShader';
 import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
 import { RenderPipelineLayout } from '../PipelineLayout';
-import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction';
+import {
+  VertexShaderFunction,
+  WGSLcode,
+} from '../shaderFunctions/VertexShaderFunction';
 import { ShaderBuilder } from '../ShaderBuilder';
 import { ColorRenderTarget } from '../renderTargets/ColorRenderTarget';
 import { TextureUsageEnums } from '../Texture';
@@ -98,7 +101,7 @@ declare const buffers: VertexBufferLayout2<typeof position_uv_attrs>;
 const vertexshaderfunction = new VertexShaderFunction(
   UI_Input,
   [buffers],
-  ([{ uniforms /*texture*/ }], [{ position, uv }]) => /* wgsl */ `
+  ([{ uniforms /*texture*/ }], [{ position, uv }]) => WGSLcode/* wgsl */ `
   var output : Output;   
   output.Position = vec4<f32>(${uniforms.prop(
     'translate',

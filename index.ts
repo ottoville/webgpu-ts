@@ -19,6 +19,9 @@ export { OutputShader } from './shaders/OutputShader.js';
 export {
   VertexShaderFunction,
   type AnyVertexStage,
+  VertexBuildin,
+  VertexBuildinNames,
+  WGSLcode,
 } from './shaderFunctions/VertexShaderFunction.js';
 export { FragmentShaderFunction } from './shaderFunctions/FragmentShaderFunction.js';
 export { ComputeShader } from './shaders/ComputeShader.js';

@@ -4,7 +4,10 @@ import { RenderPipelineLayout } from '../PipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
 import { ShaderBuilder } from '../ShaderBuilder';
 import { Struct, position_vec2f32, UI_Input } from '../Struct';
-import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction';
+import {
+  VertexShaderFunction,
+  WGSLcode,
+} from '../shaderFunctions/VertexShaderFunction';
 import { VertexBufferLayout2, VertexShader } from '../shaders/VertexShader';
 
 declare const pipelineLayouts: readonly [
@@ -64,7 +67,7 @@ declare const gpu: GPUDevice;
 const vertexshaderfunction = new VertexShaderFunction(
   UI_Input,
   [buffers],
-  ([{ uniforms /*texture*/ }], [{ position, uv }]) => /* wgsl */ `
+  ([{ uniforms /*texture*/ }], [{ position, uv }]) => WGSLcode/* wgsl */ `
   var output : Output;   
   output.Position = vec4<f32>(${uniforms.prop(
     'translate',
@@ -94,7 +97,7 @@ new VertexShader({
 const vertexshaderfunction_no_uniforms = new VertexShaderFunction(
   UI_Input,
   [buffers],
-  ([,], [{ position, uv }]) => /* wgsl */ `
+  ([,], [{ position, uv }]) => WGSLcode/* wgsl */ `
   var output : Output;   
   output.Position = vec4<f32>(${position}, 1.0, 1.0);
   output.v_uv=${uv};
@@ -124,7 +127,7 @@ builder.addFunction('main', vertexshaderfunction);
 new VertexShaderFunction(
   UI_Input,
   [],
-  ([{ uniforms /*texture*/ }]) => /* wgsl */ `
+  ([{ uniforms /*texture*/ }]) => WGSLcode/* wgsl */ `
     var output : Output;   
     output.Position = vec4<f32>(${uniforms.prop('translate')};
     return output;

@@ -13,6 +13,50 @@ export type AnyVertexStage =
   | ShaderStage.VERTEX_AND_FRAGMENT
   | ShaderStage.COMPUTE_AND_VERTEX_AND_FRAGMENT;
 
+type VertexShaderCode = readonly [
+  string,
+  Set<(typeof VertexBuildinNames)[keyof typeof VertexBuildinNames]>,
+];
+
+export enum VertexBuildin {
+  instance_index = 'buildinInstanceIndex',
+  vertex_index = 'buildinVertexIndex',
+  position = 'buildinPosition',
+}
+
+export const VertexBuildinNames = {
+  buildinInstanceIndex: ['instance_index', 'u32'],
+  buildinPosition: ['position', 'vec4<f32>'],
+  buildinVertexIndex: ['vertex_index', 'u32'],
+} as const;
+
+export function WGSLcode(
+  parts: TemplateStringsArray,
+  ...exps: (VertexBuildin | string)[]
+) {
+  const buildIns: Set<
+    (typeof VertexBuildinNames)[keyof typeof VertexBuildinNames]
+  > = new Set();
+  const glued: string[] = [];
+  parts.reduce((acc, curr, index) => {
+    const exp = exps[index];
+    if (typeof exp === 'undefined') {
+      acc.push(curr);
+      return acc;
+    }
+    if (
+      typeof VertexBuildinNames[exp as keyof typeof VertexBuildinNames] !==
+      'undefined'
+    ) {
+      buildIns.add(VertexBuildinNames[exp as keyof typeof VertexBuildinNames]);
+    }
+    acc.push(curr, exp);
+    return acc;
+  }, glued);
+
+  return [glued.join(''), buildIns] as const;
+}
+
 export class VertexShaderFunction<
   const B extends readonly {
     [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
@@ -22,7 +66,7 @@ export class VertexShaderFunction<
     | readonly [],
 > {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  #code: (args: any, bufferArgs: any) => string;
+  #code: (args: any, bufferArgs: any) => VertexShaderCode;
   readonly vertexBufferLayout: V;
   buffers: GPUVertexBufferLayout[] = [];
   constructor(
@@ -33,9 +77,7 @@ export class VertexShaderFunction<
       bufferArgs: Readonly<{
         [K in keyof V]: { [KK in keyof V[K]['attributes2']]: KK };
       }>,
-    ) => string,
-    // TODO: use enums
-    private inputs = '',
+    ) => VertexShaderCode,
   ) {
     this.#code = code;
     this.vertexBufferLayout = Object.freeze(vertexBufferLayout);
@@ -62,17 +104,24 @@ export class VertexShaderFunction<
         }) ${varName} : ${buffer.attributes2[varName]!.shaderFormat},\n`;
       }
     });
+    const [code, buildins] = this.#code(bindGroups, variableNames);
     const wgsl = /* wgsl */ `
             @vertex
             fn ${name}(
-                ${this.inputs}
+                ${[...buildins]
+                  .map((buildin) => {
+                    return `@builtin(${buildin[0]}) ${
+                      VertexBuildin[buildin[0]]
+                    } : ${buildin[1]}`;
+                  })
+                  .join('\n')}
                 ${attributesString}
                 ) -> ${
                   this.output instanceof Struct
                     ? this.output.name
                     : this.output.join(' ')
                 } {
-                    ${this.#code(bindGroups, variableNames)}
+                    ${code}
                 }`;
     return wgsl;
   }
