@@ -48,6 +48,10 @@ export const UI_Input = new Struct('Output', {
   Position: ['@builtin(position)', 'vec4<f32>'],
   v_uv: ['@location(0)', 'vec2<f32>'],
 });
+export const UI_Input2 = new Struct('Output', {
+  Position: ['@builtin(position)', 'vec4<f32>'],
+  v_uv2: ['@location(0)', 'vec2<f32>'],
+});
 export const position_vec2 = new Struct('Position', {
   position: ['', 'vec2<i32>'],
 });

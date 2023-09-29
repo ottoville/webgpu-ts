@@ -63,7 +63,13 @@ export class RenderPipelineBuilder<
     this.pipelineLayout = renderPipelineLayout.layout;
     renderPipelineLayout.renderPipeLines.add(this);
   }
-  async build(descriptor: RenderPipelineBuilderDesc<V, F>) {
+  async build<
+    D extends RenderPipelineBuilderDesc<V, F>,
+    O extends V['props']['entryPoints'][D['vertex']['entryPoint']]['output'],
+    I extends F['props']['entryPoints'][D['fragment']['entryPoint']]['inputs'],
+  >(
+    descriptor: D,
+  ): Promise<I extends O | undefined ? RenderPipeline<L, B> : never> {
     const gpu = this.vertexShader.props.pipelineLayouts[0]!.gpu;
 
     const RenderPipelineDescriptor: GPURenderPipelineDescriptor = {
@@ -136,6 +142,7 @@ export class RenderPipelineBuilder<
           cause: err,
         });
       });
+    //@ts-expect-error
     return new RenderPipeline<L, B>(renderPipeline);
   }
 }

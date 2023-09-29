@@ -15,13 +15,16 @@ export class FragmentShaderFunction<
     [index: string]: BindGroupLayoutEntry<AnyFragmentStage>;
     // eslint-disable-next-line @typescript-eslint/ban-types
   }[] = readonly {}[],
+  I extends [properties: string, type: wgslType] | Struct | undefined =
+    | [properties: string, type: wgslType]
+    | Struct
+    | undefined,
 > {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #code: (args: any) => string;
   constructor(
     public output: [properties: string, type: wgslType] | Struct,
-    /* TODO: use struct array from vertex shader output */
-    private inputs: [properties: string, type: wgslType] | Struct | undefined,
+    public inputs: I,
     code: (args: FilteredBindEntrys<B, FragmentEntry>) => string,
   ) {
     this.#code = code;

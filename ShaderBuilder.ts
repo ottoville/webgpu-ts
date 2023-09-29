@@ -8,7 +8,11 @@ import {
   FragmentShaderFunction,
 } from './shaderFunctions/FragmentShaderFunction.js';
 import type { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
-import { VertexEntry, VertexShader } from './shaders/VertexShader.js';
+import {
+  VertexBufferLayout2,
+  VertexEntry,
+  VertexShader,
+} from './shaders/VertexShader.js';
 import {
   AnyVertexStage,
   VertexShaderFunction,
@@ -16,6 +20,7 @@ import {
 import { ComputeShader } from './shaders/ComputeShader.js';
 import type { FilteredBindgroupEntrys, LayoutEntries } from './Utilities.js';
 import type { BindGroupLayoutEntry } from './BindgroupLayout.js';
+import { Struct, wgslType } from './Struct.js';
 
 export class ShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -29,22 +34,25 @@ export class ShaderBuilder<
     F extends readonly {
       [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
     }[],
+    V extends readonly VertexBufferLayout2[] | readonly [],
+    O extends [properties: string, type: wgslType] | Struct,
     RP extends readonly RenderPipelineLayout[],
   >(
     this: ShaderBuilder<E, RP>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
-    shaderFunction: VertexShaderFunction<F>,
+    shaderFunction: VertexShaderFunction<F, V, O>,
   ): VertexShaderBuilder<E & Record<S, typeof shaderFunction>, RP>;
   addFunction<
     S extends string,
     F extends readonly {
       [index: string]: BindGroupLayoutEntry<AnyFragmentStage>;
     }[],
+    I extends [properties: string, type: wgslType] | Struct | undefined,
     RP extends readonly RenderPipelineLayout[],
   >(
     this: ShaderBuilder<E, RP>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
-    shaderFunction: FragmentShaderFunction<F>,
+    shaderFunction: FragmentShaderFunction<F, I>,
   ): FragmentShaderBuilder<E & Record<S, typeof shaderFunction>, RP>;
   addFunction<
     S extends string,

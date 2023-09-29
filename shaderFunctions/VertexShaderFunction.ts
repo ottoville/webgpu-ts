@@ -64,13 +64,16 @@ export class VertexShaderFunction<
   const V extends readonly VertexBufferLayout2[] | readonly [] =
     | readonly VertexBufferLayout2[]
     | readonly [],
+  O extends [properties: string, type: wgslType] | Struct =
+    | [properties: string, type: wgslType]
+    | Struct,
 > {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #code: (args: any, bufferArgs: any) => VertexShaderCode;
   readonly vertexBufferLayout: V;
   buffers: GPUVertexBufferLayout[] = [];
   constructor(
-    public output: [properties: string, type: wgslType] | Struct,
+    public output: O,
     vertexBufferLayout: V,
     code: (
       args: FilteredBindEntrys<B, VertexEntry>,

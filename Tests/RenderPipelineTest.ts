@@ -1,3 +1,4 @@
+/* eslint-disable promise/catch-or-return */
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { ShaderStage } from '../shaders/Shader';
@@ -6,6 +7,7 @@ import {
   position_vec2f32,
   UI_Input,
   diffuseOutput,
+  UI_Input2,
 } from '../Struct';
 import { position_uv_attrs } from './VertexShaderTypeTest';
 import { VertexBufferLayout2 } from '../shaders/VertexShader';
@@ -74,15 +76,7 @@ declare const pipelineLayouts_missing_texture_2d: readonly [
   >,
 ];
 
-const fragmentshaderfunction = new FragmentShaderFunction<
-  readonly [
-    {
-      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
-    },
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    {},
-  ]
->(
+const fragmentshaderfunction = new FragmentShaderFunction(
   diffuseOutput,
   UI_Input,
   ([{ texture }]) => /* wgsl */ `
@@ -94,8 +88,58 @@ const fragmentshaderfunction = new FragmentShaderFunction<
         //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
-);
+) satisfies FragmentShaderFunction<
+  readonly [
+    {
+      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    {},
+  ]
+>;
+const fragmentshaderfunction_no_input = new FragmentShaderFunction(
+  diffuseOutput,
+  undefined,
+  ([{ texture }]) => /* wgsl */ `
+        let fragCoordI=vec2<i32>(floor(v_uv));
+        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
+    
+        var output:Output;
+    
+        //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
+        output.Diffuse=color;
+        return output;`,
+) satisfies FragmentShaderFunction<
+  readonly [
+    {
+      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    {},
+  ]
+>;
 
+const fragmentshaderfunction_different_input = new FragmentShaderFunction(
+  diffuseOutput,
+  UI_Input2,
+  ([{ texture }]) => /* wgsl */ `
+        let fragCoordI=vec2<i32>(floor(v_uv));
+        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
+    
+        var output:Output;
+    
+        //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
+        output.Diffuse=color;
+        return output;`,
+) satisfies FragmentShaderFunction<
+  readonly [
+    {
+      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    {},
+  ]
+>;
 declare const buffers: VertexBufferLayout2<typeof position_uv_attrs>;
 
 const vertexshaderfunction = new VertexShaderFunction(
@@ -121,17 +165,19 @@ const vertexshaderfunction = new VertexShaderFunction(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any
 >;
+
 const shaderB = new ShaderBuilder(
   pipelineLayouts_different_fragment,
 ).addFunction('main', vertexshaderfunction);
 //Should be fine
+
 const vertexShader = shaderB.build('label');
+vertexShader.props.entryPoints.main.output;
 const fragmentShader = new ShaderBuilder(pipelineLayouts_different_vertex)
   .addFunction('main', fragmentshaderfunction)
+  .addFunction('main2', fragmentshaderfunction_different_input)
+  .addFunction('main3', fragmentshaderfunction_no_input)
   .build('label');
-
-fragmentShader.props.entryPoints.main.output;
-vertexShader.props.entryPoints.main.output;
 
 vertexShader.props.pipelineLayouts;
 
@@ -157,7 +203,37 @@ const colorRenderTargets = [
   ),
 ];
 
-createRenderPipelineBuilder(vertexShader, fragmentShader).build({
+const test = createRenderPipelineBuilder(vertexShader, fragmentShader).build({
+  fragment: {
+    entryPoint: 'main2',
+    targets: colorRenderTargets,
+  },
+  vertex: {
+    entryPoint: 'main',
+  },
+});
+test.then((v) => {
+  // @ts-expect-error Vertex and Fragment shader have no common input and output
+  v.pipeline;
+});
+const test_no_input = createRenderPipelineBuilder(
+  vertexShader,
+  fragmentShader,
+).build({
+  fragment: {
+    entryPoint: 'main3',
+    targets: colorRenderTargets,
+  },
+  vertex: {
+    entryPoint: 'main',
+  },
+});
+test_no_input.then((v) => {
+  // This sould be okay, fragment function have no inputs.
+  v.pipeline;
+});
+//this should be ok
+const test2 = createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main',
     targets: colorRenderTargets,
@@ -166,15 +242,9 @@ createRenderPipelineBuilder(vertexShader, fragmentShader).build({
     entryPoint: 'main',
   },
 });
-//this should be ok
-createRenderPipelineBuilder(vertexShader, fragmentShader).build({
-  fragment: {
-    entryPoint: 'main',
-    targets: colorRenderTargets,
-  },
-  vertex: {
-    entryPoint: 'main',
-  },
+
+test2.then((v) => {
+  v.pipeline;
 });
 
 createRenderPipelineBuilder(vertexShader, fragmentShader).build({

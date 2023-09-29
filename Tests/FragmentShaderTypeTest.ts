@@ -39,13 +39,7 @@ declare const pipelineLayouts_missing_texture: readonly [
 
 declare const gpu: GPUDevice;
 
-const fragmentshaderfunction = new FragmentShaderFunction<
-  readonly [
-    {
-      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
-    },
-  ]
->(
+const fragmentshaderfunction = new FragmentShaderFunction(
   diffuseOutput,
   UI_Input,
   ([{ texture }]) => /* wgsl */ `
@@ -57,15 +51,15 @@ const fragmentshaderfunction = new FragmentShaderFunction<
         //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
-);
-
-const fragmentshaderfunction_array = new FragmentShaderFunction<
+) satisfies FragmentShaderFunction<
   readonly [
     {
-      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d_array<f32>'>;
+      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
     },
   ]
->(
+>;
+
+const fragmentshaderfunction_array = new FragmentShaderFunction(
   diffuseOutput,
   UI_Input,
   ([{ texture }]) => /* wgsl */ `
@@ -77,7 +71,13 @@ const fragmentshaderfunction_array = new FragmentShaderFunction<
         //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
-);
+) satisfies FragmentShaderFunction<
+  readonly [
+    {
+      texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d_array<f32>'>;
+    },
+  ]
+>;
 
 //Should be fine
 const fragmentShaderBuilder = new ShaderBuilder(pipelineLayouts);
@@ -92,10 +92,7 @@ new FragmentShader({
   pipelineLayouts,
 });
 
-const vertexshaderfunction_no_texture = new FragmentShaderFunction<
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly [{}]
->(
+const vertexshaderfunction_no_texture = new FragmentShaderFunction(
   diffuseOutput,
   UI_Input,
   () => /* wgsl */ `
@@ -104,7 +101,10 @@ const vertexshaderfunction_no_texture = new FragmentShaderFunction<
       var output:Output;  
       output.Diffuse=color;
       return output;`,
-);
+) satisfies FragmentShaderFunction<
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  readonly [{}]
+>;
 
 //FragmentShaderFunction is missing texture, should be ok
 new ShaderBuilder(pipelineLayouts).addFunction(
