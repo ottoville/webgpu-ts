@@ -1,3 +1,4 @@
+import { RenderEncoder } from './RenderEncoder';
 import { RenderBundleEncoder } from './RenderbundleEncoder';
 import { RenderPipeline } from './renderPipeline/RenderPipeline';
 import { RenderPipelineBuilder } from './renderPipeline/RenderPipelineBuilder';
@@ -24,8 +25,34 @@ export class Renderpass<
     RenderPipeline | Promise<RenderPipeline>
   > = new Map();
   readonly bundles: RenderBundleEncoder[] = [];
+  readonly renderEncoders: RenderEncoder[] = [];
   public readonly props: RenderpassProps<U>;
   constructor(props: RenderpassProps<U>) {
     this.props = Object.freeze(props);
+  }
+  get GPURenderPassDescriptor(): GPURenderPassDescriptor {
+    //  TODO: do not re-create on every render
+    const renderPassDescriptor: GPURenderPassDescriptor = {
+      colorAttachments: Object.values(this.props.colorRenderTargets).map((rt) =>
+        rt.createColorAttachment(),
+      ),
+    };
+    return renderPassDescriptor;
+  }
+  render(renderEncoder: GPUCommandEncoder) {
+    const passEncoder = renderEncoder.beginRenderPass(
+      this.GPURenderPassDescriptor,
+    );
+    if (this.bundles.length) {
+      passEncoder.executeBundles(
+        this.bundles.map((b) => {
+          return b.render();
+        }),
+      );
+    }
+    this.renderEncoders.forEach((encoder) => {
+      encoder.render(passEncoder);
+    });
+    passEncoder.end();
   }
 }

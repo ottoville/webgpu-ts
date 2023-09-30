@@ -62,20 +62,47 @@ export class RenderPipelineLayout<
   ) {
     super(Object.freeze(props));
   }
-
+  #setBindGroups(
+    renderEncoder: GPURenderPassEncoder | RenderBundleEncoder,
+    bindgroups: readonly BindGroupRef[],
+    bindGroupStartIndex: number,
+  ) {
+    if (renderEncoder instanceof GPURenderPassEncoder) {
+      bindgroups.forEach((bindGroup) => {
+        renderEncoder.setBindGroup(
+          bindGroupStartIndex++,
+          bindGroup.bindGroup.bindGroup,
+          bindGroup.offsets,
+        );
+      });
+    } else {
+      bindgroups.forEach((bindGroup) => {
+        renderEncoder.renderBundleEncoder.setBindGroup(
+          bindGroupStartIndex++,
+          bindGroup.bindGroup.getForRenderBundle(renderEncoder),
+          bindGroup.offsets,
+        );
+      });
+    }
+  }
   render(
-    renderBundleEncoder: RenderBundleEncoder,
+    renderEncoder: GPURenderPassEncoder | RenderBundleEncoder,
     renderpass: Renderpass,
     bindGroupStartIndex: number,
   ): number {
+    const nativeEncoder =
+      renderEncoder instanceof GPURenderPassEncoder
+        ? renderEncoder
+        : renderEncoder.renderBundleEncoder;
+
     let meshesDrawn = 0;
-    this.sharedBindgroups.forEach((sharedBindgroup) => {
-      renderBundleEncoder.renderBundleEncoder.setBindGroup(
-        bindGroupStartIndex++,
-        sharedBindgroup.bindGroup.getForRenderBundle(renderBundleEncoder),
-        sharedBindgroup.offsets,
-      );
-    });
+    this.#setBindGroups(
+      renderEncoder,
+      this.sharedBindgroups,
+      bindGroupStartIndex,
+    );
+    bindGroupStartIndex += this.sharedBindgroups.length;
+
     this.renderPipeLines.forEach((renderPipeline) => {
       const variant = renderpass.renderPipelines.get(renderPipeline);
       if (variant instanceof RenderPipeline) {
@@ -88,43 +115,43 @@ export class RenderPipelineLayout<
           );
           return;
         }
-        renderBundleEncoder.renderBundleEncoder.setPipeline(variant.pipeline);
+        nativeEncoder.setPipeline(variant.pipeline);
         drawables.forEach((drawable) => {
-          drawable.bindGroups.forEach((bindGroup, i) => {
-            renderBundleEncoder.renderBundleEncoder.setBindGroup(
-              i + bindGroupStartIndex,
-              bindGroup.bindGroup.getForRenderBundle(renderBundleEncoder),
-              bindGroup.offsets,
-            );
-          });
+          this.#setBindGroups(
+            renderEncoder,
+            drawable.bindGroups,
+            bindGroupStartIndex,
+          );
+
           drawable.vertexBuffers.forEach((buffer, index) => {
             console.debug(
               'set vertexBuffer index',
               index,
               buffer.buffer.props.label,
             );
-            renderBundleEncoder.renderBundleEncoder.setVertexBuffer(
+            nativeEncoder.setVertexBuffer(
               index,
-              buffer.buffer.getVertexBinding(renderBundleEncoder),
+              renderEncoder instanceof RenderBundleEncoder
+                ? buffer.buffer.getVertexBinding(renderEncoder)
+                : buffer.buffer.getVertexBinding(),
               buffer.offset,
               buffer.size,
             );
           });
-          drawable.render(renderBundleEncoder);
+          drawable.render(renderEncoder);
           meshesDrawn++;
         });
       }
     });
     this.subBindGroups.forEach((subBindGroup) => {
       meshesDrawn += subBindGroup.render(
-        renderBundleEncoder,
+        renderEncoder,
         renderpass,
         bindGroupStartIndex,
       );
     });
     return meshesDrawn;
   }
-
   /**
    * Appends bindgroups or bindgrouplayouts for a bindgroup layout.
    * @param label

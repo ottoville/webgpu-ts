@@ -4,7 +4,7 @@ export class RenderBundleEncoder {
   #renderBundle: GPURenderBundle | undefined;
   GPURenderBundleEncoderDescriptor: GPURenderBundleEncoderDescriptor;
   renderBundleEncoder: GPURenderBundleEncoder;
-  renderBundle() {
+  render() {
     if (!this.#renderBundle) {
       this.record(this);
       this.#renderBundle = this.renderBundleEncoder.finish();
