@@ -88,7 +88,7 @@ export class RenderPipelineLayout<
   render(
     renderEncoder: GPURenderPassEncoder | RenderBundleEncoder,
     renderpass: Renderpass,
-    bindGroupStartIndex: number,
+    bindGroupStartIndex = 0,
   ): number {
     const nativeEncoder =
       renderEncoder instanceof GPURenderPassEncoder

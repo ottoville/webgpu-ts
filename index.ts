@@ -88,3 +88,5 @@ export {
   type RenderpassTargetOptions,
   type RenderpassTargetTextureParams,
 } from './renderTargets/RenderpassTarget.js';
+
+export { RenderEncoder } from './RenderEncoder.js';
