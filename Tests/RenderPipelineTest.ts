@@ -22,6 +22,7 @@ import { ShaderBuilder } from '../ShaderBuilder';
 import { ColorRenderTarget } from '../renderTargets/ColorRenderTarget';
 import { TextureUsageEnums } from '../Texture';
 import { createRenderPipelineBuilder } from '../renderPipeline/RenderPipelineBuilder';
+import { Renderpass } from '../Renderpass';
 
 declare const gpu: GPUDevice;
 
@@ -181,8 +182,8 @@ const fragmentShader = new ShaderBuilder(pipelineLayouts_different_vertex)
 
 vertexShader.props.pipelineLayouts;
 
-const colorRenderTargets = [
-  new ColorRenderTarget(
+const colorRenderTargets = {
+  diffuse: new ColorRenderTarget(
     {
       context: {
         format: 'bgra8unorm',
@@ -201,13 +202,13 @@ const colorRenderTargets = [
       },
     },
   ),
-];
+};
 
 const test = createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main2',
-    targets: colorRenderTargets,
   },
+  renderpass: new Renderpass({ colorRenderTargets, label: 'renderpas' }),
   vertex: {
     entryPoint: 'main',
   },
@@ -222,8 +223,8 @@ const test_no_input = createRenderPipelineBuilder(
 ).build({
   fragment: {
     entryPoint: 'main3',
-    targets: colorRenderTargets,
   },
+  renderpass: new Renderpass({ colorRenderTargets, label: 'renderpas' }),
   vertex: {
     entryPoint: 'main',
   },
@@ -236,8 +237,8 @@ test_no_input.then((v) => {
 const test2 = createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main',
-    targets: colorRenderTargets,
   },
+  renderpass: new Renderpass({ colorRenderTargets, label: 'renderpas' }),
   vertex: {
     entryPoint: 'main',
   },

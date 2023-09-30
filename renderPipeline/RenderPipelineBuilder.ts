@@ -1,10 +1,8 @@
 import { BGLayout } from '../BindgroupLayout.js';
 import type { RenderPipelineLayout } from '../PipelineLayout.js';
+import type { Renderpass } from '../Renderpass.js';
 import type { PipelineIntersection } from '../Utilities.js';
-import {
-  ColorWriteEnum,
-  type ColorRenderTarget,
-} from '../renderTargets/ColorRenderTarget.js';
+import { ColorWriteEnum } from '../renderTargets/ColorRenderTarget.js';
 import type { FragmentShader } from '../shaders/FragmentShader.js';
 import type { VertexShader } from '../shaders/VertexShader.js';
 import { RenderPipeline } from './RenderPipeline.js';
@@ -41,11 +39,10 @@ export type RenderPipelineBuilderDesc<
   vertex: Omit<GPUProgrammableStage, 'module'> & {
     entryPoint: V extends VertexShader<infer E> ? keyof E & string : never;
   };
-} & {
   fragment: Omit<GPUProgrammableStage, 'module' | 'targets'> & {
     entryPoint: F extends FragmentShader<infer E> ? keyof E & string : never;
-    targets: (ColorRenderTarget | null)[];
   };
+  renderpass: Renderpass;
 };
 
 export class RenderPipelineBuilder<
@@ -63,7 +60,7 @@ export class RenderPipelineBuilder<
     this.pipelineLayout = renderPipelineLayout.layout;
     renderPipelineLayout.renderPipeLines.add(this);
   }
-  async build<
+  build<
     D extends RenderPipelineBuilderDesc<V, F>,
     O extends V['props']['entryPoints'][D['vertex']['entryPoint']]['output'],
     I extends F['props']['entryPoints'][D['fragment']['entryPoint']]['inputs'],
@@ -77,7 +74,9 @@ export class RenderPipelineBuilder<
       fragment: {
         ...descriptor.fragment,
         module: this.fragmentShader.module,
-        targets: descriptor.fragment.targets.map((target) => {
+        targets: Object.values(
+          descriptor.renderpass.props.colorRenderTargets,
+        ).map((target) => {
           if (target === null) return null;
           const state: GPUColorTargetState = {
             format: target.renderTargetOptions.context.format,
@@ -98,8 +97,15 @@ export class RenderPipelineBuilder<
       },
     };
     console.debug('create pipeline', RenderPipelineDescriptor);
-    const renderPipeline = await gpu
+    //@ts-expect-error
+    return gpu
       .createRenderPipelineAsync(RenderPipelineDescriptor)
+      .then((variantPipeline) => {
+        const renderPipeline = new RenderPipeline<L, B>(variantPipeline);
+        // Replace promise with real object
+        descriptor.renderpass.renderPipelines.set(this, renderPipeline);
+        return renderPipeline;
+      })
       .catch((err: unknown) => {
         if (err instanceof DOMException) {
           if (err.message.includes(this.vertexShader.module.label)) {
@@ -142,7 +148,5 @@ export class RenderPipelineBuilder<
           cause: err,
         });
       });
-    //@ts-expect-error
-    return new RenderPipeline<L, B>(renderPipeline);
   }
 }

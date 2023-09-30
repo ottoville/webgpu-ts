@@ -9,7 +9,6 @@ export type RenderpassProps<
   },
 > = Readonly<{
   colorRenderTargets: U;
-  gpu: GPUDevice;
   label: string;
   sampleCount?: 1 | 4;
 }>;
@@ -21,7 +20,7 @@ export class Renderpass<
   },
 > {
   readonly renderPipelines: Map<
-    Readonly<RenderPipelineBuilder>,
+    RenderPipelineBuilder,
     RenderPipeline | Promise<RenderPipeline>
   > = new Map();
   readonly bundles: RenderBundleEncoder[] = [];

@@ -10,10 +10,9 @@ export class RenderBundleEncoder {
       this.#renderBundle = this.renderBundleEncoder.finish();
       // Create bundeEncoder ready for next time it is called
       // As writing of this code, resetting renderBundleEncoder is still TODO in webgpu specs.
-      this.renderBundleEncoder =
-        this.renderPass.props.gpu.createRenderBundleEncoder(
-          this.GPURenderBundleEncoderDescriptor,
-        );
+      this.renderBundleEncoder = this.gpu.createRenderBundleEncoder(
+        this.GPURenderBundleEncoderDescriptor,
+      );
     }
     return this.#renderBundle;
   }
@@ -21,7 +20,8 @@ export class RenderBundleEncoder {
     this.#renderBundle = undefined;
   }
   constructor(
-    private renderPass: Renderpass,
+    renderPass: Renderpass,
+    private gpu: GPUDevice,
     renderBundleEncoderDescriptor:
       | Partial<GPURenderBundleEncoderDescriptor>
       | undefined,
@@ -41,9 +41,8 @@ export class RenderBundleEncoder {
       'renderbundle formats',
       this.GPURenderBundleEncoderDescriptor.colorFormats,
     );
-    this.renderBundleEncoder =
-      this.renderPass.props.gpu.createRenderBundleEncoder(
-        this.GPURenderBundleEncoderDescriptor,
-      );
+    this.renderBundleEncoder = this.gpu.createRenderBundleEncoder(
+      this.GPURenderBundleEncoderDescriptor,
+    );
   }
 }
