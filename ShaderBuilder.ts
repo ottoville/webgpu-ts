@@ -23,12 +23,18 @@ import type { BindGroupLayoutEntry } from './BindgroupLayout.js';
 import { Struct, wgslType } from './Struct.js';
 
 export class ShaderBuilder<
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  E extends {},
   const P extends readonly PipelineLayout[],
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  E extends {} = {},
 > {
   entryPoints: E = {} as E;
   constructor(public pipelineLayouts: P) {}
+  /**
+   * Add vertex function
+   * @param this
+   * @param entryPoint
+   * @param shaderFunction
+   */
   addFunction<
     S extends string,
     F extends readonly {
@@ -38,10 +44,16 @@ export class ShaderBuilder<
     O extends [properties: string, type: wgslType] | Struct,
     RP extends readonly RenderPipelineLayout[],
   >(
-    this: ShaderBuilder<E, RP>,
+    this: ShaderBuilder<RP, E>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
     shaderFunction: VertexShaderFunction<F, V, O>,
   ): VertexShaderBuilder<E & Record<S, typeof shaderFunction>, RP>;
+  /**
+   * Add fragment function
+   * @param this
+   * @param entryPoint
+   * @param shaderFunction
+   */
   addFunction<
     S extends string,
     F extends readonly {
@@ -50,10 +62,16 @@ export class ShaderBuilder<
     I extends [properties: string, type: wgslType] | Struct | undefined,
     RP extends readonly RenderPipelineLayout[],
   >(
-    this: ShaderBuilder<E, RP>,
+    this: ShaderBuilder<RP, E>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
     shaderFunction: FragmentShaderFunction<F, I>,
   ): FragmentShaderBuilder<E & Record<S, typeof shaderFunction>, RP>;
+  /**
+   * Add compute function
+   * @param this
+   * @param entryPoint
+   * @param shaderFunction
+   */
   addFunction<
     S extends string,
     F extends readonly {
@@ -61,7 +79,7 @@ export class ShaderBuilder<
     }[],
     PL extends readonly PipelineLayout[],
   >(
-    this: ShaderBuilder<E, PL>,
+    this: ShaderBuilder<PL, E>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
     shaderFunction: ComputeShaderFunction<F>,
   ): ComputeShaderBuilder<E & Record<S, typeof shaderFunction>, PL>;
@@ -106,7 +124,7 @@ export class FragmentShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends {} = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
-> extends ShaderBuilder<E, P> {
+> extends ShaderBuilder<P, E> {
   constructor(p: P) {
     super(p);
   }
@@ -122,7 +140,7 @@ export class VertexShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends {} = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
-> extends ShaderBuilder<E, P> {
+> extends ShaderBuilder<P, E> {
   constructor(p: P) {
     super(p);
   }
@@ -146,7 +164,7 @@ export class ComputeShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends {} = {},
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
-> extends ShaderBuilder<E, P> {
+> extends ShaderBuilder<P, E> {
   constructor(p: P) {
     super(p);
   }
