@@ -44,7 +44,7 @@ export class RenderPipelineLayout<
   static override CreateEmptyLayout(
     gpu: GPUDevice,
   ): RenderPipelineLayout<readonly []> {
-    return Object.assign(
+    return Object.setPrototypeOf(
       {
         renderPipeLines: new Set(),
         sharedBindgroups: [],
