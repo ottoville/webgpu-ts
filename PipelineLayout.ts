@@ -62,7 +62,8 @@ export class RenderPipelineLayout<
   ) {
     super(Object.freeze(props));
   }
-  #setBindGroups(
+  // Cant be es6 private because "CreateEmptyLayout" creates object from prototype, which cant see es6 private methods
+  private setBindGroups(
     renderEncoder: GPURenderPassEncoder | RenderBundleEncoder,
     bindgroups: readonly BindGroupRef[],
     bindGroupStartIndex: number,
@@ -96,7 +97,7 @@ export class RenderPipelineLayout<
         : renderEncoder.renderBundleEncoder;
 
     let meshesDrawn = 0;
-    this.#setBindGroups(
+    this.setBindGroups(
       renderEncoder,
       this.sharedBindgroups,
       bindGroupStartIndex,
@@ -117,7 +118,7 @@ export class RenderPipelineLayout<
         }
         nativeEncoder.setPipeline(variant.pipeline);
         drawables.forEach((drawable) => {
-          this.#setBindGroups(
+          this.setBindGroups(
             renderEncoder,
             drawable.bindGroups,
             bindGroupStartIndex,
