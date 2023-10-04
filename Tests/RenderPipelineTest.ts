@@ -79,7 +79,6 @@ declare const pipelineLayouts_missing_texture_2d: readonly [
 
 const fragmentshaderfunction = new FragmentShaderFunction(
   diffuseOutput,
-  UI_Input,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
         let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
@@ -89,6 +88,7 @@ const fragmentshaderfunction = new FragmentShaderFunction(
         //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
+  UI_Input,
 ) satisfies FragmentShaderFunction<
   readonly [
     {
@@ -100,7 +100,6 @@ const fragmentshaderfunction = new FragmentShaderFunction(
 >;
 const fragmentshaderfunction_no_input = new FragmentShaderFunction(
   diffuseOutput,
-  undefined,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
         let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
@@ -122,7 +121,6 @@ const fragmentshaderfunction_no_input = new FragmentShaderFunction(
 
 const fragmentshaderfunction_different_input = new FragmentShaderFunction(
   diffuseOutput,
-  UI_Input2,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
         let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
@@ -132,6 +130,7 @@ const fragmentshaderfunction_different_input = new FragmentShaderFunction(
         //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
+  UI_Input2,
 ) satisfies FragmentShaderFunction<
   readonly [
     {

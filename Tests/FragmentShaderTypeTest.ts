@@ -41,7 +41,6 @@ declare const gpu: GPUDevice;
 
 const fragmentshaderfunction = new FragmentShaderFunction(
   diffuseOutput,
-  UI_Input,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
         let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
@@ -51,6 +50,7 @@ const fragmentshaderfunction = new FragmentShaderFunction(
         //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
+  UI_Input,
 ) satisfies FragmentShaderFunction<
   readonly [
     {
@@ -61,7 +61,6 @@ const fragmentshaderfunction = new FragmentShaderFunction(
 
 const fragmentshaderfunction_array = new FragmentShaderFunction(
   diffuseOutput,
-  UI_Input,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
         let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0', '0')};
@@ -71,6 +70,7 @@ const fragmentshaderfunction_array = new FragmentShaderFunction(
         //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
+  UI_Input,
 ) satisfies FragmentShaderFunction<
   readonly [
     {
@@ -94,13 +94,13 @@ new FragmentShader({
 
 const vertexshaderfunction_no_texture = new FragmentShaderFunction(
   diffuseOutput,
-  UI_Input,
   () => /* wgsl */ `
       let fragCoordI=vec2<i32>(floor(v_uv));
       let color:vec4<f32> = vec4<f32>(0.5,0.5,0.5,1.0);
       var output:Output;  
       output.Diffuse=color;
       return output;`,
+  UI_Input,
 ) satisfies FragmentShaderFunction<
   // eslint-disable-next-line @typescript-eslint/ban-types
   readonly [{}]

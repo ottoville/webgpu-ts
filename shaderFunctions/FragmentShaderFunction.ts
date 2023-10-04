@@ -24,8 +24,8 @@ export class FragmentShaderFunction<
   #code: (args: any) => string;
   constructor(
     public output: [properties: string, type: wgslType] | Struct,
-    public inputs: I,
     code: (args: FilteredBindEntrys<B, FragmentEntry>) => string,
+    public inputs: I = undefined as I,
   ) {
     this.#code = code;
   }
