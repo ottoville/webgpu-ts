@@ -97,28 +97,26 @@ export class VertexShaderFunction<
       return Object.fromEntries(keys.map((o, i) => [o, keys[i]!]));
     }) as { [K in keyof V]: { [KK in keyof V[K]['attributes2']]: KK } };
 
-    let attributesString = '';
-    const bufferVariables: string[] = [];
+    const attributesString: string[] = [];
     this.vertexBufferLayout.forEach((buffer) => {
       for (const varName in buffer.attributes2) {
-        bufferVariables.push(varName);
-        attributesString += `@location(${
-          buffer.attributes2[varName]!.shaderLocation
-        }) ${varName} : ${buffer.attributes2[varName]!.shaderFormat},\n`;
+        attributesString.push(
+          `@location(${
+            buffer.attributes2[varName]!.shaderLocation
+          }) ${varName} : ${buffer.attributes2[varName]!.shaderFormat}`,
+        );
       }
     });
     const [code, buildins] = this.#code(bindGroups, variableNames);
+    buildins.forEach((buildin) => {
+      attributesString.push(
+        `@builtin(${buildin[0]}) ${VertexBuildin[buildin[0]]} : ${buildin[1]}`,
+      );
+    });
     const wgsl = /* wgsl */ `
             @vertex
             fn ${name}(
-                ${[...buildins]
-                  .map((buildin) => {
-                    return `@builtin(${buildin[0]}) ${
-                      VertexBuildin[buildin[0]]
-                    } : ${buildin[1]}`;
-                  })
-                  .join('\n')}
-                ${attributesString}
+                ${attributesString.join(',\n')}
                 ) -> ${
                   this.output instanceof Struct
                     ? this.output.name
