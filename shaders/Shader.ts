@@ -41,11 +41,13 @@ export abstract class Shader<
   E extends { [index: string]: ShaderFunction } = {
     [index: string]: ShaderFunction;
   },
+  P extends readonly PipelineLayout[] = readonly PipelineLayout[],
 > {
   module: GPUShaderModule;
   wgsl: string;
+  readonly props: ShaderParams<E, P>;
   constructor(
-    props: ShaderParamsConstructor<E>,
+    props: ShaderParamsConstructor<E, P>,
     shaderFlag: ShaderStage,
     structs: Set<Struct> = new Set(),
   ) {
@@ -96,6 +98,7 @@ export abstract class Shader<
       (bl) => bl.entries,
     );
     if (props.constantCode) {
+      //@ts-expect-error
       this.wgsl += props.constantCode(entries);
       delete props.constantCode;
     }
@@ -115,5 +118,6 @@ export abstract class Shader<
       hints: pipelineLayouts,
       label: props.label,
     });
+    this.props = Object.freeze(props);
   }
 }

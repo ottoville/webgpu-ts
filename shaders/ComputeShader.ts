@@ -1,12 +1,7 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import type { ComputeShaderFunction } from '../shaderFunctions/ComputeShaderFunction.js';
 import type { PipelineLayout } from '../PipelineLayout.js';
-import {
-  Shader,
-  type ShaderParams,
-  ShaderStage,
-  type ShaderParamsConstructor,
-} from './Shader.js';
+import { Shader, ShaderStage, type ShaderParamsConstructor } from './Shader.js';
 
 export type ComputeEntry = BindGroupLayoutEntry<
   | ShaderStage.COMPUTE
@@ -22,11 +17,9 @@ export class ComputeShader<
   }>,
   //TODO: Compute shader have no reason to have multiple pipelinelayouts, as it is not part of any pipeline
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
-> extends Shader<E> {
-  readonly props: ShaderParams<E, P>;
+> extends Shader<E, P> {
   constructor(props: ShaderParamsConstructor<E, P, ComputeEntry>) {
-    super(props as ShaderParams<E>, ShaderStage.COMPUTE);
-    this.props = Object.freeze(props);
+    super(props as ShaderParamsConstructor<E, P>, ShaderStage.COMPUTE);
   }
   createComputePipeline(entryPoint: keyof E) {
     return this.props.pipelineLayouts[0]!.gpu.createComputePipelineAsync({

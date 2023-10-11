@@ -2,7 +2,6 @@ import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunctio
 import {
   Shader,
   type ShaderParamsConstructor,
-  type ShaderParams,
   type ShaderStage,
 } from './Shader.js';
 import { Struct } from '../Struct.js';
@@ -21,8 +20,7 @@ export abstract class OutputShader<
     [index: string]: outputShaderFunction;
   }>,
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
-> extends Shader<E> {
-  readonly props: ShaderParams<E, P>;
+> extends Shader<E, P> {
   constructor(
     props:
       | ShaderParamsConstructor<E, P, VertexEntry>
@@ -35,7 +33,6 @@ export abstract class OutputShader<
       if (entryPoint.output instanceof Struct)
         outputStructs.add(entryPoint.output);
     }
-    super(props as ShaderParams<E>, shaderFlag, outputStructs);
-    this.props = Object.freeze(props);
+    super(props as ShaderParamsConstructor<E, P>, shaderFlag, outputStructs);
   }
 }
