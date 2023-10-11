@@ -1,9 +1,15 @@
-import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction.js';
-import { Shader, type ShaderParams, type ShaderStage } from './Shader.js';
+import {
+  Shader,
+  type ShaderParamsConstructor,
+  type ShaderParams,
+  type ShaderStage,
+} from './Shader.js';
 import { Struct } from '../Struct.js';
 import type { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
 import type { RenderPipelineLayout } from '../PipelineLayout.js';
+import type { VertexEntry } from './VertexShader.js';
+import type { FragmentEntry } from './FragmentShader.js';
 
 type outputShaderFunction = VertexShaderFunction | FragmentShaderFunction;
 
@@ -14,19 +20,14 @@ export abstract class OutputShader<
   E extends Readonly<{ [index: string]: outputShaderFunction }> = Readonly<{
     [index: string]: outputShaderFunction;
   }>,
-  //TODO: use renderpipelinelayout
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends Shader<E> {
+  readonly props: ShaderParams<E, P>;
   constructor(
-    public override props: ShaderParams<E, P>,
+    props:
+      | ShaderParamsConstructor<E, P, VertexEntry>
+      | ShaderParamsConstructor<E, P, FragmentEntry>,
     shaderFlag: ShaderStage,
-    constantCode?:
-      | ((
-          b: Readonly<{
-            [index: string]: BindGroupLayoutEntry;
-          }>[],
-        ) => string)
-      | undefined,
   ) {
     const outputStructs: Set<Struct> = new Set();
     for (const key in props.entryPoints) {
@@ -34,6 +35,7 @@ export abstract class OutputShader<
       if (entryPoint.output instanceof Struct)
         outputStructs.add(entryPoint.output);
     }
-    super(props, shaderFlag, constantCode, outputStructs);
+    super(props as ShaderParams<E>, shaderFlag, outputStructs);
+    this.props = Object.freeze(props);
   }
 }

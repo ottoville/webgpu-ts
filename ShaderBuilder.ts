@@ -150,14 +150,12 @@ export class VertexShaderBuilder<
       args: FilteredBindgroupEntrys<P[number]['bindGroupLayouts'], VertexEntry>,
     ) => string,
   ) {
-    return new VertexShader(
-      {
-        entryPoints: this.entryPoints,
-        label,
-        pipelineLayouts: this.pipelineLayouts,
-      },
+    return new VertexShader({
       constantCode,
-    );
+      entryPoints: this.entryPoints,
+      label,
+      pipelineLayouts: this.pipelineLayouts,
+    });
   }
 }
 export class ComputeShaderBuilder<

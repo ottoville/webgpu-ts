@@ -1,8 +1,7 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import { OutputShader } from './OutputShader.js';
 import type { RenderPipelineLayout } from '../PipelineLayout.js';
-import { type ShaderParams, ShaderStage } from './Shader.js';
-import type { FilteredBindgroupEntrys } from '../Utilities.js';
+import { ShaderStage, type ShaderParamsConstructor } from './Shader.js';
 import type { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction.js';
 
 export type FragmentEntry = BindGroupLayoutEntry<
@@ -19,20 +18,7 @@ export class FragmentShader<
   }>,
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends OutputShader<E, P> {
-  constructor(
-    props: ShaderParams<E, P>,
-    constantCode?: (
-      args: FilteredBindgroupEntrys<
-        P[number]['bindGroupLayouts'],
-        FragmentEntry
-      >,
-    ) => string,
-  ) {
-    super(
-      props,
-      ShaderStage.FRAGMENT,
-      //@ts-expect-error TODO
-      constantCode,
-    );
+  constructor(props: ShaderParamsConstructor<E, P, FragmentEntry>) {
+    super(props, ShaderStage.FRAGMENT);
   }
 }

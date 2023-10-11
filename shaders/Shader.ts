@@ -1,7 +1,7 @@
 import { type BindGroupLayoutEntry, BufLayout } from '../BindgroupLayout.js';
 import type { PipelineLayout } from '../PipelineLayout.js';
 import type { Struct } from '../Struct.js';
-import type { ShaderFunction } from '../Utilities.js';
+import type { FilteredBindgroupEntrys, ShaderFunction } from '../Utilities.js';
 
 export const enum ShaderStage {
   VERTEX = 1,
@@ -23,6 +23,19 @@ export type ShaderParams<
   label: string;
   readonly pipelineLayouts: P;
 };
+export interface ShaderParamsConstructor<
+  E extends Readonly<{ [index: string]: ShaderFunction }> = Readonly<{
+    [index: string]: ShaderFunction;
+  }>,
+  P extends readonly PipelineLayout[] = readonly PipelineLayout[],
+  F extends BindGroupLayoutEntry = BindGroupLayoutEntry,
+> extends ShaderParams<E, P> {
+  constantCode?:
+    | ((
+        args: FilteredBindgroupEntrys<P[number]['bindGroupLayouts'], F>,
+      ) => string)
+    | undefined;
+}
 
 export abstract class Shader<
   E extends { [index: string]: ShaderFunction } = {
@@ -32,18 +45,11 @@ export abstract class Shader<
   module: GPUShaderModule;
   wgsl: string;
   constructor(
-    public props: ShaderParams<E>,
+    props: ShaderParamsConstructor<E>,
     shaderFlag: ShaderStage,
-    constantCode?:
-      | ((
-          b: Readonly<{
-            [index: string]: BindGroupLayoutEntry;
-          }>[],
-        ) => string)
-      | undefined,
     structs: Set<Struct> = new Set(),
   ) {
-    const groups = this.props.pipelineLayouts[0]!.bindGroupLayouts.reduce(
+    const groups = props.pipelineLayouts[0]!.bindGroupLayouts.reduce(
       (groupstring, group, gi) => {
         return Object.entries(group.entries).reduce(
           (acc, [variableName, binding], bi) => {
@@ -86,25 +92,28 @@ export abstract class Shader<
     //
     this.wgsl = groups + structString;
 
-    const entries = this.props.pipelineLayouts[0]!.bindGroupLayouts.map(
+    const entries = props.pipelineLayouts[0]!.bindGroupLayouts.map(
       (bl) => bl.entries,
     );
-    if (constantCode) this.wgsl += constantCode(entries);
+    if (props.constantCode) {
+      this.wgsl += props.constantCode(entries);
+      delete props.constantCode;
+    }
     const pipelineLayouts: { [index: string]: GPUShaderModuleCompilationHint } =
       {};
     for (const key in props.entryPoints) {
       const entryPoint = props.entryPoints[key]!;
       this.wgsl += entryPoint.createCode(entries, key);
       //@ts-expect-error https://github.com/gpuweb/gpuweb/issues/4233
-      pipelineLayouts[key] = this.props.pipelineLayouts.map(
+      pipelineLayouts[key] = props.pipelineLayouts.map(
         (pipelineLayout) => pipelineLayout.layout,
       );
     }
-    const gpu = this.props.pipelineLayouts[0]!.gpu;
+    const gpu = props.pipelineLayouts[0]!.gpu;
     this.module = gpu.createShaderModule({
       code: this.wgsl,
       hints: pipelineLayouts,
-      label: this.props.label,
+      label: props.label,
     });
   }
 }
