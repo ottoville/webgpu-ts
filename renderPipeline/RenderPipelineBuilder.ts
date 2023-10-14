@@ -58,7 +58,7 @@ export class RenderPipelineBuilder<
     renderPipelineLayout: RenderPipelineLayout,
   ) {
     this.pipelineLayout = renderPipelineLayout.layout;
-    renderPipelineLayout.renderPipeLines.add(this);
+    renderPipelineLayout.renderPipeLineBuilders.add(this);
   }
   build<
     D extends RenderPipelineBuilderDesc<V, F>,

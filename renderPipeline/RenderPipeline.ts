@@ -27,9 +27,17 @@ export class RenderPipeline<
 
   readonly drawables: Drawable<L, B>[] = [];
   readonly onDrawableChange: Set<() => void> = new Set();
+  renderBundles: Set<RenderBundleEncoder> = new Set();
+  removeDrawable(drawable: Drawable<L, B>) {
+    const index = this.drawables.indexOf(drawable);
+    if (index >= 0) {
+      this.drawables.splice(index, 1);
+      this.onDrawableChange.forEach((cb) => cb());
+      this.renderBundles.forEach((rb) => rb.destroy());
+    }
+  }
   addDrawable(drawable: Drawable<L, B>) {
     this.drawables.push(drawable);
     this.onDrawableChange.forEach((cb) => cb());
-    return this.drawables;
   }
 }

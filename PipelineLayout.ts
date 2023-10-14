@@ -54,7 +54,7 @@ export class RenderPipelineLayout<
       RenderPipelineLayout.prototype,
     );
   }
-  renderPipeLines: Set<RenderPipelineBuilder> = new Set();
+  renderPipeLineBuilders: Set<RenderPipelineBuilder> = new Set();
   subBindGroups: RenderPipelineLayout[] = [];
   constructor(
     props: PipeLineLayoutProps<B>,
@@ -91,11 +91,6 @@ export class RenderPipelineLayout<
     renderpass: Renderpass,
     bindGroupStartIndex = 0,
   ): number {
-    const nativeEncoder =
-      renderEncoder instanceof GPURenderPassEncoder
-        ? renderEncoder
-        : renderEncoder.renderBundleEncoder;
-
     let meshesDrawn = 0;
     this.setBindGroups(
       renderEncoder,
@@ -104,10 +99,12 @@ export class RenderPipelineLayout<
     );
     bindGroupStartIndex += this.sharedBindgroups.length;
 
-    this.renderPipeLines.forEach((renderPipeline) => {
-      const variant = renderpass.renderPipelines.get(renderPipeline);
-      if (variant instanceof RenderPipeline) {
-        var drawables = variant.drawables;
+    this.renderPipeLineBuilders.forEach((renderPipelineBuilder) => {
+      const renderPipeline = renderpass.renderPipelines.get(
+        renderPipelineBuilder,
+      );
+      if (renderPipeline instanceof RenderPipeline) {
+        var drawables = renderPipeline.drawables;
         if (!drawables || drawables.length == 0) {
           console.warn(
             'No drawables has been set for renderpass',
@@ -116,7 +113,15 @@ export class RenderPipelineLayout<
           );
           return;
         }
-        nativeEncoder.setPipeline(variant.pipeline);
+        let nativeEncoder: GPURenderPassEncoder | GPURenderBundleEncoder;
+        if (renderEncoder instanceof GPURenderPassEncoder) {
+          nativeEncoder = renderEncoder;
+        } else {
+          nativeEncoder = renderEncoder.renderBundleEncoder;
+          renderPipeline.renderBundles.add(renderEncoder);
+        }
+
+        nativeEncoder.setPipeline(renderPipeline.pipeline);
         drawables.forEach((drawable) => {
           this.setBindGroups(
             renderEncoder,
