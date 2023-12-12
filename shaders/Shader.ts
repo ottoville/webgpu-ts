@@ -102,20 +102,23 @@ export abstract class Shader<
       this.wgsl += props.constantCode(entries);
       delete props.constantCode;
     }
-    const pipelineLayouts: { [index: string]: GPUShaderModuleCompilationHint } =
-      {};
+    const compilationHints: GPUShaderModuleCompilationHint[] = [];
     for (const key in props.entryPoints) {
       const entryPoint = props.entryPoints[key]!;
       this.wgsl += entryPoint.createCode(entries, key);
-      //@ts-expect-error https://github.com/gpuweb/gpuweb/issues/4233
-      pipelineLayouts[key] = props.pipelineLayouts.map(
-        (pipelineLayout) => pipelineLayout.layout,
+      compilationHints.push(
+        ...props.pipelineLayouts.map((pipelineLayout) => {
+          return {
+            entryPoint: key,
+            layout: pipelineLayout.layout,
+          };
+        }),
       );
     }
     const gpu = props.pipelineLayouts[0]!.gpu;
     this.module = gpu.createShaderModule({
       code: this.wgsl,
-      hints: pipelineLayouts,
+      compilationHints,
       label: props.label,
     });
     this.props = Object.freeze(props);
