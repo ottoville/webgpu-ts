@@ -131,9 +131,16 @@ export class RenderPipelineLayout<
 
           drawable.vertexBuffers.forEach((buffer, index) => {
             console.debug(
-              'set vertexBuffer index',
-              index,
+              'set vertexBuffer for',
               buffer.buffer.props.label,
+              ', index:',
+              index,
+              ', offset:',
+              buffer.offset,
+              ', size:',
+              buffer.size,
+              ', actual buffer size:',
+              buffer.buffer.props.size,
             );
             nativeEncoder.setVertexBuffer(
               index,
