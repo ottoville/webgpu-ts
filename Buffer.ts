@@ -128,7 +128,7 @@ export class Buffer<U extends BufferUsageEnums> extends Bindable {
     ) {
       //https://gpuweb.github.io/gpuweb/#dom-supported-limits-maxstoragebufferbindingsize
       throw new Error(
-        `Tried to create buffer ${props.label} for binding but the size is too large with size ${props.size}`,
+        `Tried to create buffer ${props.label} for storage binding but the size is too large with size ${props.size}`,
       );
     }
     super();
@@ -154,8 +154,8 @@ export class Buffer<U extends BufferUsageEnums> extends Bindable {
     this: Buffer<COPY_DST_BUFFER>,
     commandEncoder: GPUCommandEncoder,
     from: Texture<GPUTextureFormat, COPY_SRC_TEXTURE>,
-    sourceDetails: Omit<GPUImageCopyTexture, 'texture'>,
-    destinationDataLayout: GPUImageDataLayout,
+    sourceDetails: Omit<GPUImageCopyTexture, 'texture'> | undefined,
+    destinationDataLayout: GPUImageDataLayout | undefined,
     copySize: GPUExtent3DStrict,
   ) {
     commandEncoder.copyTextureToBuffer(
