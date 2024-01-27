@@ -21,15 +21,26 @@ export class FragmentShaderFunction<
     | undefined,
 > {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  #code: (args: any) => string;
+  #code: (...args: any) => string;
   constructor(
     public output: [properties: string, type: wgslType] | Struct,
-    code: (args: FilteredBindEntrys<B, FragmentEntry>) => string,
+    code: (
+      args: FilteredBindEntrys<B, FragmentEntry>,
+      inputs: I extends Struct
+        ? { [K in keyof I['properties']]: K }
+        : undefined,
+    ) => string,
     public inputs: I = undefined as I,
   ) {
     this.#code = code;
   }
   createCode(bindGroups: FilteredBindEntrys<B, FragmentEntry>, name: string) {
+    var inputs: { [index: string]: string } | undefined = undefined;
+    if (this.inputs instanceof Struct) {
+      const keys = Object.keys(this.inputs.properties);
+      inputs = Object.fromEntries(keys.map((o, i) => [o, keys[i]!]));
+    }
+
     const wgsl = /* wgsl */ `
                 @fragment
                 fn ${name}(
@@ -44,7 +55,7 @@ export class FragmentShaderFunction<
                         : this.output.join(' ')
                     }
                     {
-                        ${this.#code(bindGroups)}
+                        ${this.#code(bindGroups, inputs)}
                     }`;
     return wgsl;
   }

@@ -2,7 +2,7 @@ import type {
   AnyComputeStage,
   ComputeShaderFunction,
 } from './shaderFunctions/ComputeShaderFunction.js';
-import { FragmentShader } from './shaders/FragmentShader.js';
+import { FragmentEntry, FragmentShader } from './shaders/FragmentShader.js';
 import {
   AnyFragmentStage,
   FragmentShaderFunction,
@@ -128,8 +128,17 @@ export class FragmentShaderBuilder<
   constructor(p: P) {
     super(p);
   }
-  build(label: string) {
+  build(
+    label: string,
+    constantCode?: (
+      args: FilteredBindgroupEntrys<
+        P[number]['bindGroupLayouts'],
+        FragmentEntry
+      >,
+    ) => string,
+  ) {
     return new FragmentShader({
+      constantCode,
       entryPoints: this.entryPoints,
       label,
       pipelineLayouts: this.pipelineLayouts,
