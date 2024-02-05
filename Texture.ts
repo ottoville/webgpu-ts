@@ -120,6 +120,7 @@ export const enum TextureUsageEnums {
   TEXTURE_BINDING = 4,
   RENDER_ATTACHMENT = 16,
   'TEXTURE_BINDING|COPY_DST' = 6,
+  'TEXTURE_BINDING|COPY_DST|COPY_SRC' = 7,
   'RENDER_ATTACHMENT|COPY_SRC' = 17,
   'RENDER_ATTACHMENT|TEXTURE_BINDING' = 20,
   'RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_SRC' = 21,
@@ -132,6 +133,7 @@ export const enum TextureUsageEnums {
 export type COPY_SRC_TEXTURE =
   | (typeof TextureUsageEnums)['COPY_SRC']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|COPY_SRC']
+  | (typeof TextureUsageEnums)['TEXTURE_BINDING|COPY_DST|COPY_SRC']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_DST|COPY_SRC']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_DST|COPY_SRC|STORAGE_BINDING']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_SRC']
@@ -139,6 +141,7 @@ export type COPY_SRC_TEXTURE =
 type COPY_DST_TEXTURE =
   | (typeof TextureUsageEnums)['COPY_DST']
   | (typeof TextureUsageEnums)['TEXTURE_BINDING|COPY_DST']
+  | (typeof TextureUsageEnums)['TEXTURE_BINDING|COPY_DST|COPY_SRC']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_DST']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_DST|COPY_SRC']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_DST|COPY_SRC|STORAGE_BINDING'];
@@ -157,6 +160,7 @@ export type RENDER_TARGET_TEXTURE =
 export type TEXTURE_BINDING_TEXTURE =
   | (typeof TextureUsageEnums)['TEXTURE_BINDING']
   | (typeof TextureUsageEnums)['TEXTURE_BINDING|COPY_DST']
+  | (typeof TextureUsageEnums)['TEXTURE_BINDING|COPY_DST|COPY_SRC']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_DST']
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_DST|COPY_SRC']
