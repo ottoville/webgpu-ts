@@ -346,11 +346,10 @@ export class Texture<
       copySize,
     );
   }
-  async toBitmap(this: RenderTargetTexture, depth = 0) {
-    /*  if (this.renderPass.sampleCount > 1 && !this.resolveTexture) {
-              throw (new Error('Printing MSAA swap target is not supported'))
-          }*/
-
+  async toBitmap(
+    this: Texture<GPUTextureFormat, TextureUsageEnums, Texture2dSize>,
+    depth = 0,
+  ) {
     //Use for debugging purpose.
     //this.#debug = true;
     let add_copy_src = false;
@@ -421,37 +420,32 @@ export class Texture<
     }
     return data;
   }
-  async print_bitmap(this: RenderTargetTexture) {
+  async print_bitmap(
+    this: Texture<GPUTextureFormat, TextureUsageEnums, Texture2dSize>,
+  ) {
     let bytesPerRow = this.props.size.width * this.bytes_per_fixel;
     const missAlignment = bytesPerRow % 256;
     if (missAlignment !== 0) {
       bytesPerRow = bytesPerRow - missAlignment + 256;
     }
 
-    const c = document.createElement('canvas');
-    c.width = this.props.size.width;
-    c.height = this.props.size.height;
+    const c = new OffscreenCanvas(
+      this.props.size.width,
+      this.props.size.height,
+    );
 
     const ctx = c.getContext('2d');
     if (!ctx) {
       throw new Error('Cannot get context');
     }
-    const imageData = ctx.createImageData(
-      bytesPerRow / this.bytes_per_fixel,
-      c.height,
-    );
-    const data = await this.toBitmap();
-    imageData.data.set(data);
-    ctx.putImageData(imageData, 0, 0);
-    c.toBlob(
-      (b) => {
-        if (!b) {
-          throw new Error('Blob creation failed');
-        }
+    ctx.putImageData(new ImageData(await this.toBitmap(), c.height), 0, 0);
+    return c
+      .convertToBlob({
+        quality: 0.96,
+        type: 'image&jpeg',
+      })
+      .then((b) => {
         console.log(URL.createObjectURL(b));
-      },
-      'image/jpeg',
-      0.96,
-    );
+      });
   }
 }
