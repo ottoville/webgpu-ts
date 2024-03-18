@@ -125,9 +125,6 @@ export class FragmentShaderBuilder<
   E extends {} = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends ShaderBuilder<P, E> {
-  constructor(p: P) {
-    super(p);
-  }
   build(
     label: string,
     constantCode?: (
@@ -150,9 +147,6 @@ export class VertexShaderBuilder<
   E extends {} = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends ShaderBuilder<P, E> {
-  constructor(p: P) {
-    super(p);
-  }
   build(
     label: string,
     constantCode?: (
@@ -172,9 +166,6 @@ export class ComputeShaderBuilder<
   E extends {} = {},
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
 > extends ShaderBuilder<P, E> {
-  constructor(p: P) {
-    super(p);
-  }
   build(label: string) {
     return new ComputeShader({
       entryPoints: this.entryPoints,

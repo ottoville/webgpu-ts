@@ -27,6 +27,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
     '@typescript-eslint/no-explicit-any': ['error'],
     '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-useless-constructor': 'error',
     'promise/catch-or-return': 'error',
     'no-var': 'off',
     'no-cond-assign': 'off',
