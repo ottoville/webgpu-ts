@@ -15,13 +15,13 @@ export type MapToGPUBindGroupEntry<
         >
       >
     : // Any other texture
-    T[K] extends TextLayout<ShaderStage, TextLayoutFormats>
-    ?
-        | TextureView<Texture<GPUTextureFormat, TEXTURE_BINDING_TEXTURE>>
-        | GPUExternalTexture
-    : T[K] extends BufLayout
-    ? GPUBufferBinding
-    : GPUBindingResource;
+      T[K] extends TextLayout<ShaderStage, TextLayoutFormats>
+      ?
+          | TextureView<Texture<GPUTextureFormat, TEXTURE_BINDING_TEXTURE>>
+          | GPUExternalTexture
+      : T[K] extends BufLayout
+        ? GPUBufferBinding
+        : GPUBindingResource;
 };
 
 interface BindGroupLayoutEntryProps<V extends ShaderStage = ShaderStage>

@@ -195,8 +195,8 @@ export class RenderPipelineLayout<
             }
               ? T[K]['bindGroup']['layout']
               : T[K] extends BGLayout
-              ? T[K]
-              : never;
+                ? T[K]
+                : never;
           },
         ],
         label,
