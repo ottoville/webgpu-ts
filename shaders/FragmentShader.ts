@@ -1,6 +1,6 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import { OutputShader } from './OutputShader.js';
-import type { RenderPipelineLayout } from '../PipelineLayout.js';
+import type { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout.js';
 import { ShaderStage, type ShaderParamsConstructor } from './Shader.js';
 import type { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction.js';
 

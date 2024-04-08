@@ -13,7 +13,7 @@ import { position_uv_attrs } from './VertexShaderTypeTest';
 import { VertexBufferLayout2 } from '../shaders/VertexShader';
 import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
-import { RenderPipelineLayout } from '../PipelineLayout';
+import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import {
   VertexShaderFunction,
   WGSLcode,

@@ -1,5 +1,5 @@
 import type { BGLayout, BindGroupLayoutEntry } from './BindgroupLayout';
-import type { PipelineLayout } from './PipelineLayout';
+import type { PipelineLayout } from './pipelineLayots/PipelineLayout';
 import type { ComputeShaderFunction } from './shaderFunctions/ComputeShaderFunction';
 import type { FragmentShaderFunction } from './shaderFunctions/FragmentShaderFunction';
 import type { VertexShaderFunction } from './shaderFunctions/VertexShaderFunction';

@@ -1,5 +1,5 @@
 import { BGLayout } from '../BindgroupLayout.js';
-import type { RenderPipelineLayout } from '../PipelineLayout.js';
+import type { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout.js';
 import type { Renderpass } from '../Renderpass.js';
 import type { PipelineIntersection } from '../Utilities.js';
 import { ColorWriteEnum } from '../renderTargets/ColorRenderTarget.js';

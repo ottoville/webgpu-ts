@@ -52,7 +52,8 @@ export {
   RenderPipeline,
   type Drawable,
 } from './renderPipeline/RenderPipeline.js';
-export { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
+export { PipelineLayout } from './pipelineLayots/PipelineLayout.js';
+export { RenderPipelineLayout } from './pipelineLayots/RenderPipelineLayout.js';
 export {
   ShaderBuilder,
   type VertexShaderBuilder,

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
-import { RenderPipelineLayout } from '../PipelineLayout';
+import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
 import { ShaderBuilder } from '../ShaderBuilder';
 import { Struct, position_vec2f32, UI_Input } from '../Struct';
@@ -86,13 +86,8 @@ const vertexshaderfunction = new VertexShaderFunction(
 >;
 
 //Should be fine
-new VertexShader({
-  entryPoints: {
-    main: vertexshaderfunction,
-  },
-  label: 'UI.vert',
-  pipelineLayouts,
-});
+const builder2 = new ShaderBuilder(pipelineLayouts);
+builder2.addFunction('main', vertexshaderfunction).build('UI.vert');
 
 const vertexshaderfunction_no_uniforms = new VertexShaderFunction(
   UI_Input,

@@ -7,7 +7,8 @@ import {
   AnyFragmentStage,
   FragmentShaderFunction,
 } from './shaderFunctions/FragmentShaderFunction.js';
-import type { PipelineLayout, RenderPipelineLayout } from './PipelineLayout.js';
+import type { PipelineLayout } from './pipelineLayots/PipelineLayout.js';
+import type { RenderPipelineLayout } from './pipelineLayots/RenderPipelineLayout.js';
 import {
   VertexBufferLayout2,
   VertexEntry,
@@ -17,7 +18,7 @@ import {
   AnyVertexStage,
   VertexShaderFunction,
 } from './shaderFunctions/VertexShaderFunction.js';
-import { ComputeShader } from './shaders/ComputeShader.js';
+import { ComputeEntry, ComputeShader } from './shaders/ComputeShader.js';
 import type { FilteredBindgroupEntrys, LayoutEntries } from './Utilities.js';
 import type { BindGroupLayoutEntry } from './BindgroupLayout.js';
 import { Struct, wgslType } from './Struct.js';
@@ -166,8 +167,17 @@ export class ComputeShaderBuilder<
   E extends {} = {},
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
 > extends ShaderBuilder<P, E> {
-  build(label: string) {
+  build(
+    label: string,
+    constantCode?: (
+      args: FilteredBindgroupEntrys<
+        P[number]['bindGroupLayouts'],
+        ComputeEntry
+      >,
+    ) => string,
+  ) {
     return new ComputeShader({
+      constantCode,
       entryPoints: this.entryPoints,
       label,
       pipelineLayouts: this.pipelineLayouts,

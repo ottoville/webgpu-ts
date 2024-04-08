@@ -1,6 +1,6 @@
 import type { BindGroupLayoutEntry } from '../BindgroupLayout.js';
 import type { ComputeShaderFunction } from '../shaderFunctions/ComputeShaderFunction.js';
-import type { PipelineLayout } from '../PipelineLayout.js';
+import type { PipelineLayout } from '../pipelineLayots/PipelineLayout.js';
 import { Shader, ShaderStage, type ShaderParamsConstructor } from './Shader.js';
 
 export type ComputeEntry = BindGroupLayoutEntry<

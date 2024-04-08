@@ -1,5 +1,5 @@
 import { type BindGroupLayoutEntry, BufLayout } from '../BindgroupLayout.js';
-import type { PipelineLayout } from '../PipelineLayout.js';
+import type { PipelineLayout } from '../pipelineLayots/PipelineLayout.js';
 import type { Struct } from '../Struct.js';
 import type { FilteredBindgroupEntrys, ShaderFunction } from '../Utilities.js';
 
@@ -116,6 +116,7 @@ export abstract class Shader<
       );
     }
     const gpu = props.pipelineLayouts[0]!.gpu;
+    console.debug('create shader', props.label, this.wgsl);
     this.module = gpu.createShaderModule({
       code: this.wgsl,
       compilationHints,

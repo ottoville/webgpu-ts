@@ -6,7 +6,7 @@ import {
 } from './Shader.js';
 import { Struct } from '../Struct.js';
 import type { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
-import type { RenderPipelineLayout } from '../PipelineLayout.js';
+import type { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout.js';
 import type { VertexEntry } from './VertexShader.js';
 import type { FragmentEntry } from './FragmentShader.js';
 

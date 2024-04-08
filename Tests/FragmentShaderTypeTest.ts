@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { FragmentShader } from '../shaders/FragmentShader';
-import { RenderPipelineLayout } from '../PipelineLayout';
+import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
 import { ShaderBuilder } from '../ShaderBuilder';
 import { position_vec2f32, UI_Input, diffuseOutput } from '../Struct';
@@ -44,10 +44,7 @@ const fragmentshaderfunction = new FragmentShaderFunction(
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
         let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
-    
         var output:Output;
-    
-        //output.Color=vec4<f32>(0.5,0.5,0.5,1.0);
         output.Diffuse=color;
         return output;`,
   UI_Input,
