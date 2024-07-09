@@ -175,9 +175,12 @@ export class Buffer<U extends BufferUsageEnums> extends Bindable {
     callback: (buff: ArrayBuffer) => Promise<void> | void,
   ) {
     await this.#buffer.mapAsync(GPUMapMode.READ);
-    const arrbuff = this.#buffer.getMappedRange();
-    await callback(arrbuff);
-    this.#buffer.unmap();
+    try {
+      const arrbuff = this.#buffer.getMappedRange();
+      await callback(arrbuff);
+    } finally {
+      this.#buffer.unmap();
+    }
   }
   async readAndDestroy(
     this: Buffer<MAP_READ_BUFFER>,
@@ -319,7 +322,13 @@ export class Buffer<U extends BufferUsageEnums> extends Bindable {
     }
   }
   /**
+   *
    * @deprecated Use something with commandencoder
+   *
+   * @param bufferOffset Offset in bytes into buffer to begin writing at
+   * @param data Data to write into buffer.
+   * @param dataOffset Offset in into data to begin writing from. Given in elements if data is a TypedArray and bytes otherwise
+   * @param writeSize Size of content to write from data to buffer. Given in elements if data is a TypedArray and bytes otherwise
    */
   write(
     this: Buffer<COPY_DST_BUFFER>,
