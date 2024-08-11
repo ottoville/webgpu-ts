@@ -78,7 +78,7 @@ export class VertexShaderFunction<
     code: (
       args: FilteredBindEntrys<B, VertexEntry>,
       bufferArgs: Readonly<{
-        [K in keyof V]: { [KK in keyof V[K]['attributes2']]: KK };
+        [K in keyof V]: { [KK in keyof V[K]['attributes']]: KK };
       }>,
     ) => VertexShaderCode,
   ) {
@@ -87,23 +87,23 @@ export class VertexShaderFunction<
     this.buffers = vertexBufferLayout.map((layout) => {
       return {
         ...layout,
-        attributes: Object.values(layout.attributes2),
+        attributes: Object.values(layout.attributes),
       };
     });
   }
   createCode(bindGroups: FilteredBindEntrys<B, VertexEntry>, name: string) {
     const variableNames = this.vertexBufferLayout.map((buffer) => {
-      const keys = Object.keys(buffer.attributes2);
+      const keys = Object.keys(buffer.attributes);
       return Object.fromEntries(keys.map((o, i) => [o, keys[i]!]));
-    }) as { [K in keyof V]: { [KK in keyof V[K]['attributes2']]: KK } };
+    }) as { [K in keyof V]: { [KK in keyof V[K]['attributes']]: KK } };
 
     const attributesString: string[] = [];
     this.vertexBufferLayout.forEach((buffer) => {
-      for (const varName in buffer.attributes2) {
+      for (const varName in buffer.attributes) {
         attributesString.push(
           `@location(${
-            buffer.attributes2[varName]!.shaderLocation
-          }) ${varName} : ${buffer.attributes2[varName]!.shaderFormat}`,
+            buffer.attributes[varName]!.shaderLocation
+          }) ${varName} : ${buffer.attributes[varName]!.shaderFormat}`,
         );
       }
     });

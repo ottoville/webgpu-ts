@@ -38,6 +38,11 @@ export class RenderPipelineLayout<
   ) {
     if (renderEncoder instanceof GPURenderPassEncoder) {
       bindgroups.forEach((bindGroup) => {
+        console.debug(
+          'set bindgroup',
+          bindGroupStartIndex,
+          bindGroup.bindGroup.bindGroup.label,
+        );
         renderEncoder.setBindGroup(
           bindGroupStartIndex++,
           bindGroup.bindGroup.bindGroup,
@@ -46,6 +51,11 @@ export class RenderPipelineLayout<
       });
     } else {
       bindgroups.forEach((bindGroup) => {
+        console.debug(
+          'set bindgroup',
+          bindGroupStartIndex,
+          bindGroup.bindGroup.bindGroup.label,
+        );
         renderEncoder.renderBundleEncoder.setBindGroup(
           bindGroupStartIndex++,
           bindGroup.bindGroup.getForRenderBundle(renderEncoder),
@@ -75,7 +85,9 @@ export class RenderPipelineLayout<
         var drawables = renderPipeline.drawables;
         if (!drawables || drawables.length == 0) {
           console.warn(
-            'No drawables has been set for renderpass',
+            'No drawables has been in renderpipeline,',
+            renderPipeline.pipeline.label,
+            'set for renderpass',
             renderpass.props.label,
             ', wont draw anything',
           );
@@ -88,6 +100,12 @@ export class RenderPipelineLayout<
           nativeEncoder = renderEncoder.renderBundleEncoder;
           renderPipeline.renderBundles.add(renderEncoder);
         }
+        console.debug(
+          'set renderpipeline',
+          renderPipeline.pipeline.label,
+          'drawables: ',
+          drawables.length,
+        );
 
         nativeEncoder.setPipeline(renderPipeline.pipeline);
         drawables.forEach((drawable) => {

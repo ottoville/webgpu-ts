@@ -18,7 +18,8 @@ export function createRenderPipelineBuilder<
 > extends never
   ? never
   : RenderPipelineBuilder<V, F> {
-  const [pipelineLayout] = vertexShader.props.pipelineLayouts.filter((p) =>
+  // Search common pipeline layout
+  const pipelineLayout = vertexShader.props.pipelineLayouts.find((p) =>
     fragmentShader.props.pipelineLayouts.includes(p),
   );
   if (!pipelineLayout) {

@@ -22,7 +22,7 @@ export interface VertexBufferLayout2<
   /**
    * An array defining the layout of the vertex attributes within each element.
    */
-  attributes2: A;
+  attributes: A;
 }
 
 export class VertexShader<
