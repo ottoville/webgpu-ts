@@ -3,10 +3,10 @@ import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { FragmentShader } from '../shaders/FragmentShader';
 import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
-import { ShaderBuilder } from '../ShaderBuilder';
 import { position_vec2f32, UI_Input, diffuseOutput } from '../Struct';
 import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
+import { FragmentShaderBuilder } from '../shaderBuilders/FragmentShaderBuilder';
 
 declare const pipelineLayouts: readonly [
   RenderPipelineLayout<
@@ -77,7 +77,7 @@ const fragmentshaderfunction_array = new FragmentShaderFunction(
 >;
 
 //Should be fine
-const fragmentShaderBuilder = new ShaderBuilder(pipelineLayouts);
+const fragmentShaderBuilder = new FragmentShaderBuilder(pipelineLayouts, 'test');
 
 fragmentShaderBuilder.addFunction('main', fragmentshaderfunction);
 
@@ -104,28 +104,28 @@ const vertexshaderfunction_no_texture = new FragmentShaderFunction(
 >;
 
 //FragmentShaderFunction is missing texture, should be ok
-new ShaderBuilder(pipelineLayouts).addFunction(
+new FragmentShaderBuilder(pipelineLayouts, 'test').addFunction(
   'main',
   vertexshaderfunction_no_texture,
 );
 
-new ShaderBuilder(pipelineLayouts_missing_texture).addFunction(
+new FragmentShaderBuilder(pipelineLayouts_missing_texture, 'test').addFunction(
   'main',
   vertexshaderfunction_no_texture,
 );
 
-new ShaderBuilder(
-  pipelineLayouts_missing_texture,
+new FragmentShaderBuilder(
+  pipelineLayouts_missing_texture, 'test'
   //@ts-expect-error pipelinelayout is missing texture bindgroup.
 ).addFunction2('main', fragmentshaderfunction);
 
-new ShaderBuilder(pipelineLayouts).addFunction(
+new FragmentShaderBuilder(pipelineLayouts, 'test').addFunction(
   //@ts-expect-error Type '"texture_2d<f32>"' is not assignable to type '"texture_2d_array<f32>"'.
   'main',
   fragmentshaderfunction_array,
 );
 
-const shaderBuilder = new ShaderBuilder(pipelineLayouts)
+const shaderBuilder = new FragmentShaderBuilder(pipelineLayouts, 'test')
   .addFunction('main', fragmentshaderfunction)
   .addFunction('entry_array', vertexshaderfunction_no_texture);
 
@@ -134,4 +134,4 @@ shaderBuilder.entryPoints.entry_array.output;
 //@ts-expect-error entry does not exists
 shaderBuilder.entryPoints.noExists.output;
 
-shaderBuilder.build('label');
+shaderBuilder.build();

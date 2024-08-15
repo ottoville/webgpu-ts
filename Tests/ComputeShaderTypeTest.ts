@@ -1,9 +1,8 @@
 import { BGLayout, BufLayout } from '../BindgroupLayout';
 import { PipelineLayout } from '../pipelineLayots/PipelineLayout';
-import { ShaderBuilder } from '../ShaderBuilder';
 import { Struct } from '../Struct';
 import { ShaderStage } from '../shaders/Shader';
-import { ComputeShaderFunction } from '../index';
+import { ComputeShaderBuilder, ComputeShaderFunction } from '../index';
 
 declare const gpu: GPUDevice;
 
@@ -100,6 +99,6 @@ const cfunction = new ComputeShaderFunction<
   ]
 >('abc', [1, 1, 1], () => '');
 
-const builder = new ShaderBuilder([pipelineLayout]);
+const builder = new ComputeShaderBuilder([pipelineLayout], 'test');
 
 builder.addFunction('main', cfunction);

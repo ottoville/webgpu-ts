@@ -31,6 +31,7 @@ export class FragmentShaderFunction<
         : undefined,
     ) => string,
     public inputs: I = undefined as I,
+    public label: string = '',
   ) {
     this.#code = code;
   }

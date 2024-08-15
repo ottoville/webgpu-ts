@@ -2,13 +2,13 @@
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
-import { ShaderBuilder } from '../ShaderBuilder';
 import { Struct, position_vec2f32, UI_Input } from '../Struct';
 import {
   VertexShaderFunction,
   WGSLcode,
 } from '../shaderFunctions/VertexShaderFunction';
 import { VertexBufferLayout2, VertexShader } from '../shaders/VertexShader';
+import { VertexShaderBuilder } from '../shaderBuilders/VertexShaderBuilder';
 
 declare const pipelineLayouts: readonly [
   RenderPipelineLayout<
@@ -86,8 +86,8 @@ const vertexshaderfunction = new VertexShaderFunction(
 >;
 
 //Should be fine
-const builder2 = new ShaderBuilder(pipelineLayouts);
-builder2.addFunction('main', vertexshaderfunction).build('UI.vert');
+const builder2 = new VertexShaderBuilder(pipelineLayouts, 'test');
+builder2.addFunction('main', vertexshaderfunction).build();
 
 const vertexshaderfunction_no_uniforms = new VertexShaderFunction(
   UI_Input,
@@ -114,7 +114,7 @@ new VertexShader({
   pipelineLayouts,
 });
 
-const builder = new ShaderBuilder(pipelineLayouts_missing_uniforms);
+const builder = new VertexShaderBuilder(pipelineLayouts_missing_uniforms, 'test');
 //@ts-expect-error pipelinelayout is missing vertex uniforms bindgroup.
 builder.addFunction('main', vertexshaderfunction);
 
@@ -181,7 +181,7 @@ declare const pipelineLayouts4: readonly [
 declare const vertexShaderfunctionTest: VertexShaderFunction<
   readonly [{ a: s; b: s; c: s }]
 >;
-new ShaderBuilder(pipelineLayouts4).addFunction(
+new VertexShaderBuilder(pipelineLayouts4, 'test').addFunction(
   'main',
   vertexShaderfunctionTest,
 );
@@ -190,7 +190,7 @@ declare const vertexShaderfunctionTest2: VertexShaderFunction<
   readonly [{ a: s; b: s }]
 >;
 //Bglayouts is missing one entry from pipelinelayout, should be ok
-new ShaderBuilder(pipelineLayouts4).addFunction(
+new VertexShaderBuilder(pipelineLayouts4, 'test').addFunction(
   'main',
   vertexShaderfunctionTest2,
 );
@@ -198,7 +198,7 @@ new ShaderBuilder(pipelineLayouts4).addFunction(
 declare const vertexShaderfunctionTest3: VertexShaderFunction<
   readonly [{ a: s; b: s; c: s; d: s }]
 >;
-new ShaderBuilder(pipelineLayouts4).addFunction(
+new VertexShaderBuilder(pipelineLayouts4, 'test').addFunction(
   //@ts-expect-error D is not in pipelinelayout
   'main',
   vertexShaderfunctionTest3,
@@ -213,11 +213,11 @@ declare const pipelineLayouts5: readonly [
     [BGLayout<{ a: s; b: s; c: s }>, BGLayout<{ a: s; b: s; c: s }>]
   >,
 ];
-const shaderBuilder2 = new ShaderBuilder(pipelineLayouts5);
+const shaderBuilder2 = new VertexShaderBuilder(pipelineLayouts5, 'test');
 //This should be vertexshaderbuilder
 shaderBuilder2.addFunction('main', vertexShaderfunctionTest4);
 
-new ShaderBuilder(pipelineLayouts4).addFunction(
+new VertexShaderBuilder(pipelineLayouts4, 'test').addFunction(
   //@ts-expect-error Pipelinelayout is missing second group
   'main',
   vertexShaderfunctionTest4,
@@ -231,13 +231,13 @@ declare const pipelineLayouts6: readonly [
 declare const vertexShaderfunctionTestS1: VertexShaderFunction<
   readonly [{ a: s; b: s }]
 >;
-new ShaderBuilder(pipelineLayouts6).addFunction(
+new VertexShaderBuilder(pipelineLayouts6, 'test').addFunction(
   'main',
   vertexShaderfunctionTestS1,
 );
 
 //Two different functions
-const builder0 = new ShaderBuilder(pipelineLayouts4);
+const builder0 = new VertexShaderBuilder(pipelineLayouts4, 'test');
 const shaderBuilderWithTwoEntries = builder0
   .addFunction('main', vertexShaderfunctionTest2)
   .addFunction('other', vertexShaderfunctionTest);
@@ -247,8 +247,7 @@ shaderBuilderWithTwoEntries.entryPoints.other.buffers;
 
 //@ts-expect-error No such entrypoint
 shaderBuilderWithTwoEntries.entryPoints.noexists;
-
-new ShaderBuilder(pipelineLayouts4)
+new VertexShaderBuilder(pipelineLayouts4, 'test')
   //@ts-expect-error D is missing from pipelinelayout
   .addFunction('main', vertexShaderfunctionTest3)
   .addFunction('other', vertexShaderfunctionTest);

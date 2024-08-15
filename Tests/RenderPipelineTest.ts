@@ -18,11 +18,12 @@ import {
   VertexShaderFunction,
   WGSLcode,
 } from '../shaderFunctions/VertexShaderFunction';
-import { ShaderBuilder } from '../ShaderBuilder';
 import { ColorRenderTarget } from '../renderTargets/ColorRenderTarget';
 import { TextureUsageEnums } from '../Texture';
 import { createRenderPipelineBuilder } from '../renderPipeline/RenderPipelineBuilder';
 import { Renderpass } from '../Renderpass';
+import { VertexShaderBuilder } from '../shaderBuilders/VertexShaderBuilder';
+import { FragmentShaderBuilder } from '../shaderBuilders/FragmentShaderBuilder';
 
 declare const gpu: GPUDevice;
 
@@ -166,18 +167,22 @@ const vertexshaderfunction = new VertexShaderFunction(
   any
 >;
 
-const shaderB = new ShaderBuilder(
+const shaderB = new VertexShaderBuilder(
   pipelineLayouts_different_fragment,
+  'test',
 ).addFunction('main', vertexshaderfunction);
 //Should be fine
 
-const vertexShader = shaderB.build('label');
+const vertexShader = shaderB.build();
 vertexShader.props.entryPoints.main.output;
-const fragmentShader = new ShaderBuilder(pipelineLayouts_different_vertex)
+const fragmentShader = new FragmentShaderBuilder(
+  pipelineLayouts_different_vertex,
+  'test',
+)
   .addFunction('main', fragmentshaderfunction)
   .addFunction('main2', fragmentshaderfunction_different_input)
   .addFunction('main3', fragmentshaderfunction_no_input)
-  .build('label');
+  .build();
 
 vertexShader.props.pipelineLayouts;
 
@@ -206,11 +211,11 @@ const colorRenderTargets = {
 const test = createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   fragment: {
     entryPoint: 'main2',
-  },
+  } as const,
   renderpass: new Renderpass({ colorRenderTargets, label: 'renderpas' }),
   vertex: {
     entryPoint: 'main',
-  },
+  } as const,
 });
 test.then((v) => {
   // @ts-expect-error Vertex and Fragment shader have no common input and output
@@ -259,11 +264,12 @@ createRenderPipelineBuilder(vertexShader, fragmentShader).build({
   },
 });
 
-const vertexShader_missing_texture_2d = new ShaderBuilder(
+const vertexShader_missing_texture_2d = new VertexShaderBuilder(
   pipelineLayouts_missing_texture_2d,
+  'test',
 )
   .addFunction('main', vertexshaderfunction)
-  .build('label');
+  .build();
 
 const renderpipelinebuilder = createRenderPipelineBuilder(
   vertexShader_missing_texture_2d,

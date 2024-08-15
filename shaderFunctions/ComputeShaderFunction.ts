@@ -27,6 +27,7 @@ export class ComputeShaderFunction<
       z?: number,
     ],
     code: (args: FilteredBindEntrys<B, ComputeEntry>) => string,
+    public label: string = '',
   ) {
     this.#code = code;
   }

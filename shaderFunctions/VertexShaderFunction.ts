@@ -71,7 +71,14 @@ export class VertexShaderFunction<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #code: (args: any, bufferArgs: any) => VertexShaderCode;
   readonly vertexBufferLayout: V;
-  buffers: GPUVertexBufferLayout[] = [];
+  get buffers() {
+    return this.vertexBufferLayout.map<GPUVertexBufferLayout>((layout) => {
+      return {
+        ...layout,
+        attributes: Object.values(layout.attributes),
+      };
+    });
+  }
   constructor(
     public output: O,
     vertexBufferLayout: V,
@@ -81,15 +88,10 @@ export class VertexShaderFunction<
         [K in keyof V]: { [KK in keyof V[K]['attributes']]: KK };
       }>,
     ) => VertexShaderCode,
+    public label: string = '',
   ) {
     this.#code = code;
     this.vertexBufferLayout = Object.freeze(vertexBufferLayout);
-    this.buffers = vertexBufferLayout.map((layout) => {
-      return {
-        ...layout,
-        attributes: Object.values(layout.attributes),
-      };
-    });
   }
   createCode(bindGroups: FilteredBindEntrys<B, VertexEntry>, name: string) {
     const variableNames = this.vertexBufferLayout.map((buffer) => {
