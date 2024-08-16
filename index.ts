@@ -55,7 +55,7 @@ export {
 export { PipelineLayout } from './pipelineLayots/PipelineLayout.js';
 export { RenderPipelineLayout } from './pipelineLayots/RenderPipelineLayout.js';
 
-export { ShaderBuilder } from './shaderBuilders/ShaderBuilder.js';
+export { AbstractShader } from './shaders/AbstractShader.js';
 export { VertexShaderBuilder } from './shaderBuilders/VertexShaderBuilder.js';
 export { FragmentShaderBuilder } from './shaderBuilders/FragmentShaderBuilder.js';
 export { ComputeShaderBuilder } from './shaderBuilders/ComputeShaderBuilder.js';

@@ -4,6 +4,7 @@ import type {
   AnyVertexStage,
   VertexShaderFunction,
 } from '../shaderFunctions/VertexShaderFunction';
+import { AbstractShader } from '../shaders/AbstractShader.js';
 import {
   type VertexBufferLayout2,
   type VertexEntry,
@@ -11,7 +12,6 @@ import {
 } from '../shaders/VertexShader.js';
 import type { Struct, wgslType } from '../Struct';
 import type { FilteredBindgroupEntrys, LayoutEntries } from '../Utilities';
-import { ShaderBuilder } from './ShaderBuilder.js';
 
 export class VertexShaderBuilder<
   E extends {
@@ -19,7 +19,7 @@ export class VertexShaderBuilder<
     // eslint-disable-next-line @typescript-eslint/ban-types
   } = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
-> extends ShaderBuilder<P, E> {
+> extends AbstractShader<E, P> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #constantCode: ((args: any) => string) | undefined;
   constructor(
@@ -47,7 +47,6 @@ export class VertexShaderBuilder<
     O extends [properties: string, type: wgslType] | Struct,
     RP extends readonly RenderPipelineLayout[],
   >(
-    this: ShaderBuilder<RP, E>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
     shaderFunction: VertexShaderFunction<F, V, O>,
   ) {

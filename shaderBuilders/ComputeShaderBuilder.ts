@@ -4,15 +4,15 @@ import type {
   AnyComputeStage,
   ComputeShaderFunction,
 } from '../shaderFunctions/ComputeShaderFunction';
+import { AbstractShader } from '../shaders/AbstractShader.js';
 import { type ComputeEntry, ComputeShader } from '../shaders/ComputeShader.js';
 import type { FilteredBindgroupEntrys, LayoutEntries } from '../Utilities';
-import { ShaderBuilder } from './ShaderBuilder.js';
 
 export class ComputeShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends { [index: string]: ComputeShaderFunction } = {},
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
-> extends ShaderBuilder<P, E> {
+> extends AbstractShader<E, P> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #constantCode: ((args: any) => string) | undefined;
   constructor(
@@ -41,7 +41,6 @@ export class ComputeShaderBuilder<
     }[],
     PL extends readonly PipelineLayout[],
   >(
-    this: ShaderBuilder<PL, E>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
     shaderFunction: ComputeShaderFunction<F>,
   ) {

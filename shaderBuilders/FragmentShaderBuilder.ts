@@ -4,19 +4,19 @@ import type {
   AnyFragmentStage,
   FragmentShaderFunction,
 } from '../shaderFunctions/FragmentShaderFunction';
+import { AbstractShader } from '../shaders/AbstractShader.js';
 import {
   type FragmentEntry,
   FragmentShader,
 } from '../shaders/FragmentShader.js';
 import type { Struct, wgslType } from '../Struct';
 import type { FilteredBindgroupEntrys, LayoutEntries } from '../Utilities';
-import { ShaderBuilder } from './ShaderBuilder.js';
 
 export class FragmentShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   E extends { [index: string]: FragmentShaderFunction } = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
-> extends ShaderBuilder<P, E> {
+> extends AbstractShader<E, P> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #constantCode: ((args: any) => string) | undefined;
   constructor(
@@ -46,7 +46,6 @@ export class FragmentShaderBuilder<
     I extends [properties: string, type: wgslType] | Struct | undefined,
     RP extends readonly RenderPipelineLayout[],
   >(
-    this: ShaderBuilder<RP, E>,
     entryPoint: P extends readonly LayoutEntries<F>[] ? S : never,
     shaderFunction: FragmentShaderFunction<F, I>,
   ) {

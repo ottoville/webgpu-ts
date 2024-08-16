@@ -2,6 +2,7 @@ import { type BindGroupLayoutEntry, BufLayout } from '../BindgroupLayout.js';
 import type { PipelineLayout } from '../pipelineLayots/PipelineLayout.js';
 import type { Struct } from '../Struct.js';
 import type { FilteredBindgroupEntrys, ShaderFunction } from '../Utilities.js';
+import { AbstractShader } from './AbstractShader.js';
 
 export const enum ShaderStage {
   VERTEX = 1,
@@ -42,7 +43,7 @@ export abstract class Shader<
     [index: string]: ShaderFunction;
   },
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
-> {
+> extends AbstractShader<E, P> {
   module: GPUShaderModule;
   wgsl: string;
   readonly props: ShaderParams<E, P>;
@@ -51,6 +52,7 @@ export abstract class Shader<
     shaderFlag: ShaderStage,
     structs: Set<Struct> = new Set(),
   ) {
+    super(props.pipelineLayouts, props.label, props.entryPoints);
     const groups = props.pipelineLayouts[0]!.bindGroupLayouts.reduce(
       (groupstring, group, gi) => {
         return Object.entries(group.entries).reduce(
