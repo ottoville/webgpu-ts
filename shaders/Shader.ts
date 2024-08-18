@@ -100,7 +100,7 @@ export abstract class Shader<
       (bl) => bl.entries,
     );
     if (props.constantCode) {
-      //@ts-expect-error
+      //@ts-expect-error todo
       this.wgsl += props.constantCode(entries);
       delete props.constantCode;
     }

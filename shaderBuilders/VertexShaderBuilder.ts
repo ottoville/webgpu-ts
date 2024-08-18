@@ -16,7 +16,7 @@ import type { FilteredBindgroupEntrys, LayoutEntries } from '../Utilities';
 export class VertexShaderBuilder<
   E extends {
     [index: string]: VertexShaderFunction;
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   } = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends AbstractShader<E, P> {
@@ -53,7 +53,7 @@ export class VertexShaderBuilder<
     const newBuilder = new VertexShaderBuilder<
       E & Record<S, typeof shaderFunction>,
       P extends RP ? P : never
-      //@ts-expect-error
+      //@ts-expect-error todo
     >(this.pipelineLayouts, this.label, this.#constantCode);
 
     newBuilder.entryPoints = {

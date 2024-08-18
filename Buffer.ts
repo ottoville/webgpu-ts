@@ -313,7 +313,7 @@ export class Buffer<U extends BufferUsageEnums> extends Bindable {
       );
       this.props.gpu.queue.submit([commandEncoder.finish()]);
       this.destroy();
-      //@ts-expect-error
+      //@ts-expect-error todo
       this.#buffer = newBuffer;
     } catch (e) {
       throw new Error('Cannot create resized buffer', {

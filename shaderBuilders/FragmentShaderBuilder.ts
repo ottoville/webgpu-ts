@@ -13,7 +13,7 @@ import type { Struct, wgslType } from '../Struct';
 import type { FilteredBindgroupEntrys, LayoutEntries } from '../Utilities';
 
 export class FragmentShaderBuilder<
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   E extends { [index: string]: FragmentShaderFunction } = {},
   P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends AbstractShader<E, P> {
@@ -52,7 +52,7 @@ export class FragmentShaderBuilder<
     const newBuilder = new FragmentShaderBuilder<
       E & Record<S, typeof shaderFunction>,
       P extends RP ? P : never
-      //@ts-expect-error
+      //@ts-expect-error todo
     >(this.pipelineLayouts, this.label, this.#constantCode);
 
     newBuilder.entryPoints = {

@@ -1,5 +1,7 @@
-/* eslint-disable promise/catch-or-return */
 /* eslint-disable no-unused-expressions */
+/* eslint-disable promise/catch-or-return */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { ShaderStage } from '../shaders/Shader';
 import {
@@ -95,7 +97,7 @@ const fragmentshaderfunction = new FragmentShaderFunction(
     {
       texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
     },
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     {},
   ]
 >;
@@ -115,7 +117,7 @@ const fragmentshaderfunction_no_input = new FragmentShaderFunction(
     {
       texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
     },
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     {},
   ]
 >;
@@ -137,7 +139,7 @@ const fragmentshaderfunction_different_input = new FragmentShaderFunction(
     {
       texture: TextLayout<ShaderStage.FRAGMENT, 'texture_2d<f32>'>;
     },
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     {},
   ]
 >;

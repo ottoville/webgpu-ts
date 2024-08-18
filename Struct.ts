@@ -1,5 +1,3 @@
-/* eslint-disable sort-keys */
-
 type IntegerTypes = 'i32' | 'u32';
 type FloatingPointTypes = 'f16' | 'f32';
 type dimensions = '2' | '3' | '4';

@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
@@ -99,7 +100,7 @@ const vertexshaderfunction_no_uniforms = new VertexShaderFunction(
   return output;
 `,
 ) satisfies VertexShaderFunction<
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   readonly [{}],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any
@@ -114,7 +115,10 @@ new VertexShader({
   pipelineLayouts,
 });
 
-const builder = new VertexShaderBuilder(pipelineLayouts_missing_uniforms, 'test');
+const builder = new VertexShaderBuilder(
+  pipelineLayouts_missing_uniforms,
+  'test',
+);
 //@ts-expect-error pipelinelayout is missing vertex uniforms bindgroup.
 builder.addFunction('main', vertexshaderfunction);
 

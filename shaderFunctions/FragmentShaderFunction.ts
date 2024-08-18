@@ -13,7 +13,7 @@ export type AnyFragmentStage =
 export class FragmentShaderFunction<
   const B extends readonly {
     [index: string]: BindGroupLayoutEntry<AnyFragmentStage>;
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   }[] = readonly {}[],
   I extends [properties: string, type: wgslType] | Struct | undefined =
     | [properties: string, type: wgslType]
@@ -48,7 +48,7 @@ export class FragmentShaderFunction<
                     ${
                       this.inputs instanceof Struct
                         ? this.inputs.getPropertiesAsString()
-                        : this.inputs?.concat(' ') ?? ''
+                        : (this.inputs?.concat(' ') ?? '')
                     }
                     ) -> ${
                       this.output instanceof Struct

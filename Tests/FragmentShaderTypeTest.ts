@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { FragmentShader } from '../shaders/FragmentShader';
 import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
@@ -77,7 +78,10 @@ const fragmentshaderfunction_array = new FragmentShaderFunction(
 >;
 
 //Should be fine
-const fragmentShaderBuilder = new FragmentShaderBuilder(pipelineLayouts, 'test');
+const fragmentShaderBuilder = new FragmentShaderBuilder(
+  pipelineLayouts,
+  'test',
+);
 
 fragmentShaderBuilder.addFunction('main', fragmentshaderfunction);
 
@@ -99,7 +103,7 @@ const vertexshaderfunction_no_texture = new FragmentShaderFunction(
       return output;`,
   UI_Input,
 ) satisfies FragmentShaderFunction<
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   readonly [{}]
 >;
 
@@ -115,7 +119,8 @@ new FragmentShaderBuilder(pipelineLayouts_missing_texture, 'test').addFunction(
 );
 
 new FragmentShaderBuilder(
-  pipelineLayouts_missing_texture, 'test'
+  pipelineLayouts_missing_texture,
+  'test',
   //@ts-expect-error pipelinelayout is missing texture bindgroup.
 ).addFunction2('main', fragmentshaderfunction);
 

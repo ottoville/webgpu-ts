@@ -9,7 +9,7 @@ import { type ComputeEntry, ComputeShader } from '../shaders/ComputeShader.js';
 import type { FilteredBindgroupEntrys, LayoutEntries } from '../Utilities';
 
 export class ComputeShaderBuilder<
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   E extends { [index: string]: ComputeShaderFunction } = {},
   P extends readonly PipelineLayout[] = readonly PipelineLayout[],
 > extends AbstractShader<E, P> {
@@ -47,7 +47,7 @@ export class ComputeShaderBuilder<
     const newBuilder = new ComputeShaderBuilder<
       E & Record<S, typeof shaderFunction>,
       P extends PL ? P : never
-      //@ts-expect-error
+      //@ts-expect-error todo
     >(this.pipelineLayouts, this.label, this.#constantCode);
 
     newBuilder.entryPoints = {

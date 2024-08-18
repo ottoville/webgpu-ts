@@ -25,7 +25,7 @@ export function createRenderPipelineBuilder<
   if (!pipelineLayout) {
     throw new Error('pipelineLayout not found');
   }
-  //@ts-expect-error
+  //@ts-expect-error todo
   return new RenderPipelineBuilder(
     vertexShader,
     fragmentShader,
@@ -98,7 +98,7 @@ export class RenderPipelineBuilder<
       },
     };
     console.debug('create pipeline', RenderPipelineDescriptor);
-    //@ts-expect-error
+    //@ts-expect-error todo
     return gpu
       .createRenderPipelineAsync(RenderPipelineDescriptor)
       .then((variantPipeline) => {

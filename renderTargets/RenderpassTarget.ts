@@ -38,11 +38,11 @@ export class RenderpassTarget<T extends RenderpassTargetOptions> {
 
   constructor(public renderTargetOptions: T) {
     if ('context' in renderTargetOptions.context) {
-      //@ts-expect-error
+      //@ts-expect-error todo
       this.renderTarget = renderTargetOptions.context.context;
     } else {
       const renderTarget = new Texture(renderTargetOptions.context);
-      //@ts-expect-error
+      //@ts-expect-error todo
       this.renderTarget = new TextureView(
         renderTarget,
         renderTargetOptions.textureViewDescriptor,
