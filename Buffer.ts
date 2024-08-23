@@ -101,19 +101,26 @@ export type INDIRECT_BUFFER =
   | (typeof BufferUsageEnums)['INDIRECT']
   | (typeof BufferUsageEnums)['INDIRECT|COPY_DST'];
 
-export type BufferProps<U extends BufferUsageEnums> = {
+export type BufferProps<
+  U extends BufferUsageEnums,
+  MAPPED extends boolean = false,
+> = {
   gpu: GPUDevice;
   size: number;
   usages: U;
   label: string;
+  mapped?: MAPPED;
 };
 
-export class Buffer<U extends BufferUsageEnums> extends Bindable {
+export class Buffer<
+  U extends BufferUsageEnums,
+  MAPPED extends boolean = boolean,
+> extends Bindable {
   renderBundles: Set<RenderBundleEncoder> = new Set();
   readonly #buffer: GPUBuffer;
   constructor(
-    public props: BufferProps<U>,
-    mappedAtCreation?: (buff: GPUBuffer, buffer: Buffer<U>) => void,
+    public props: BufferProps<U, MAPPED>,
+    mappedAtCreation?: (buff: Buffer<U, true>) => void,
   ) {
     if (props.size <= 0) throw new Error('Cannot create zero sized buffer');
     if (props.size > 268435456) {
@@ -134,7 +141,7 @@ export class Buffer<U extends BufferUsageEnums> extends Bindable {
     super();
     const desc: GPUBufferDescriptor = {
       label: props.label,
-      mappedAtCreation: mappedAtCreation ? true : false,
+      mappedAtCreation: mappedAtCreation || props.mapped ? true : false,
       size: props.size,
       usage: props.usages,
     };
@@ -146,9 +153,19 @@ export class Buffer<U extends BufferUsageEnums> extends Bindable {
       });
     }
     if (mappedAtCreation) {
-      mappedAtCreation(this.#buffer, this);
+      mappedAtCreation(this as Buffer<U, true>);
       this.#buffer.unmap();
     }
+  }
+  unmap(this: Buffer<BufferUsageEnums, true>) {
+    this.#buffer.unmap();
+  }
+  getMappedRange(
+    this: Buffer<BufferUsageEnums, true>,
+    offset?: GPUSize64,
+    size?: GPUSize64,
+  ) {
+    return this.#buffer.getMappedRange(offset, size);
   }
   copyFromTexture(
     this: Buffer<COPY_DST_BUFFER>,

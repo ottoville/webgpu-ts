@@ -37,10 +37,6 @@ export class RenderBundleEncoder {
       sampleCount: renderPass.props.sampleCount ?? 1,
       ...renderBundleEncoderDescriptor,
     };
-    console.log(
-      'renderbundle formats',
-      this.GPURenderBundleEncoderDescriptor.colorFormats,
-    );
     this.renderBundleEncoder = this.gpu.createRenderBundleEncoder(
       this.GPURenderBundleEncoderDescriptor,
     );
