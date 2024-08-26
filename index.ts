@@ -91,3 +91,4 @@ export {
 } from './renderTargets/RenderpassTarget.js';
 
 export { RenderEncoder } from './RenderEncoder.js';
+export { Bindable } from './Bindable.js';

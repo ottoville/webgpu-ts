@@ -113,7 +113,7 @@ export type BufferProps<
 };
 
 export class Buffer<
-  U extends BufferUsageEnums,
+  U extends BufferUsageEnums = BufferUsageEnums,
   MAPPED extends boolean = boolean,
 > extends Bindable {
   renderBundles: Set<RenderBundleEncoder> = new Set();
