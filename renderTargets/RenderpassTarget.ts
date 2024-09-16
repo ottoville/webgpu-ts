@@ -32,19 +32,20 @@ export type RenderpassTargetOptions<
 export class RenderpassTarget<T extends RenderpassTargetOptions> {
   public renderTarget: T extends RenderpassTargetOptions<infer TX>
     ? TX extends RenderpassTargetTextureParams<infer XF, infer XU, infer XS>
-      ? TextureView<Texture<XF, XU, XS>>
+      ? TextureView<Texture<XU, XF, XS>>
       : GPUCanvasContext
     : never;
 
   constructor(public renderTargetOptions: T) {
     if ('context' in renderTargetOptions.context) {
-      //@ts-expect-error todo
+      //@ts-expect-error rendertarget is GPUCanvasContext
       this.renderTarget = renderTargetOptions.context.context;
     } else {
       const renderTarget = new Texture(renderTargetOptions.context);
-      //@ts-expect-error todo
+      //@ts-expect-error rendertarget is TextureView
       this.renderTarget = new TextureView(
         renderTarget,
+        renderTarget.props.format,
         renderTargetOptions.textureViewDescriptor,
       );
     }

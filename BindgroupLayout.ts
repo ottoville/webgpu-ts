@@ -9,16 +9,14 @@ export type MapToGPUBindGroupEntry<
   [K in keyof T]: T[K] extends TextLayout<ShaderStage, TextLayoutArrayFormats> // If texture is array format, then depthOrArrayLayers must be set
     ? TextureView<
         Texture<
-          GPUTextureFormat,
           TEXTURE_BINDING_TEXTURE,
+          GPUTextureFormat,
           TextureSize & { depthOrArrayLayers: GPUIntegerCoordinate }
         >
       >
     : // Any other texture
       T[K] extends TextLayout<ShaderStage, TextLayoutFormats>
-      ?
-          | TextureView<Texture<GPUTextureFormat, TEXTURE_BINDING_TEXTURE>>
-          | GPUExternalTexture
+      ? TextureView<Texture<TEXTURE_BINDING_TEXTURE>> | GPUExternalTexture
       : T[K] extends BufLayout
         ? GPUBufferBinding
         : GPUBindingResource;

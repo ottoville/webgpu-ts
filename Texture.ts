@@ -16,9 +16,9 @@ export type TextureSize =
   | Texture2dSize
   | RenderTargetSize;
 
-export type TextureParams<
+type AbstractTextureParams<
   F extends GPUTextureFormat,
-  U extends Exclude<TextureUsageEnums, STORAGE_BINDING_TEXTURE>,
+  U extends TextureUsageEnums,
   S extends TextureSize = TextureSize,
 > = {
   gpu: GPUDevice;
@@ -27,7 +27,21 @@ export type TextureParams<
   label: string;
   size: S;
   initialSampleCount?: 1 | 4;
+  viewFormats?: F[];
 };
+
+export type TextureParams<
+  F extends GPUTextureFormat,
+  U extends Exclude<TextureUsageEnums, STORAGE_BINDING_TEXTURE>,
+  S extends TextureSize = TextureSize,
+> = AbstractTextureParams<F, U, S>;
+
+export type TextureParamsStorage<
+  F extends STORAGE_FORMATS,
+  U extends STORAGE_BINDING_TEXTURE,
+  S extends TextureSize,
+> = AbstractTextureParams<F, U, S>;
+
 /**
  * Allowed formats for STORAGE_BINDING see https://www.w3.org/TR/webgpu/#plain-color-formats
  */
@@ -98,19 +112,6 @@ export type DEPTH_FORMATS =
   | 'depth32float'
   | 'depth32float-stencil8';
 
-export type TextureParamsStorage<
-  F extends STORAGE_FORMATS,
-  U extends STORAGE_BINDING_TEXTURE,
-  S extends TextureSize,
-> = {
-  gpu: GPUDevice;
-
-  format: F;
-  usages: U;
-  label: string;
-  size: S;
-  initialSampleCount?: 1 | 4;
-};
 let n = 0;
 
 export const enum TextureUsageEnums {
@@ -168,52 +169,42 @@ export type TEXTURE_BINDING_TEXTURE =
   | (typeof TextureUsageEnums)['RENDER_ATTACHMENT|TEXTURE_BINDING|COPY_SRC'];
 
 export class Texture<
-  F extends GPUTextureFormat,
-  U extends TextureUsageEnums,
+  U extends TextureUsageEnums = TextureUsageEnums,
+  VF extends GPUTextureFormat = GPUTextureFormat,
   S extends TextureSize = TextureSize,
 > {
-  //RenderTarget & Storage
-  static create<
-    F extends STORAGE_FORMATS & RENDER_TARGET_FORMAT,
-    U extends RENDER_TARGET_TEXTURE & STORAGE_BINDING_TEXTURE,
-    S extends RenderTargetSize = RenderTargetSize,
-  >(props: TextureParamsStorage<F, U, S>): RenderTargetTexture<F, U, S>;
-  //RenderTarget
-  static create<
-    F extends RENDER_TARGET_FORMAT,
-    U extends Exclude<RENDER_TARGET_TEXTURE, STORAGE_BINDING_TEXTURE>,
-    S extends RenderTargetSize = RenderTargetSize,
-  >(props: TextureParams<F, U, S>): RenderTargetTexture<F, U, S>;
-  //STORAGE
-  static create<
-    F extends STORAGE_FORMATS,
-    U extends STORAGE_BINDING_TEXTURE,
-    S extends TextureSize = TextureSize,
-  >(props: TextureParamsStorage<F, U, S>): Texture<F, U, S>;
-  static create<
-    F extends GPUTextureFormat,
-    U extends Exclude<
-      TextureUsageEnums,
-      STORAGE_BINDING_TEXTURE | RENDER_TARGET_TEXTURE
-    >,
-    S extends TextureSize = TextureSize,
-  >(props: TextureParams<F, U, S>): Texture<F, U, S>;
-  static create<
-    F extends GPUTextureFormat,
-    U extends Exclude<TextureUsageEnums, STORAGE_BINDING_TEXTURE>,
-    S extends TextureSize = TextureSize,
-  >(props: TextureParams<F, U, S>) {
-    return new Texture<F, U, S>(props);
-  }
   bytes_per_fixel: number;
   texture: GPUTexture;
   views: Set<TextureView<typeof this>> = new Set();
   protected initialSampleCount: 1 | 4 = 1;
   constructor(
-    public props: //@ts-expect-error Texture is always created with static "create" method, giving correct generics
-    | TextureParams<F, Exclude<U, TextureUsageType['STORAGE_BINDING']>, S>
-      //@ts-expect-error Texture is always created with static "create" method, giving correct generics
-      | TextureParamsStorage<F, U, S>,
+    public props: //RenderTarget & Storage
+    | TextureParamsStorage<
+          VF & STORAGE_FORMATS & RENDER_TARGET_FORMAT,
+          U & RENDER_TARGET_TEXTURE & STORAGE_BINDING_TEXTURE,
+          RenderTargetSize
+        >
+      //RenderTarget
+      | TextureParams<
+          VF & RENDER_TARGET_FORMAT,
+          U & Exclude<RENDER_TARGET_TEXTURE, STORAGE_BINDING_TEXTURE>,
+          RenderTargetSize
+        >
+      //STORAGE
+      | TextureParamsStorage<
+          VF & STORAGE_FORMATS,
+          U & STORAGE_BINDING_TEXTURE,
+          S
+        >
+      | TextureParams<
+          VF,
+          U &
+            Exclude<
+              TextureUsageEnums,
+              STORAGE_BINDING_TEXTURE | RENDER_TARGET_TEXTURE
+            >,
+          S
+        >,
   ) {
     this.texture = this.createTexture(props.initialSampleCount);
     switch (props.format) {
@@ -232,9 +223,9 @@ export class Texture<
     }
   }
   copyTo(
-    this: Texture<GPUTextureFormat, COPY_SRC_TEXTURE>,
+    this: Texture<COPY_SRC_TEXTURE>,
     commandEncoder: GPUCommandEncoder,
-    destination: Texture<GPUTextureFormat, COPY_DST_TEXTURE>,
+    destination: Texture<COPY_DST_TEXTURE>,
     sourceDetails: Omit<GPUImageCopyTexture, 'texture'>,
     destinationDetails: Omit<GPUImageCopyTexture, 'texture'>,
     copySize: GPUExtent3DStrict,
@@ -248,9 +239,9 @@ export class Texture<
     );
   }
   copyFrom(
-    this: Texture<GPUTextureFormat, COPY_DST_TEXTURE>,
+    this: Texture<COPY_DST_TEXTURE>,
     commandEncoder: GPUCommandEncoder,
-    from: Texture<GPUTextureFormat, COPY_SRC_TEXTURE>,
+    from: Texture<COPY_SRC_TEXTURE>,
     sourceDetails: Omit<GPUImageCopyTexture, 'texture'>,
     destinationDetails: Omit<GPUImageCopyTexture, 'texture'>,
     copySize: GPUExtent3DStrict,
@@ -299,13 +290,17 @@ export class Texture<
     } else if ('height' in this.props.size && this.props.size.height === 0) {
       throw new Error('Texture must have height');
     }
-    this.texture = this.props.gpu.createTexture({
+    const textureProps: GPUTextureDescriptor = {
       format: this.props.format,
       label,
       sampleCount: sampleCount,
       size: this.props.size,
       usage: usages,
-    });
+    };
+    if (this.props.viewFormats) {
+      textureProps.viewFormats = this.props.viewFormats;
+    }
+    this.texture = this.props.gpu.createTexture(textureProps);
     this.views.forEach((view) => view.reCreate(debug));
 
     return this.texture;
@@ -347,7 +342,7 @@ export class Texture<
     );
   }
   async toBitmap(
-    this: Texture<GPUTextureFormat, TextureUsageEnums, Texture2dSize>,
+    this: Texture<TextureUsageEnums, GPUTextureFormat, Texture2dSize>,
     depth = 0,
   ) {
     //Use for debugging purpose.
@@ -421,7 +416,7 @@ export class Texture<
     return data;
   }
   async print_bitmap(
-    this: Texture<GPUTextureFormat, TextureUsageEnums, Texture2dSize>,
+    this: Texture<TextureUsageEnums, GPUTextureFormat, Texture2dSize>,
   ) {
     let bytesPerRow = this.props.size.width * this.bytes_per_fixel;
     const missAlignment = bytesPerRow % 256;

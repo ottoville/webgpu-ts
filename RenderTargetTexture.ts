@@ -4,10 +4,10 @@ import {
   type Texture,
 } from './Texture';
 export type RenderTargetTexture<
-  F extends RENDER_TARGET_FORMAT = RENDER_TARGET_FORMAT,
   U extends RENDER_TARGET_TEXTURE = RENDER_TARGET_TEXTURE,
+  VF extends RENDER_TARGET_FORMAT = RENDER_TARGET_FORMAT,
   S extends RenderTargetSize = RenderTargetSize,
-> = Texture<F, U, S>;
+> = Texture<U, VF, S>;
 
 export type RenderTargetSize = {
   readonly width: GPUIntegerCoordinate;
