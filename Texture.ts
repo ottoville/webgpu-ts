@@ -27,7 +27,7 @@ type AbstractTextureParams<
   label: string;
   size: S;
   initialSampleCount?: 1 | 4;
-  viewFormats?: F[];
+  viewFormats?: Iterable<F>;
 };
 
 export type TextureParams<
