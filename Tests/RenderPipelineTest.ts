@@ -12,7 +12,7 @@ import {
   UI_Input2,
 } from '../Struct';
 import { position_uv_attrs } from './VertexShaderTypeTest';
-import { VertexBufferLayout2 } from '../shaders/VertexShader';
+import { VertexBufferLayout } from '../shaders/VertexShader';
 import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
 import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
@@ -143,7 +143,7 @@ const fragmentshaderfunction_different_input = new FragmentShaderFunction(
     {},
   ]
 >;
-declare const buffers: VertexBufferLayout2<typeof position_uv_attrs>;
+declare const buffers: VertexBufferLayout<typeof position_uv_attrs>;
 
 const vertexshaderfunction = new VertexShaderFunction(
   UI_Input,

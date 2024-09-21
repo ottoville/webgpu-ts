@@ -1,6 +1,6 @@
 export {
   VertexShader,
-  type VertexBufferLayout2,
+  type VertexBufferLayout,
 } from './shaders/VertexShader.js';
 export { FragmentShader } from './shaders/FragmentShader.js';
 export {

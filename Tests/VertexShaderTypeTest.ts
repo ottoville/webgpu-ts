@@ -8,7 +8,7 @@ import {
   VertexShaderFunction,
   WGSLcode,
 } from '../shaderFunctions/VertexShaderFunction';
-import { VertexBufferLayout2, VertexShader } from '../shaders/VertexShader';
+import { VertexBufferLayout, VertexShader } from '../shaders/VertexShader';
 import { VertexShaderBuilder } from '../shaderBuilders/VertexShaderBuilder';
 
 declare const pipelineLayouts: readonly [
@@ -62,7 +62,7 @@ export const position_uv_attrs = Object.freeze({
   },
 } as const);
 
-declare const buffers: VertexBufferLayout2<typeof position_uv_attrs>;
+declare const buffers: VertexBufferLayout<typeof position_uv_attrs>;
 declare const gpu: GPUDevice;
 
 const vertexshaderfunction = new VertexShaderFunction(

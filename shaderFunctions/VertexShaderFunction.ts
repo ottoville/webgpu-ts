@@ -3,7 +3,7 @@ import type { ShaderStage } from '../shaders/Shader.js';
 import { Struct, type wgslType } from '../Struct.js';
 import type { FilteredBindEntrys } from '../Utilities.js';
 import type {
-  VertexBufferLayout2,
+  VertexBufferLayout,
   VertexEntry,
 } from '../shaders/VertexShader.js';
 
@@ -61,8 +61,8 @@ export class VertexShaderFunction<
   const B extends readonly {
     [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
   }[] = readonly { [index: string]: BindGroupLayoutEntry<AnyVertexStage> }[],
-  const V extends readonly VertexBufferLayout2[] | readonly [] =
-    | readonly VertexBufferLayout2[]
+  const V extends readonly VertexBufferLayout[] | readonly [] =
+    | readonly VertexBufferLayout[]
     | readonly [],
   O extends [properties: string, type: wgslType] | Struct =
     | [properties: string, type: wgslType]

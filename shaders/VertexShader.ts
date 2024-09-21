@@ -14,7 +14,7 @@ interface VertexAttribute extends GPUVertexAttribute {
   shaderFormat: string;
 }
 
-export interface VertexBufferLayout2<
+export interface VertexBufferLayout<
   A extends Readonly<{ [index: string]: GPUVertexAttribute }> = Readonly<{
     [index: string]: VertexAttribute;
   }>,

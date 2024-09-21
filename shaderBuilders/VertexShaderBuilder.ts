@@ -6,7 +6,7 @@ import type {
 } from '../shaderFunctions/VertexShaderFunction';
 import { AbstractShader } from '../shaders/AbstractShader.js';
 import {
-  type VertexBufferLayout2,
+  type VertexBufferLayout,
   type VertexEntry,
   VertexShader,
 } from '../shaders/VertexShader.js';
@@ -43,7 +43,7 @@ export class VertexShaderBuilder<
     F extends readonly {
       [index: string]: BindGroupLayoutEntry<AnyVertexStage>;
     }[],
-    V extends readonly VertexBufferLayout2[] | readonly [],
+    V extends readonly VertexBufferLayout[] | readonly [],
     O extends [properties: string, type: wgslType] | Struct,
     RP extends readonly RenderPipelineLayout[],
   >(
