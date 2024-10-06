@@ -15,14 +15,14 @@ export abstract class AbstractShader<
   ) {}
   get hash() {
     if (!this.#hash) {
-      const hash_arr: string[] = [this.label];
+      const hash_arr: string[] = ['shader_' + this.label + '['];
       Object.entries(this.entryPoints).forEach(([entrypoint, f]) => {
         hash_arr.push(entrypoint + '_' + f.label);
       });
       this.pipelineLayouts.forEach((p) => {
         hash_arr.push(p.layout.label);
       });
-      this.#hash = hash_arr.sort().join();
+      this.#hash = hash_arr.sort().join() + ']';
     }
     return this.#hash;
   }
