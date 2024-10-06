@@ -92,3 +92,4 @@ export {
 
 export { RenderEncoder } from './RenderEncoder.js';
 export { Bindable, Destroyable } from './Bindable.js';
+export type { PipelineIntersection } from './Utilities.js';
