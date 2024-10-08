@@ -10,7 +10,7 @@ export type VertexEntry = BindGroupLayoutEntry<
   | ShaderStage.VERTEX_AND_FRAGMENT
 >;
 
-interface VertexAttribute extends GPUVertexAttribute {
+export interface VertexAttribute extends GPUVertexAttribute {
   shaderFormat: string;
 }
 
