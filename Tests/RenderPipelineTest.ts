@@ -17,6 +17,7 @@ import { textureLoad } from '../std_functions';
 import { FragmentShaderFunction } from '../shaderFunctions/FragmentShaderFunction';
 import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import {
+  VertexBufferLayouts,
   VertexShaderFunction,
   WGSLcode,
 } from '../shaderFunctions/VertexShaderFunction';
@@ -147,7 +148,7 @@ declare const buffers: VertexBufferLayout<typeof position_uv_attrs>;
 
 const vertexshaderfunction = new VertexShaderFunction(
   UI_Input,
-  [buffers],
+  new VertexBufferLayouts([buffers]),
   ([{ uniforms /*texture*/ }], [{ position, uv }]) => WGSLcode/* wgsl */ `
   var output : Output;   
   output.Position = vec4<f32>(${uniforms.prop(

@@ -1,5 +1,6 @@
-import { PipelineLayout } from '../pipelineLayots/PipelineLayout';
-import { ShaderFunction } from '../Utilities';
+import type { PipelineLayout } from '../pipelineLayots/PipelineLayout';
+import { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
+import type { ShaderFunction } from '../Utilities';
 
 export abstract class AbstractShader<
   E extends { [index: string]: ShaderFunction } = {
@@ -18,6 +19,9 @@ export abstract class AbstractShader<
       const hash_arr: string[] = ['shader_' + this.label + '['];
       Object.entries(this.entryPoints).forEach(([entrypoint, f]) => {
         hash_arr.push(entrypoint + '_' + f.label);
+        if (f instanceof VertexShaderFunction) {
+          hash_arr.push(f.vertexBufferLayouts.id.toString());
+        }
       });
       this.pipelineLayouts.forEach((p) => {
         hash_arr.push(p.layout.label);

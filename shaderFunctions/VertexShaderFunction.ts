@@ -56,6 +56,53 @@ export function WGSLcode(
 
   return [glued.join(''), buildIns] as const;
 }
+let id = 0;
+export class VertexBufferLayouts<
+  const V extends readonly VertexBufferLayout[],
+> {
+  readonly #vertexBufferLayout: V;
+  readonly attributesString: string[] = [];
+  readonly variableNames = [] as {
+    [K in keyof V]: { [KK in keyof V[K]['struct']['properties']]: KK };
+  };
+  readonly buffers: GPUVertexBufferLayout[] = [];
+  id = id++;
+  constructor(vertexBufferLayout: V) {
+    this.#vertexBufferLayout = Object.freeze(vertexBufferLayout);
+
+    let shaderLocation = 0;
+    this.#vertexBufferLayout.forEach((buffer) => {
+      const vertexAttributes: GPUVertexAttribute[] = [];
+      const r: GPUVertexBufferLayout = {
+        arrayStride: buffer.struct.stride,
+        attributes: [],
+      };
+      const variableNames: Record<string, string> = {};
+      (this.variableNames as Record<string, string>[]).push(variableNames);
+      for (const varName in buffer.struct.properties) {
+        const nameInShader = `${varName}${shaderLocation}`;
+        variableNames[varName] = nameInShader;
+
+        const property = buffer.struct.properties[varName]!;
+        this.attributesString.push(
+          `@location(${shaderLocation}) ${nameInShader} : ${property.overrideVertexType ?? property.type}`,
+        );
+        vertexAttributes.push(
+          Object.freeze({
+            format: property.vertexFormat,
+            offset: property.offset,
+            shaderLocation: shaderLocation++,
+          }) as GPUVertexAttribute,
+        );
+      }
+      r.attributes = vertexAttributes;
+      if (buffer.stepMode) {
+        r.stepMode = buffer.stepMode;
+      }
+      this.buffers.push(r);
+    });
+  }
+}
 
 export class VertexShaderFunction<
   const B extends readonly {
@@ -70,51 +117,35 @@ export class VertexShaderFunction<
 > {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #code: (args: any, bufferArgs: any) => VertexShaderCode;
-  readonly vertexBufferLayout: V;
-  get buffers() {
-    return this.vertexBufferLayout.map<GPUVertexBufferLayout>((layout) => {
-      return {
-        ...layout,
-        attributes: Object.values(layout.attributes),
-      };
-    });
-  }
   constructor(
     public output: O,
-    vertexBufferLayout: V,
+    public readonly vertexBufferLayouts: VertexBufferLayouts<V>,
     code: (
       args: FilteredBindEntrys<B, VertexEntry>,
       bufferArgs: Readonly<{
-        [K in keyof V]: { [KK in keyof V[K]['attributes']]: KK };
+        [K in keyof V]: {
+          [KK in keyof V[K]['struct']['properties']]: KK;
+        };
       }>,
     ) => VertexShaderCode,
     public label: string = '',
   ) {
     this.#code = code;
-    this.vertexBufferLayout = Object.freeze(vertexBufferLayout);
   }
   createCode(bindGroups: FilteredBindEntrys<B, VertexEntry>, name: string) {
-    const variableNames = this.vertexBufferLayout.map((buffer) => {
-      const keys = Object.keys(buffer.attributes);
-      return Object.fromEntries(keys.map((o, i) => [o, keys[i]!]));
-    }) as { [K in keyof V]: { [KK in keyof V[K]['attributes']]: KK } };
-
-    const attributesString: string[] = [];
-    this.vertexBufferLayout.forEach((buffer) => {
-      for (const varName in buffer.attributes) {
-        attributesString.push(
-          `@location(${
-            buffer.attributes[varName]!.shaderLocation
-          }) ${varName} : ${buffer.attributes[varName]!.shaderFormat}`,
-        );
-      }
-    });
-    const [code, buildins] = this.#code(bindGroups, variableNames);
-    buildins.forEach((buildin) => {
-      attributesString.push(
-        `@builtin(${buildin[0]}) ${VertexBuildin[buildin[0]]} : ${buildin[1]}`,
-      );
-    });
+    const [code, buildins] = this.#code(
+      bindGroups,
+      this.vertexBufferLayouts.variableNames,
+    );
+    const attributesString: string[] = [
+      ...this.vertexBufferLayouts.attributesString,
+      ...buildins
+        .values()
+        .map(
+          (buildin) =>
+            `@builtin(${buildin[0]}) ${VertexBuildin[buildin[0]]} : ${buildin[1]}`,
+        ),
+    ];
     const wgsl = /* wgsl */ `
             @vertex
             fn ${name}(

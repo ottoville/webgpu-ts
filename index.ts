@@ -19,6 +19,7 @@ export { ShaderStage, type ShaderParams, Shader } from './shaders/Shader.js';
 export { OutputShader } from './shaders/OutputShader.js';
 export {
   VertexShaderFunction,
+  VertexBufferLayouts,
   type AnyVertexStage,
   VertexBuildin,
   VertexBuildinNames,
@@ -78,7 +79,7 @@ export { textureLoad, textureStore } from './std_functions.js';
 
 export { Renderpass, type RenderpassProps } from './Renderpass.js';
 
-export { Struct, type wgslType } from './Struct.js';
+export { Struct, type wgslType, StructProperty } from './Struct.js';
 
 export type {
   RenderTargetTexture,

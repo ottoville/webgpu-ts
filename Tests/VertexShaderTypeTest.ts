@@ -3,8 +3,9 @@
 import { BGLayout, BufLayout, TextLayout } from '../BindgroupLayout';
 import { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout';
 import { ShaderStage } from '../shaders/Shader';
-import { Struct, position_vec2f32, UI_Input } from '../Struct';
+import { Struct, position_vec2f32, UI_Input, StructProperty } from '../Struct';
 import {
+  VertexBufferLayouts,
   VertexShaderFunction,
   WGSLcode,
 } from '../shaderFunctions/VertexShaderFunction';
@@ -47,27 +48,17 @@ declare const pipelineLayouts_missing_uniforms: readonly [
   >,
 ];
 
-export const position_uv_attrs = Object.freeze({
-  position: {
-    format: 'float32x2',
-    offset: 0,
-    shaderFormat: 'vec2<f32>',
-    shaderLocation: 0,
-  },
-  uv: {
-    format: 'float32x2',
-    offset: 8,
-    shaderFormat: 'vec2<f32>',
-    shaderLocation: 1,
-  },
-} as const);
+export const position_uv_attrs = new Struct('PositionAndUV', {
+  position: new StructProperty('', 'vec2<f32>'),
+  uv: new StructProperty('', 'vec2<f32>'),
+});
 
 declare const buffers: VertexBufferLayout<typeof position_uv_attrs>;
 declare const gpu: GPUDevice;
 
 const vertexshaderfunction = new VertexShaderFunction(
   UI_Input,
-  [buffers],
+  new VertexBufferLayouts([buffers]),
   ([{ uniforms /*texture*/ }], [{ position, uv }]) => WGSLcode/* wgsl */ `
   var output : Output;   
   output.Position = vec4<f32>(${uniforms.prop(
@@ -92,7 +83,7 @@ builder2.addFunction('main', vertexshaderfunction).build();
 
 const vertexshaderfunction_no_uniforms = new VertexShaderFunction(
   UI_Input,
-  [buffers],
+  new VertexBufferLayouts([buffers]),
   ([,], [{ position, uv }]) => WGSLcode/* wgsl */ `
   var output : Output;   
   output.Position = vec4<f32>(${position}, 1.0, 1.0);
@@ -125,7 +116,7 @@ builder.addFunction('main', vertexshaderfunction);
 //No buffers
 new VertexShaderFunction(
   UI_Input,
-  [],
+  new VertexBufferLayouts([]),
   ([{ uniforms /*texture*/ }]) => WGSLcode/* wgsl */ `
     var output : Output;   
     output.Position = vec4<f32>(${uniforms.prop('translate')};
@@ -144,37 +135,37 @@ new VertexShaderFunction(
 declare const s: BufLayout<
   ShaderStage.VERTEX,
   Struct<{
-    readonly a: readonly ['', 'f32'];
+    readonly a: StructProperty<'f32'>;
   }>
 >;
 declare const s1: BufLayout<
   ShaderStage.VERTEX,
   Struct<{
-    readonly s1: readonly ['', 'f32'];
+    readonly s1: StructProperty<'f32'>;
   }>
 >;
 declare const s2: BufLayout<
   ShaderStage.VERTEX,
   Struct<{
-    readonly s2: readonly ['', 'f32'];
+    readonly s2: StructProperty<'f32'>;
   }>
 >;
 type s = BufLayout<
   ShaderStage.VERTEX,
   Struct<{
-    readonly a: readonly ['', 'f32'];
+    readonly a: StructProperty<'f32'>;
   }>
 >;
 type s1 = BufLayout<
   ShaderStage.FRAGMENT,
   Struct<{
-    readonly s1: readonly ['', 'f32'];
+    readonly s1: StructProperty<'f32'>;
   }>
 >;
 type s2 = BufLayout<
   ShaderStage.FRAGMENT,
   Struct<{
-    readonly s2: readonly ['', 'f32'];
+    readonly s2: StructProperty<'f32'>;
   }>
 >;
 
@@ -246,8 +237,8 @@ const shaderBuilderWithTwoEntries = builder0
   .addFunction('main', vertexShaderfunctionTest2)
   .addFunction('other', vertexShaderfunctionTest);
 
-shaderBuilderWithTwoEntries.entryPoints.main.buffers;
-shaderBuilderWithTwoEntries.entryPoints.other.buffers;
+shaderBuilderWithTwoEntries.entryPoints.main.vertexBufferLayouts.buffers;
+shaderBuilderWithTwoEntries.entryPoints.other.vertexBufferLayouts.buffers;
 
 //@ts-expect-error No such entrypoint
 shaderBuilderWithTwoEntries.entryPoints.noexists;

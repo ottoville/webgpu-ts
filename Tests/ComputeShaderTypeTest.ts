@@ -1,35 +1,35 @@
 import { BGLayout, BufLayout } from '../BindgroupLayout';
 import { PipelineLayout } from '../pipelineLayots/PipelineLayout';
-import { Struct } from '../Struct';
+import { Struct, StructProperty } from '../Struct';
 import { ShaderStage } from '../shaders/Shader';
 import { ComputeShaderBuilder, ComputeShaderFunction } from '../index';
 
 declare const gpu: GPUDevice;
 
 const Lights = new Struct('Lights', {
-  length: ['', 'u32'],
-  pointers: ['', 'array<u32>'],
+  length: new StructProperty('', 'u32'),
+  pointers: new StructProperty('', 'array<u32>'),
 });
 const MeshArray = new Struct(
   'MeshArray',
   {
-    mesh: ['', 'array<MeshUniforms>'],
+    mesh: new StructProperty('', 'array<MeshUniforms>'),
   },
   [],
 );
 const Clusters = new Struct(
   'Clusters',
   {
-    bounds: ['', 'array<ClusterBounds, 27648>'], //32 * 18 * 48 = total tiles = 27648
-    lights: ['', 'array<u32, 1741824>'], //27648 * 63 = 1741824`,
-    lightsCount: ['', 'array<u32, 27648>'],
+    bounds: new StructProperty('', 'array<ClusterBounds, 27648>'), //32 * 18 * 48 = total tiles = 27648
+    lights: new StructProperty('', 'array<u32, 1741824>'), //27648 * 63 = 1741824`,
+    lightsCount: new StructProperty('', 'array<u32, 27648>'),
   },
   [],
 );
 const ViewUniforms = new Struct('ViewUniforms', {
-  modelViewProjectionMatrix: ['', 'mat4x4<f32>'],
-  view: ['', 'mat4x4<f32>'],
-  viewPosition: ['', 'vec3<f32>'],
+  modelViewProjectionMatrix: new StructProperty('', 'mat4x4<f32>'),
+  view: new StructProperty('', 'mat4x4<f32>'),
+  viewPosition: new StructProperty('', 'vec3<f32>'),
 });
 const UpdateClustersBufferLayout = new BufLayout(
   {

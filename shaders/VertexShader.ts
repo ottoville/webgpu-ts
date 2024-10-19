@@ -3,6 +3,7 @@ import { OutputShader } from './OutputShader.js';
 import type { RenderPipelineLayout } from '../pipelineLayots/RenderPipelineLayout.js';
 import { ShaderStage, type ShaderParamsConstructor } from './Shader.js';
 import type { VertexShaderFunction } from '../shaderFunctions/VertexShaderFunction.js';
+import { Struct } from '../Struct.js';
 
 export type VertexEntry = BindGroupLayoutEntry<
   | ShaderStage.VERTEX
@@ -14,15 +15,12 @@ export interface VertexAttribute extends GPUVertexAttribute {
   shaderFormat: string;
 }
 
-export interface VertexBufferLayout<
-  A extends Readonly<{ [index: string]: GPUVertexAttribute }> = Readonly<{
-    [index: string]: VertexAttribute;
-  }>,
-> extends Omit<GPUVertexBufferLayout, 'attributes'> {
+export interface VertexBufferLayout<A extends Struct = Struct>
+  extends Omit<GPUVertexBufferLayout, 'attributes' | 'arrayStride'> {
   /**
    * An array defining the layout of the vertex attributes within each element.
    */
-  attributes: A;
+  struct: A;
 }
 
 export class VertexShader<

@@ -93,7 +93,7 @@ export class RenderPipelineBuilder<
         ...descriptor.vertex,
         buffers:
           this.vertexShader.props.entryPoints[descriptor.vertex.entryPoint]!
-            .buffers,
+            .vertexBufferLayouts.buffers,
         module: this.vertexShader.module,
       },
     };
