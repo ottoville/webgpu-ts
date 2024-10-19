@@ -15,7 +15,8 @@ import type { FilteredBindgroupEntrys, LayoutEntries } from '../Utilities';
 export class FragmentShaderBuilder<
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   E extends { [index: string]: FragmentShaderFunction } = {},
-  P extends readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
+  const P extends
+    readonly RenderPipelineLayout[] = readonly RenderPipelineLayout[],
 > extends AbstractShader<E, P> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   #constantCode: ((args: any) => string) | undefined;

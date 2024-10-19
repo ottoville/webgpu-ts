@@ -67,7 +67,7 @@ export class VertexBufferLayouts<
   };
   readonly buffers: GPUVertexBufferLayout[] = [];
   id = id++;
-  constructor(vertexBufferLayout: V) {
+  constructor(public vertexBufferLayout: V) {
     this.#vertexBufferLayout = Object.freeze(vertexBufferLayout);
 
     let shaderLocation = 0;

@@ -22,6 +22,9 @@ export const enum BufferUsageEnums {
     BufferUsageEnums.COPY_DST,
   'VERTEX|STORAGE' = BufferUsageEnums.VERTEX | BufferUsageEnums.STORAGE,
   'VERTEX|COPY_DST' = BufferUsageEnums.VERTEX | BufferUsageEnums.COPY_DST,
+  'VERTEX|STORAGE|COPY_DST' = BufferUsageEnums.VERTEX |
+    BufferUsageEnums.STORAGE |
+    BufferUsageEnums.COPY_DST,
   'VERTEX|STORAGE|COPY_SRC' = BufferUsageEnums.VERTEX |
     BufferUsageEnums.STORAGE |
     BufferUsageEnums.COPY_SRC,
@@ -62,6 +65,7 @@ type COPY_DST_BUFFER =
   | (typeof BufferUsageEnums)['COPY_DST']
   | (typeof BufferUsageEnums)['MAP_READ|COPY_DST']
   | (typeof BufferUsageEnums)['VERTEX|COPY_DST']
+  | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_DST']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_SRC|COPY_DST']
   | (typeof BufferUsageEnums)['STORAGE|COPY_DST']
   | (typeof BufferUsageEnums)['STORAGE|COPY_SRC|COPY_DST']
@@ -74,6 +78,7 @@ type STORAGE_BUFFER =
   | (typeof BufferUsageEnums)['STORAGE|COPY_SRC']
   | (typeof BufferUsageEnums)['STORAGE|COPY_DST']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE']
+  | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_DST']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_SRC']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_SRC|COPY_DST']
   | (typeof BufferUsageEnums)['INDEX|STORAGE|COPY_SRC']
@@ -90,6 +95,7 @@ export type VERTEX_BUFFER =
   | (typeof BufferUsageEnums)['VERTEX']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE']
   | (typeof BufferUsageEnums)['VERTEX|COPY_DST']
+  | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_DST']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_SRC']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_SRC|COPY_DST'];
 
