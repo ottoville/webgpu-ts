@@ -30,6 +30,21 @@ export class Struct<
   };
   readonly depedencies?: readonly Struct[];
   stride = 0;
+  #array?: Struct<{
+    values: StructProperty<`array<${string}>`>;
+  }>;
+  get asArray() {
+    if (!this.#array) {
+      this.#array = new Struct(
+        `${this.name}_arr`,
+        {
+          values: new StructProperty('', `array<${this.name}>`),
+        },
+        [this],
+      );
+    }
+    return this.#array;
+  }
   constructor(
     public readonly name: string,
     properties: T,
@@ -124,7 +139,11 @@ const wgslTypes: { [index: string]: WebGPUType } = {
   },
   'vec2<i32>': {
     size: 8,
-    vertex: 'float32x2',
+    vertex: 'sint32x2',
+  },
+  'vec2<u32>': {
+    size: 8,
+    vertex: 'uint32x2',
   },
   'vec3<f32>': {
     size: 12,
