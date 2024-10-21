@@ -5,7 +5,7 @@ export type PipeLineLayoutProps<B extends readonly BGLayout[]> = {
   bindGroupLayouts: B;
 };
 export class PipelineLayout<
-  B extends readonly BGLayout[] = readonly BGLayout[],
+  const B extends readonly BGLayout[] = readonly BGLayout[],
 > {
   static CreateEmptyLayout(gpu: GPUDevice): PipelineLayout<readonly []> {
     return {

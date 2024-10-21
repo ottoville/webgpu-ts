@@ -20,6 +20,7 @@ export class Struct<
   const T extends {
     [index: string]: StructProperty;
   } = { [index: string]: StructProperty },
+  N extends string = string,
 > {
   readonly properties: {
     [K in keyof T]: T[K] & {
@@ -30,10 +31,18 @@ export class Struct<
   };
   readonly depedencies?: readonly Struct[];
   stride = 0;
-  #array?: Struct<{
-    values: StructProperty<`array<${string}>`>;
-  }>;
-  get asArray() {
+  #array?: Struct<
+    {
+      values: StructProperty<`array<${N}>`>;
+    },
+    `${N}_arr`
+  >;
+  get asArray(): Struct<
+    {
+      values: StructProperty<`array<${N}>`>;
+    },
+    `${N}_arr`
+  > {
     if (!this.#array) {
       this.#array = new Struct(
         `${this.name}_arr`,
@@ -46,7 +55,7 @@ export class Struct<
     return this.#array;
   }
   constructor(
-    public readonly name: string,
+    public readonly name: N,
     properties: T,
     depedencies?: Struct[],
   ) {
