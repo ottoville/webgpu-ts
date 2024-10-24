@@ -1,6 +1,6 @@
 import type { BindGroup, BindGroupRef } from '../BindGroup.js';
 import { RenderBundleEncoder } from '../RenderbundleEncoder.js';
-import { Renderpass } from '../Renderpass.js';
+import type { Renderpass } from '../Renderpass.js';
 import { RenderPipeline } from '../renderPipeline/RenderPipeline.js';
 import type { RenderPipelineBuilder } from '../renderPipeline/RenderPipelineBuilder.js';
 import { BGLayout } from '../BindgroupLayout.js';
@@ -26,7 +26,7 @@ export class RenderPipelineLayout<
   subBindGroups: RenderPipelineLayout[] = [];
   constructor(
     props: PipeLineLayoutProps<B>,
-    public sharedBindgroups: readonly BindGroupRef[] = [],
+    public readonly sharedBindgroups: readonly BindGroupRef[] = [],
   ) {
     super(Object.freeze(props));
   }
@@ -70,11 +70,13 @@ export class RenderPipelineLayout<
     bindGroupStartIndex = 0,
   ): number {
     let meshesDrawn = 0;
+    console.group('shared bindgroups');
     this.setBindGroups(
       renderEncoder,
       this.sharedBindgroups,
       bindGroupStartIndex,
     );
+    console.groupEnd();
     bindGroupStartIndex += this.sharedBindgroups.length;
 
     this.renderPipeLineBuilders.forEach((renderPipelineBuilder) => {
@@ -109,11 +111,13 @@ export class RenderPipelineLayout<
 
         nativeEncoder.setPipeline(renderPipeline.pipeline);
         drawables.forEach((drawable) => {
+          console.group('drawable bindgroups');
           this.setBindGroups(
             renderEncoder,
             drawable.bindGroups,
             bindGroupStartIndex,
           );
+          console.groupEnd();
 
           drawable.vertexBuffers.forEach((buffer, index) => {
             console.debug(

@@ -37,6 +37,7 @@ export class Struct<
     },
     `${N}_arr`
   >;
+  readonly hash: string;
   get asArray(): Struct<
     {
       values: StructProperty<`array<${N}>`>;
@@ -59,6 +60,11 @@ export class Struct<
     properties: T,
     depedencies?: Struct[],
   ) {
+    this.hash =
+      name +
+      Object.entries(properties)
+        .map(([k, property]) => k + property.hash)
+        .join();
     this.properties = Object.freeze(
       Object.fromEntries(
         Object.entries(properties).map(([k, property]) => {
@@ -165,11 +171,14 @@ const wgslTypes: { [index: string]: WebGPUType } = {
 };
 
 export class StructProperty<T extends wgslType = wgslType> {
+  readonly hash: string;
   constructor(
     public readonly decoration: string,
     public readonly type: T,
-    public overrideVertexType?: wgslType,
-  ) {}
+    public readonly overrideVertexType?: wgslType,
+  ) {
+    this.hash = decoration + type;
+  }
 }
 export const diffuseOutput = new Struct('Output', {
   Diffuse: new StructProperty('@location(0)', 'vec4<f32>'),

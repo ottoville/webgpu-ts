@@ -41,9 +41,9 @@ export class BindGroup<L extends BGLayout = BGLayout> {
     return this.#bindGroup;
   }
   constructor(
-    public layout: L,
-    private label: string,
-    private entriesf: (
+    public readonly layout: L,
+    private readonly label: string,
+    private readonly entriesf: (
       bindGroup: BindGroup,
     ) => Readonly<MapToGPUBindGroupEntry<L['entries']>>,
   ) {}

@@ -30,12 +30,15 @@ export abstract class BindGroupLayoutEntry<
   V extends ShaderStage = ShaderStage,
   F extends string = string,
 > {
+  readonly hash: string;
   // Each shader will set this variableName to right context when creating wgsl
   variableName = '';
   constructor(
     public entry: BindGroupLayoutEntryProps<V>,
     public structName: F,
-  ) {}
+  ) {
+    this.hash = JSON.stringify(entry) + structName;
+  }
   toString() {
     return this.variableName;
   }
@@ -44,13 +47,15 @@ export class BufLayout<
   V extends ShaderStage = ShaderStage,
   S extends Struct = Struct,
 > extends BindGroupLayoutEntry<V> {
+  override readonly hash: string;
   constructor(
-    public override entry: BindGroupLayoutEntryProps<V> & {
+    public override readonly entry: BindGroupLayoutEntryProps<V> & {
       buffer: GPUBufferBindingLayout & { minBindingSize: GPUSize64 };
     },
-    public struct: S,
+    public readonly struct: S,
   ) {
     super(entry, struct.name);
+    this.hash = JSON.stringify(entry) + struct.hash;
   }
   prop(member: keyof S['properties'] & string) {
     return `${this.variableName}.${member}`;
@@ -124,7 +129,7 @@ export class StorageTextLayout<
   V extends ShaderStage = ShaderStage,
 > extends AbstractTextureLayout<V> {
   constructor(
-    public override entry: BindGroupLayoutEntryProps<V> & {
+    public override readonly entry: BindGroupLayoutEntryProps<V> & {
       storageTexture: NonNullable<GPUBindGroupLayoutEntry['storageTexture']>;
     },
     structName: // Storage Texture Types https://www.w3.org/TR/WGSL/#texture-storage
@@ -158,7 +163,10 @@ export class TextLayout<
   F extends TextLayoutFormats,
 > extends AbstractTextureLayout<V, F> {
   constructor(
-    public override entry: Omit<BindGroupLayoutEntryProps<V>, 'texture'> & {
+    public override readonly entry: Omit<
+      BindGroupLayoutEntryProps<V>,
+      'texture'
+    > & {
       texture: Omit<
         NonNullable<GPUBindGroupLayoutEntry['texture']>,
         'viewDimension'
@@ -177,7 +185,7 @@ export class SampLayout<
   F extends SamplerFormats,
 > extends BindGroupLayoutEntry<V, F> {
   constructor(
-    public override entry: BindGroupLayoutEntryProps<V> & {
+    public override readonly entry: BindGroupLayoutEntryProps<V> & {
       sampler: NonNullable<GPUBindGroupLayoutEntry['sampler']>;
     },
     structName: F,
@@ -186,18 +194,28 @@ export class SampLayout<
   }
 }
 
+const BGLayouts: Map<string, BGLayout> = new Map();
 export class BGLayout<
   T extends { [index: string]: BindGroupLayoutEntry } = {
     [index: string]: BindGroupLayoutEntry;
   },
 > {
-  layout: GPUBindGroupLayout;
-  entries: Readonly<T>;
+  layout!: GPUBindGroupLayout; // https://github.com/microsoft/TypeScript/issues/27555
+  readonly entries!: Readonly<T>; // https://github.com/microsoft/TypeScript/issues/27555
   constructor(
-    public gpu: GPUDevice,
+    public readonly gpu: GPUDevice,
     label: string,
     entries: T,
   ) {
+    const hash = Object.entries(entries)
+      .map(([k, property]) => k + property.hash)
+      .join();
+    const existing = BGLayouts.get(hash);
+    if (existing) {
+      return existing as BGLayout<T>;
+    } else {
+      BGLayouts.set(hash, this);
+    }
     const entriesArr = Object.values(entries);
     this.layout = gpu.createBindGroupLayout({
       entries: entriesArr.map((entry, i) => {

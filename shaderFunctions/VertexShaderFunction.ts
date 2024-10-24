@@ -56,7 +56,6 @@ export function WGSLcode(
 
   return [glued.join(''), buildIns] as const;
 }
-let id = 0;
 export class VertexBufferLayouts<
   const V extends readonly VertexBufferLayout[],
 > {
@@ -66,10 +65,12 @@ export class VertexBufferLayouts<
     [K in keyof V]: { [KK in keyof V[K]['struct']['properties']]: KK };
   };
   readonly buffers: GPUVertexBufferLayout[] = [];
-  id = id++;
-  constructor(public vertexBufferLayout: V) {
+  readonly hash: string;
+  constructor(public readonly vertexBufferLayout: V) {
     this.#vertexBufferLayout = Object.freeze(vertexBufferLayout);
-
+    this.hash = vertexBufferLayout
+      .map((l) => l.stepMode + l.struct.hash)
+      .join(',');
     let shaderLocation = 0;
     this.#vertexBufferLayout.forEach((buffer) => {
       const vertexAttributes: GPUVertexAttribute[] = [];

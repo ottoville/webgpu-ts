@@ -20,7 +20,7 @@ export abstract class AbstractShader<
       Object.entries(this.entryPoints).forEach(([entrypoint, f]) => {
         hash_arr.push(entrypoint + '_' + f.label);
         if (f instanceof VertexShaderFunction) {
-          hash_arr.push(f.vertexBufferLayouts.id.toString());
+          hash_arr.push(f.vertexBufferLayouts.hash);
         }
       });
       this.pipelineLayouts.forEach((p) => {
