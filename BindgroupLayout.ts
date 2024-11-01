@@ -207,9 +207,11 @@ export class BGLayout<
     label: string,
     entries: T,
   ) {
-    const hash = Object.entries(entries)
-      .map(([k, property]) => k + property.hash)
-      .join();
+    const hash =
+      gpu.label +
+      Object.entries(entries)
+        .map(([k, property]) => k + property.hash)
+        .join();
     const existing = BGLayouts.get(hash);
     if (existing) {
       return existing as BGLayout<T>;
