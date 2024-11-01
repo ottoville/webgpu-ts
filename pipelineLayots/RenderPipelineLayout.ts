@@ -7,7 +7,7 @@ import { BGLayout } from '../BindgroupLayout.js';
 import { type PipeLineLayoutProps, PipelineLayout } from './PipelineLayout.js';
 
 export class RenderPipelineLayout<
-  B extends readonly BGLayout[] = readonly BGLayout[],
+  const B extends readonly BGLayout[] = readonly BGLayout[],
 > extends PipelineLayout<B> {
   static override CreateEmptyLayout(
     gpu: GPUDevice,
