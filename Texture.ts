@@ -305,17 +305,28 @@ export class Texture<
 
     return this.texture;
   }
+  /**
+   * Issues a copy operation of the contents of a platform image/canvas
+   * into the destination texture.
+   * This operation performs [[#color-space-conversions|color encoding]] into the destination
+   * encoding according to the parameters of {@link GPUImageCopyTextureTagged}.
+   * Copying into a `-srgb` texture results in the same texture bytes, not the same decoded
+   * values, as copying into the corresponding non-`-srgb` format.
+   * Thus, after a copy operation, sampling the destination texture has
+   * different results depending on whether its format is `-srgb`, all else unchanged.
+   * <!-- POSTV1(srgb-linear): If added, explain here how it interacts. -->
+   * @param source - source image and origin to copy to `destination`.
+   * @param destination - The texture subresource and origin to write to, and its encoding metadata.
+   * @param copySize - Extents of the content to write from `source` to `destination`.
+   */
   copyFromExternalImage(
-    this: RenderTargetTexture,
+    this: RenderTargetTexture<RENDER_TARGET_TEXTURE & COPY_DST_TEXTURE>,
     source: GPUImageCopyExternalImage,
     destination: Omit<GPUImageCopyTextureTagged, 'texture'> & {
       origin?: GPUOrigin3DDict;
     },
     copySize: GPUExtent3DDict,
   ) {
-    if ((this.props.usages & GPUTextureUsage.COPY_DST) === 0) {
-      throw new Error('copyFromExternalImage: texture must include COPY_DST.');
-    }
     if (
       (destination.origin?.y ?? 0) + (copySize.height ?? 0) >
       this.props.size.height
