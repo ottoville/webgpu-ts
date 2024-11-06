@@ -68,6 +68,8 @@ export {
   Buffer,
   type BufferProps,
   BufferUsageEnums,
+  type COPY_SRC_BUFFER,
+  type COPY_DST_BUFFER,
   type VERTEX_BUFFER,
   type INDEX_BUFFER,
   type INDIRECT_BUFFER,

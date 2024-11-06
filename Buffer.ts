@@ -52,7 +52,7 @@ export const enum BufferUsageEnums {
 type MAP_READ_BUFFER =
   | (typeof BufferUsageEnums)['MAP_READ']
   | (typeof BufferUsageEnums)['MAP_READ|COPY_DST'];
-type COPY_SRC_BUFFER =
+export type COPY_SRC_BUFFER =
   | (typeof BufferUsageEnums)['COPY_SRC']
   | (typeof BufferUsageEnums)['STORAGE|COPY_SRC']
   | (typeof BufferUsageEnums)['VERTEX|STORAGE|COPY_SRC']
@@ -61,7 +61,7 @@ type COPY_SRC_BUFFER =
   | (typeof BufferUsageEnums)['STORAGE|COPY_SRC|COPY_DST']
   | (typeof BufferUsageEnums)['UNIFORM|STORAGE|COPY_SRC|COPY_DST'];
 
-type COPY_DST_BUFFER =
+export type COPY_DST_BUFFER =
   | (typeof BufferUsageEnums)['COPY_DST']
   | (typeof BufferUsageEnums)['MAP_READ|COPY_DST']
   | (typeof BufferUsageEnums)['VERTEX|COPY_DST']
@@ -338,6 +338,33 @@ export class Buffer<
       this.destroy();
       //@ts-expect-error todo
       this.#buffer = newBuffer;
+    } catch (e) {
+      throw new Error('Cannot create resized buffer', {
+        cause: e instanceof Error ? e : new Error(new String(e).toString()),
+      });
+    }
+  }
+  /**
+   * Creates new buffer with given size and copies content to new buffer.
+   * @param this
+   * @param size
+   * @param commandEncoder
+   * @returns New buffer
+   */
+  resizeWithEncoder<T extends Buffer<COPY_SRC_BUFFER & COPY_DST_BUFFER>>(
+    this: T,
+    size: number,
+    commandEncoder: GPUCommandEncoder,
+  ): T {
+    try {
+      const newBuffer = new Buffer({
+        gpu: this.props.gpu,
+        label: this.props.label,
+        size,
+        usages: this.#buffer.usage | GPUBufferUsage.COPY_DST,
+      }) as T;
+      newBuffer.copyFrom(commandEncoder, this);
+      return newBuffer;
     } catch (e) {
       throw new Error('Cannot create resized buffer', {
         cause: e instanceof Error ? e : new Error(new String(e).toString()),
