@@ -49,7 +49,7 @@ export const enum BufferUsageEnums {
 
   'INDIRECT|COPY_DST' = BufferUsageEnums.INDIRECT | BufferUsageEnums.COPY_DST,
 }
-type MAP_READ_BUFFER =
+export type MAP_READ_BUFFER =
   | (typeof BufferUsageEnums)['MAP_READ']
   | (typeof BufferUsageEnums)['MAP_READ|COPY_DST'];
 export type COPY_SRC_BUFFER =
@@ -115,19 +115,16 @@ export type BufferProps<
   size: number;
   usages: U;
   label: string;
-  mapped?: MAPPED;
+  mappedAtCreation?: MAPPED;
 };
 
 export class Buffer<
   U extends BufferUsageEnums = BufferUsageEnums,
-  MAPPED extends boolean = boolean,
+  MAPPED extends boolean = false,
 > extends Bindable {
   renderBundles: Set<RenderBundleEncoder> = new Set();
   readonly #buffer: GPUBuffer;
-  constructor(
-    public props: BufferProps<U, MAPPED>,
-    mappedAtCreation?: (buff: Buffer<U, true>) => void,
-  ) {
+  constructor(public props: BufferProps<U, MAPPED>) {
     if (props.size <= 0) throw new Error('Cannot create zero sized buffer');
     if (props.size > 268435456) {
       //https://gpuweb.github.io/gpuweb/#dom-supported-limits-maxbuffersize
@@ -147,7 +144,7 @@ export class Buffer<
     super();
     const desc: GPUBufferDescriptor = {
       label: props.label,
-      mappedAtCreation: mappedAtCreation || props.mapped ? true : false,
+      mappedAtCreation: props.mappedAtCreation ? true : false,
       size: props.size,
       usage: props.usages,
     };
@@ -158,13 +155,10 @@ export class Buffer<
         cause: e instanceof Error ? e : new Error(new String(e).toString()),
       });
     }
-    if (mappedAtCreation) {
-      mappedAtCreation(this as Buffer<U, true>);
-      this.#buffer.unmap();
-    }
   }
-  unmap(this: Buffer<BufferUsageEnums, true>) {
+  unmap(this: Buffer<U, true>) {
     this.#buffer.unmap();
+    return this as unknown as Buffer<U, false>;
   }
   getMappedRange(
     this: Buffer<BufferUsageEnums, true>,

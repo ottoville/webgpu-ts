@@ -12,22 +12,19 @@ bufferNotMapped.unmap();
 const bufferMapped = new Buffer({
   gpu,
   label: 'test',
-  mapped: true,
+  mappedAtCreation: true,
   size: 123,
   usages: BufferUsageEnums.COPY_SRC,
 });
 bufferMapped.unmap();
 
-const bufferMappedWithCallback = new Buffer(
-  {
-    gpu,
-    label: 'test',
-    size: 123,
-    usages: BufferUsageEnums.COPY_SRC,
-  },
-  (b) => {
-    b.getMappedRange(1, 2);
-  },
-);
+const bufferMappedWithCallback = new Buffer({
+  gpu,
+  label: 'test',
+  mappedAtCreation: true,
+  size: 123,
+  usages: BufferUsageEnums.COPY_SRC,
+});
+bufferMappedWithCallback.getMappedRange(1, 2);
 //@ts-expect-error buffer is no longer mapped
-bufferMappedWithCallback.unmap();
+bufferMappedWithCallback.unmap().unmap();

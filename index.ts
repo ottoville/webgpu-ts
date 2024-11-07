@@ -73,6 +73,7 @@ export {
   type VERTEX_BUFFER,
   type INDEX_BUFFER,
   type INDIRECT_BUFFER,
+  type MAP_READ_BUFFER,
 } from './Buffer.js';
 
 export { DepthRenderTarget } from './renderTargets/DepthRenderTarget.js';
