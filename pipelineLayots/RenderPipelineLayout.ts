@@ -70,13 +70,11 @@ export class RenderPipelineLayout<
     bindGroupStartIndex = 0,
   ): number {
     let meshesDrawn = 0;
-    console.group('shared bindgroups');
     this.setBindGroups(
       renderEncoder,
       this.sharedBindgroups,
       bindGroupStartIndex,
     );
-    console.groupEnd();
     bindGroupStartIndex += this.sharedBindgroups.length;
 
     this.renderPipeLineBuilders.forEach((renderPipelineBuilder) => {
@@ -111,13 +109,11 @@ export class RenderPipelineLayout<
 
         nativeEncoder.setPipeline(renderPipeline.pipeline);
         drawables.forEach((drawable) => {
-          console.group('drawable bindgroups');
           this.setBindGroups(
             renderEncoder,
             drawable.bindGroups,
             bindGroupStartIndex,
           );
-          console.groupEnd();
 
           drawable.vertexBuffers.forEach((buffer, index) => {
             console.debug(
