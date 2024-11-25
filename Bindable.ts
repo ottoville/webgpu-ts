@@ -1,9 +1,6 @@
 import type { BindGroup } from './BindGroup';
 
 export abstract class Destroyable {
-  static isDestroyable(target: object): target is Destroyable {
-    return 'destroy' in target && typeof target.destroy === 'function';
-  }
   abstract destroy(): void;
 }
 
