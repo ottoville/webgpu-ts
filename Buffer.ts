@@ -160,6 +160,9 @@ export class Buffer<
     this.#buffer.unmap();
     return this as unknown as Buffer<U, false>;
   }
+  mapState(this: Buffer<U, boolean>) {
+    return this.#buffer.mapState;
+  }
   getMappedRange(
     this: Buffer<BufferUsageEnums, true>,
     offset?: GPUSize64,
@@ -198,6 +201,13 @@ export class Buffer<
     } finally {
       this.#buffer.unmap();
     }
+  }
+  map_write(
+    this: Buffer<BufferUsageEnums.MAP_WRITE>,
+    offset?: GPUSize64,
+    size?: GPUSize64,
+  ) {
+    return this.#buffer.mapAsync(GPUMapMode.WRITE, offset, size);
   }
   async readAndDestroy(
     this: Buffer<MAP_READ_BUFFER>,
