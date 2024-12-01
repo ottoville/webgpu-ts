@@ -226,8 +226,8 @@ export class Texture<
     this: Texture<COPY_SRC_TEXTURE>,
     commandEncoder: GPUCommandEncoder,
     destination: Texture<COPY_DST_TEXTURE>,
-    sourceDetails: Omit<GPUImageCopyTexture, 'texture'>,
-    destinationDetails: Omit<GPUImageCopyTexture, 'texture'>,
+    sourceDetails: Omit<GPUTexelCopyTextureInfo, 'texture'>,
+    destinationDetails: Omit<GPUTexelCopyTextureInfo, 'texture'>,
     copySize: GPUExtent3DStrict,
   ) {
     destination.copyFrom(
@@ -242,8 +242,8 @@ export class Texture<
     this: Texture<COPY_DST_TEXTURE>,
     commandEncoder: GPUCommandEncoder,
     from: Texture<COPY_SRC_TEXTURE>,
-    sourceDetails: Omit<GPUImageCopyTexture, 'texture'>,
-    destinationDetails: Omit<GPUImageCopyTexture, 'texture'>,
+    sourceDetails: Omit<GPUTexelCopyTextureInfo, 'texture'>,
+    destinationDetails: Omit<GPUTexelCopyTextureInfo, 'texture'>,
     copySize: GPUExtent3DStrict,
   ) {
     commandEncoder.copyTextureToTexture(
@@ -321,8 +321,8 @@ export class Texture<
    */
   copyFromExternalImage(
     this: RenderTargetTexture<RENDER_TARGET_TEXTURE & COPY_DST_TEXTURE>,
-    source: GPUImageCopyExternalImage,
-    destination: Omit<GPUImageCopyTextureTagged, 'texture'> & {
+    source: GPUCopyExternalImageSourceInfo,
+    destination: Omit<GPUCopyExternalImageDestInfo, 'texture'> & {
       origin?: GPUOrigin3DDict;
     },
     copySize: GPUExtent3DDict,

@@ -174,8 +174,8 @@ export class Buffer<
     this: Buffer<COPY_DST_BUFFER>,
     commandEncoder: GPUCommandEncoder,
     from: Texture<COPY_SRC_TEXTURE>,
-    sourceDetails: Omit<GPUImageCopyTexture, 'texture'> | undefined,
-    destinationDataLayout: GPUImageDataLayout | undefined,
+    sourceDetails: Omit<GPUCopyExternalImageDestInfo, 'texture'> | undefined,
+    destinationDataLayout: Omit<GPUTexelCopyBufferInfo, 'buffer'> | undefined,
     copySize: GPUExtent3DStrict,
   ) {
     commandEncoder.copyTextureToBuffer(
