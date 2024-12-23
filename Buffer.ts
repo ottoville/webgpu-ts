@@ -123,7 +123,7 @@ export class Buffer<
   MAPPED extends boolean = false,
 > extends Bindable {
   renderBundles: Set<RenderBundleEncoder> = new Set();
-  readonly #buffer: GPUBuffer;
+  readonly buffer: GPUBuffer;
   constructor(public props: BufferProps<U, MAPPED>) {
     if (props.size <= 0) throw new Error('Cannot create zero sized buffer');
     if (props.size > 268435456) {
@@ -149,7 +149,7 @@ export class Buffer<
       usage: props.usages,
     };
     try {
-      this.#buffer = props.gpu.createBuffer(desc);
+      this.buffer = props.gpu.createBuffer(desc);
     } catch (e) {
       throw new Error('Cannot create buffer', {
         cause: e instanceof Error ? e : new Error(new String(e).toString()),
@@ -157,18 +157,18 @@ export class Buffer<
     }
   }
   unmap(this: Buffer<U, true>) {
-    this.#buffer.unmap();
+    this.buffer.unmap();
     return this as unknown as Buffer<U, false>;
   }
   mapState(this: Buffer<U, boolean>) {
-    return this.#buffer.mapState;
+    return this.buffer.mapState;
   }
   getMappedRange(
     this: Buffer<BufferUsageEnums, true>,
     offset?: GPUSize64,
     size?: GPUSize64,
   ) {
-    return this.#buffer.getMappedRange(offset, size);
+    return this.buffer.getMappedRange(offset, size);
   }
   copyFromTexture(
     this: Buffer<COPY_DST_BUFFER>,
@@ -184,7 +184,7 @@ export class Buffer<
         ...sourceDetails,
       },
       {
-        buffer: this.#buffer,
+        buffer: this.buffer,
         ...destinationDataLayout,
       },
       copySize,
@@ -194,12 +194,12 @@ export class Buffer<
     this: Buffer<MAP_READ_BUFFER>,
     callback: (buff: ArrayBuffer) => Promise<void> | void,
   ) {
-    await this.#buffer.mapAsync(GPUMapMode.READ);
+    await this.buffer.mapAsync(GPUMapMode.READ);
     try {
-      const arrbuff = this.#buffer.getMappedRange();
+      const arrbuff = this.buffer.getMappedRange();
       await callback(arrbuff);
     } finally {
-      this.#buffer.unmap();
+      this.buffer.unmap();
     }
   }
   map_write(
@@ -207,14 +207,14 @@ export class Buffer<
     offset?: GPUSize64,
     size?: GPUSize64,
   ) {
-    return this.#buffer.mapAsync(GPUMapMode.WRITE, offset, size);
+    return this.buffer.mapAsync(GPUMapMode.WRITE, offset, size);
   }
   async readAndDestroy(
     this: Buffer<MAP_READ_BUFFER>,
     callback: (buff: ArrayBuffer) => Promise<void> | void,
   ): Promise<void> {
-    await this.#buffer.mapAsync(GPUMapMode.READ);
-    const arrbuff = this.#buffer.getMappedRange();
+    await this.buffer.mapAsync(GPUMapMode.READ);
+    const arrbuff = this.buffer.getMappedRange();
     await callback(arrbuff);
     this.destroy();
   }
@@ -227,11 +227,11 @@ export class Buffer<
     copySize?: GPUSize64,
   ) {
     commandEncoder.copyBufferToBuffer(
-      from.#buffer, // source buffer
+      from.buffer, // source buffer
       sourceOffset,
-      this.#buffer, //destination buffer
+      this.buffer, //destination buffer
       destinationOffset,
-      copySize ?? Math.min(from.#buffer.size, this.#buffer.size),
+      copySize ?? Math.min(from.buffer.size, this.buffer.size),
     );
   }
 
@@ -258,7 +258,7 @@ export class Buffer<
     bindingSize?: GPUSize64,
   ) {
     const obj: GPUBufferBinding & GPUObjectBase = {
-      buffer: this.#buffer,
+      buffer: this.buffer,
       label: label + '_Binding_for_buffer_' + this.props.label,
       offset,
     };
@@ -289,21 +289,21 @@ export class Buffer<
     renderBundle?: RenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
-    return this.#buffer;
+    return this.buffer;
   }
   getIndexBinding(
     this: Buffer<INDEX_BUFFER>,
     renderBundle?: RenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
-    return this.#buffer;
+    return this.buffer;
   }
   getIndirectBinding(
     this: Buffer<INDIRECT_BUFFER>,
     renderBundle?: RenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
-    return this.#buffer;
+    return this.buffer;
   }
   createCopy(this: Buffer<COPY_SRC_BUFFER>, commandEncoder: GPUCommandEncoder) {
     const dst = new Buffer({
@@ -314,7 +314,7 @@ export class Buffer<
     return dst;
   }
   override destroy() {
-    this.#buffer.destroy();
+    this.buffer.destroy();
     this.renderBundles.forEach((b) => b.destroy());
     super.destroy();
   }
@@ -329,19 +329,19 @@ export class Buffer<
       const newBuffer = this.props.gpu.createBuffer({
         label: this.props.label,
         size,
-        usage: this.#buffer.usage | GPUBufferUsage.COPY_DST,
+        usage: this.buffer.usage | GPUBufferUsage.COPY_DST,
       });
       commandEncoder.copyBufferToBuffer(
-        this.#buffer,
+        this.buffer,
         0,
         newBuffer,
         0,
-        this.#buffer.size,
+        this.buffer.size,
       );
       this.props.gpu.queue.submit([commandEncoder.finish()]);
       this.destroy();
       //@ts-expect-error todo
-      this.#buffer = newBuffer;
+      this.buffer = newBuffer;
     } catch (e) {
       throw new Error('Cannot create resized buffer', {
         cause: e instanceof Error ? e : new Error(new String(e).toString()),
@@ -365,7 +365,7 @@ export class Buffer<
         gpu: this.props.gpu,
         label: this.props.label,
         size,
-        usages: this.#buffer.usage | GPUBufferUsage.COPY_DST,
+        usages: this.buffer.usage | GPUBufferUsage.COPY_DST,
       }) as T;
       newBuffer.copyFrom(commandEncoder, this);
       return newBuffer;
@@ -392,7 +392,7 @@ export class Buffer<
     writeSize?: GPUSize64,
   ) {
     this.props.gpu.queue.writeBuffer(
-      this.#buffer,
+      this.buffer,
       bufferOffset,
       data,
       dataOffset,
