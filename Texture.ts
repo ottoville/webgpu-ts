@@ -352,6 +352,12 @@ export class Texture<
       copySize,
     );
   }
+  /**
+   * Creates raw bitmap from texture. Output width might increase to align 256 why bytesPerRow is returned as well
+   * @param this
+   * @param depth
+   * @returns
+   */
   async toBitmap(
     this: Texture<TextureUsageEnums, GPUTextureFormat, Texture2dSize>,
     depth = 0,
@@ -388,8 +394,8 @@ export class Texture<
         texture: this.texture,
       },
       {
-        buffer: buffer,
-        bytesPerRow: bytesPerRow,
+        buffer,
+        bytesPerRow,
         rowsPerImage: this.props.size.height,
       },
       this.props.size,
@@ -424,31 +430,25 @@ export class Texture<
     if (add_copy_src) {
       this.createTexture(this.initialSampleCount);
     }
-    return data;
+    return { bytesPerRow, data };
   }
   async print_bitmap(
     this: Texture<TextureUsageEnums, GPUTextureFormat, Texture2dSize>,
   ) {
-    let bytesPerRow = this.props.size.width * this.bytes_per_fixel;
-    const missAlignment = bytesPerRow % 256;
-    if (missAlignment !== 0) {
-      bytesPerRow = bytesPerRow - missAlignment + 256;
-    }
-
+    const { bytesPerRow, data } = await this.toBitmap();
     const c = new OffscreenCanvas(
       this.props.size.width,
       this.props.size.height,
     );
-
     const ctx = c.getContext('2d');
     if (!ctx) {
       throw new Error('Cannot get context');
     }
-    ctx.putImageData(new ImageData(await this.toBitmap(), c.height), 0, 0);
+    ctx.putImageData(new ImageData(data, bytesPerRow / 4), 0, 0);
     return c
       .convertToBlob({
-        quality: 0.96,
-        type: 'image&jpeg',
+        quality: 1,
+        type: 'image/jpeg',
       })
       .then((b) => {
         console.log(URL.createObjectURL(b));
