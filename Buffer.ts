@@ -1,6 +1,6 @@
 import type { BindGroup } from './BindGroup.js';
 import { Bindable } from './Bindable.js';
-import { RenderBundleEncoder } from './RenderbundleEncoder.js';
+import type { IRenderBundleEncoder } from './RenderbundleEncoder.js';
 import type { COPY_SRC_TEXTURE, Texture } from './Texture.js';
 
 export const enum BufferUsageEnums {
@@ -122,7 +122,7 @@ export class Buffer<
   U extends BufferUsageEnums = BufferUsageEnums,
   MAPPED extends boolean = false,
 > extends Bindable {
-  renderBundles: Set<RenderBundleEncoder> = new Set();
+  renderBundles: Set<IRenderBundleEncoder> = new Set();
   readonly buffer: GPUBuffer;
   constructor(public props: BufferProps<U, MAPPED>) {
     if (props.size <= 0) throw new Error('Cannot create zero sized buffer');
@@ -286,21 +286,21 @@ export class Buffer<
   }
   getVertexBinding(
     this: Buffer<VERTEX_BUFFER>,
-    renderBundle?: RenderBundleEncoder,
+    renderBundle?: IRenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
     return this.buffer;
   }
   getIndexBinding(
     this: Buffer<INDEX_BUFFER>,
-    renderBundle?: RenderBundleEncoder,
+    renderBundle?: IRenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
     return this.buffer;
   }
   getIndirectBinding(
     this: Buffer<INDIRECT_BUFFER>,
-    renderBundle?: RenderBundleEncoder,
+    renderBundle?: IRenderBundleEncoder,
   ) {
     if (renderBundle) this.renderBundles.add(renderBundle);
     return this.buffer;

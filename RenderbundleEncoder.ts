@@ -1,6 +1,10 @@
 import type { Renderpass } from './Renderpass.js';
-
-export class RenderBundleEncoder {
+export type IRenderBundleEncoder = {
+  destroy(): void;
+  render(): GPURenderBundle;
+  renderBundleEncoder: GPURenderBundleEncoder;
+};
+export class RenderBundleEncoder implements IRenderBundleEncoder {
   #renderBundle: GPURenderBundle | undefined;
   GPURenderBundleEncoderDescriptor: GPURenderBundleEncoderDescriptor;
   renderBundleEncoder: GPURenderBundleEncoder;

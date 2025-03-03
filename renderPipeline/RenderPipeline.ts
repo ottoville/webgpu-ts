@@ -1,7 +1,7 @@
 import type { BindGroupRef } from '../BindGroup.js';
 import type { BGLayout } from '../BindgroupLayout.js';
 import type { Buffer, VERTEX_BUFFER } from '../Buffer.js';
-import { RenderBundleEncoder } from '../RenderbundleEncoder.js';
+import type { IRenderBundleEncoder } from '../RenderbundleEncoder.js';
 export type Drawable<
   L extends readonly BGLayout[] = readonly BGLayout[],
   B extends readonly GPUVertexBufferLayout[] = readonly GPUVertexBufferLayout[],
@@ -16,7 +16,7 @@ export type Drawable<
       size?: GPUSize64 | undefined;
     };
   };
-  render: (renderEncoder: RenderBundleEncoder | GPURenderPassEncoder) => void;
+  render: (renderEncoder: IRenderBundleEncoder | GPURenderPassEncoder) => void;
 };
 
 export class RenderPipeline<
@@ -27,7 +27,7 @@ export class RenderPipeline<
 
   readonly drawables: Drawable<L, B>[] = [];
   readonly onDrawableChange: Set<() => void> = new Set();
-  renderBundles: Set<RenderBundleEncoder> = new Set();
+  renderBundles: Set<IRenderBundleEncoder> = new Set();
   removeDrawable(drawable: Drawable<L, B>) {
     const index = this.drawables.indexOf(drawable);
     if (index >= 0) {

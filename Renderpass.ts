@@ -1,5 +1,5 @@
+import type { IRenderBundleEncoder } from './RenderbundleEncoder';
 import { RenderEncoder } from './RenderEncoder';
-import { RenderBundleEncoder } from './RenderbundleEncoder';
 import { RenderPipeline } from './renderPipeline/RenderPipeline';
 import { RenderPipelineBuilder } from './renderPipeline/RenderPipelineBuilder';
 import { ColorRenderTarget } from './renderTargets/ColorRenderTarget';
@@ -24,7 +24,7 @@ export class Renderpass<
     RenderPipelineBuilder,
     RenderPipeline | Promise<RenderPipeline>
   > = new Map();
-  readonly bundles: RenderBundleEncoder[] = [];
+  readonly bundles: IRenderBundleEncoder[] = [];
   readonly renderEncoders: RenderEncoder[] = [];
   public readonly props: RenderpassProps<U>;
   constructor(props: RenderpassProps<U>) {

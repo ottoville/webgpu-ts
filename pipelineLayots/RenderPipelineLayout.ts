@@ -1,5 +1,5 @@
 import type { BindGroup, BindGroupRef } from '../BindGroup.js';
-import { RenderBundleEncoder } from '../RenderbundleEncoder.js';
+import { type IRenderBundleEncoder } from '../RenderbundleEncoder.js';
 import type { Renderpass } from '../Renderpass.js';
 import { RenderPipeline } from '../renderPipeline/RenderPipeline.js';
 import type { RenderPipelineBuilder } from '../renderPipeline/RenderPipelineBuilder.js';
@@ -32,7 +32,7 @@ export class RenderPipelineLayout<
   }
   // Cant be es6 private because "CreateEmptyLayout" creates object from prototype, which cant see es6 private methods
   private setBindGroups(
-    renderEncoder: GPURenderPassEncoder | RenderBundleEncoder,
+    renderEncoder: GPURenderPassEncoder | IRenderBundleEncoder,
     bindgroups: readonly BindGroupRef[],
     bindGroupStartIndex: number,
   ) {
@@ -65,7 +65,7 @@ export class RenderPipelineLayout<
     }
   }
   render(
-    renderEncoder: GPURenderPassEncoder | RenderBundleEncoder,
+    renderEncoder: GPURenderPassEncoder | IRenderBundleEncoder,
     renderpass: Renderpass,
     bindGroupStartIndex = 0,
   ): number {
@@ -130,9 +130,9 @@ export class RenderPipelineLayout<
             );
             nativeEncoder.setVertexBuffer(
               index,
-              renderEncoder instanceof RenderBundleEncoder
-                ? buffer.buffer.getVertexBinding(renderEncoder)
-                : buffer.buffer.getVertexBinding(),
+              renderEncoder instanceof GPURenderPassEncoder
+                ? buffer.buffer.getVertexBinding()
+                : buffer.buffer.getVertexBinding(renderEncoder),
               buffer.offset,
               buffer.size,
             );

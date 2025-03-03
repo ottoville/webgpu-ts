@@ -1,5 +1,5 @@
 import type { BGLayout, MapToGPUBindGroupEntry } from './BindgroupLayout.js';
-import type { RenderBundleEncoder } from './RenderbundleEncoder.js';
+import { IRenderBundleEncoder } from './RenderbundleEncoder.js';
 import { TextureView } from './TextureView.js';
 
 export type BindGroupRef = {
@@ -10,8 +10,8 @@ export type BindGroupRef = {
 export class BindGroup<L extends BGLayout = BGLayout> {
   #dirty = true;
   #bindGroup?: GPUBindGroup;
-  readonly #renderBundles: Set<RenderBundleEncoder> = new Set();
-  getForRenderBundle(renderBundleEncoder: RenderBundleEncoder) {
+  readonly #renderBundles: Set<IRenderBundleEncoder> = new Set();
+  getForRenderBundle(renderBundleEncoder: IRenderBundleEncoder) {
     this.#renderBundles.add(renderBundleEncoder);
     return this.bindGroup;
   }

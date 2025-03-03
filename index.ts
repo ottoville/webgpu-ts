@@ -62,7 +62,10 @@ export { VertexShaderBuilder } from './shaderBuilders/VertexShaderBuilder.js';
 export { FragmentShaderBuilder } from './shaderBuilders/FragmentShaderBuilder.js';
 export { ComputeShaderBuilder } from './shaderBuilders/ComputeShaderBuilder.js';
 
-export { RenderBundleEncoder } from './RenderbundleEncoder.js';
+export {
+  RenderBundleEncoder,
+  type IRenderBundleEncoder,
+} from './RenderbundleEncoder.js';
 export { BindGroup } from './BindGroup.js';
 export {
   Buffer,
