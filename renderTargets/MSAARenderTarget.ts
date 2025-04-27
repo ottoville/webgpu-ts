@@ -9,7 +9,7 @@ import {
 } from './RenderpassTarget.js';
 
 export class MSAARenderTarget<
-  R extends RenderpassTarget<RenderpassTargetOptions>,
+  R extends RenderpassTarget<T>,
   T extends
     RenderpassTargetOptions<RenderpassTargetTextureParams> = RenderpassTargetOptions<RenderpassTargetTextureParams>,
 > extends ColorRenderTarget<T> {
