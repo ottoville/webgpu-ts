@@ -85,7 +85,7 @@ const fragmentshaderfunction = new FragmentShaderFunction(
   diffuseOutput,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
-        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
+        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', 0)};
     
         var output:Output;
     
@@ -106,7 +106,7 @@ const fragmentshaderfunction_no_input = new FragmentShaderFunction(
   diffuseOutput,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
-        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
+        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', 0)};
     
         var output:Output;
     
@@ -127,7 +127,7 @@ const fragmentshaderfunction_different_input = new FragmentShaderFunction(
   diffuseOutput,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
-        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
+        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', 0)};
     
         var output:Output;
     

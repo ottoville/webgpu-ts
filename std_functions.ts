@@ -10,15 +10,20 @@ export const textureStore = (
 export function textureLoad(
   ...args:
     | [
-        texture: TextLayout<ShaderStage, 'texture_2d<f32>'>,
+        texture: TextLayout<
+          ShaderStage,
+          | 'texture_2d<f32>'
+          | 'texture_depth_multisampled_2d'
+          | 'texture_2d<u32>'
+        >,
         coords: string,
-        level: string,
+        level: number,
       ]
     | [
         texture: TextLayout<ShaderStage, 'texture_2d_array<f32>'>,
         coords: string,
         arrayIndex: string,
-        level: string,
+        level: number,
       ]
 ) {
   return /* wgsl */ `textureLoad(${args.join()})`;

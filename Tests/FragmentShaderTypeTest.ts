@@ -44,7 +44,7 @@ const fragmentshaderfunction = new FragmentShaderFunction(
   diffuseOutput,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
-        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0')};
+        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', 0)};
         var output:Output;
         output.Diffuse=color;
         return output;`,
@@ -61,7 +61,7 @@ const fragmentshaderfunction_array = new FragmentShaderFunction(
   diffuseOutput,
   ([{ texture }]) => /* wgsl */ `
         let fragCoordI=vec2<i32>(floor(v_uv));
-        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0', '0')};
+        let color:vec4<f32> = ${textureLoad(texture, 'fragCoordI', '0', 0)};
     
         var output:Output;
     

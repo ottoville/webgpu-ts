@@ -208,6 +208,9 @@ export class Texture<
   ) {
     this.texture = this.createTexture(props.initialSampleCount);
     switch (props.format) {
+      case 'rg32uint':
+        this.bytes_per_fixel = 8;
+        break;
       case 'r32uint':
       case 'bgra8unorm':
       case 'rgba8unorm':
