@@ -18,26 +18,15 @@ export type ColorRenderTargetParams = {
 
 export class ColorRenderTarget<
   T extends RenderpassTargetOptions = RenderpassTargetOptions,
-> extends RenderpassTarget<T> {
-  #clearValue: GPUColor;
+> extends RenderpassTarget<T, GPURenderPassColorAttachment> {
   public blend: GPUBlendState | undefined;
-  constructor(renderTargetOptions: T, options: ColorRenderTargetParams) {
-    super(renderTargetOptions);
-    this.#clearValue = options.clearValue;
-    this.blend = options.blend;
-  }
 
-  //TODO: Do not re-create on every render?
-  createColorAttachment() {
-    const obj: GPURenderPassColorAttachment = {
-      clearValue: this.#clearValue,
+  constructor(renderTargetOptions: T, options: ColorRenderTargetParams) {
+    super(renderTargetOptions, {
+      clearValue: options.clearValue,
       loadOp: 'clear',
       storeOp: 'store',
-      view:
-        this.renderTarget instanceof GPUCanvasContext
-          ? this.renderTarget.getCurrentTexture().createView()
-          : this.renderTarget.view,
-    };
-    return obj;
+    });
+    this.blend = options.blend;
   }
 }

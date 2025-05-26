@@ -1,3 +1,4 @@
+import { Renderpass } from '../Renderpass.js';
 import {
   ColorRenderTarget,
   type ColorRenderTargetParams,
@@ -24,13 +25,13 @@ export class MSAARenderTarget<
     super.resize(size, sampleCount);
     this.resolveTexture?.resize(size, 1);
   }
-  override createColorAttachment() {
-    const obj = super.createColorAttachment();
-    obj.view = this.renderTarget.view;
+  override createAttachment(renderpass: Renderpass) {
+    const obj = super.createAttachment(renderpass, true);
+    obj.view = this.renderTarget.getAsRenderTarget(this);
     obj.resolveTarget =
       this.resolveTexture.renderTarget instanceof GPUCanvasContext
         ? this.resolveTexture.renderTarget.getCurrentTexture().createView()
-        : this.resolveTexture.renderTarget.view;
+        : this.resolveTexture.renderTarget.getAsRenderTarget(this);
     obj.storeOp = 'discard';
     return obj;
   }

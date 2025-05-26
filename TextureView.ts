@@ -1,16 +1,16 @@
 import type { BindGroup } from './BindGroup.js';
 import { Bindable } from './Bindable.js';
-import type { Renderpass } from './Renderpass.js';
 import type {
   STORAGE_BINDING_TEXTURE,
   TEXTURE_BINDING_TEXTURE,
   Texture,
 } from './Texture.js';
+import type { RenderpassTarget } from './renderTargets/RenderpassTarget.js';
 
 let n = 0;
 export class TextureView<T extends Texture = Texture> extends Bindable {
   //To track when texture is assigned as render target
-  readonly #renderPasses: Set<Renderpass> = new Set();
+  readonly #renderTargets: Set<RenderpassTarget> = new Set();
 
   //TODO: set private
   view: GPUTextureView;
@@ -61,13 +61,13 @@ export class TextureView<T extends Texture = Texture> extends Bindable {
     this.bindGroups.add(bindGroup);
     return this.view;
   }
-  getAsRenderTarget(renderPass: Renderpass) {
-    this.#renderPasses.add(renderPass);
+  getAsRenderTarget(rendertarget: RenderpassTarget) {
+    this.#renderTargets.add(rendertarget);
     return this.view;
   }
   override destroy(): void {
-    this.#renderPasses.forEach((rp) => {
-      rp.bundles.forEach((bundle) => bundle.destroy());
+    this.#renderTargets.forEach((rt) => {
+      rt.dirty = true;
     });
     super.destroy();
   }
