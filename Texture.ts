@@ -112,8 +112,6 @@ export type DEPTH_FORMATS =
   | 'depth32float'
   | 'depth32float-stencil8';
 
-let n = 0;
-
 export const enum TextureUsageEnums {
   COPY_DST = 2,
   COPY_SRC = 1,
@@ -276,12 +274,6 @@ export class Texture<
     this.views.forEach((view) => view.destroy());
   }
   protected createTexture(sampleCount: 1 | 4 = 1, debug = false) {
-    let label = this.props.label;
-    if (debug) {
-      label += 'debug' + n;
-      console.log('create texture', label);
-      n = n + 1;
-    }
     //Texture is undefined on initial call
     if (this.texture) this.destroy();
     let usages = this.props.usages as number;
@@ -295,7 +287,7 @@ export class Texture<
     }
     const textureProps: GPUTextureDescriptor = {
       format: this.props.format,
-      label,
+      label: this.props.label,
       sampleCount: sampleCount,
       size: this.props.size,
       usage: usages,
@@ -304,7 +296,7 @@ export class Texture<
       textureProps.viewFormats = this.props.viewFormats;
     }
     this.texture = this.props.gpu.createTexture(textureProps);
-    this.views.forEach((view) => view.reCreate(debug));
+    this.views.forEach((view) => view.reCreate());
 
     return this.texture;
   }

@@ -7,7 +7,6 @@ import type {
 } from './Texture.js';
 import type { RenderpassTarget } from './renderTargets/RenderpassTarget.js';
 
-let n = 0;
 export class TextureView<T extends Texture = Texture> extends Bindable {
   //To track when texture is assigned as render target
   readonly #renderTargets: Set<RenderpassTarget> = new Set();
@@ -33,17 +32,10 @@ export class TextureView<T extends Texture = Texture> extends Bindable {
     this.view = this.reCreate();
     texture.views.add(this);
   }
-  reCreate(debug = false) {
+  reCreate() {
     this.destroy();
-    let label = this.#descriptor.label ?? '';
-    if (debug) {
-      label = this.#descriptor.label! + 'debug' + n;
-      console.log('create textureview', label);
-      n += 1;
-    }
     this.view = this.texture.texture.createView({
       ...this.#descriptor,
-      label: label,
     });
     return this.view;
   }

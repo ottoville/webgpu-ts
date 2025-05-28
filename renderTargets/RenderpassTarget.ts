@@ -75,7 +75,9 @@ export class RenderpassTarget<
     if (this.renderTarget instanceof GPUCanvasContext) {
       this.#colorAttachment.view = this.renderTarget
         .getCurrentTexture()
-        .createView();
+        .createView({
+          label: 'GPUCanvasContext_currenttexture_view',
+        });
     } else if (this.dirty) {
       this.#colorAttachment.view = this.renderTarget.getAsRenderTarget(this);
     }

@@ -30,7 +30,9 @@ export class MSAARenderTarget<
     obj.view = this.renderTarget.getAsRenderTarget(this);
     obj.resolveTarget =
       this.resolveTexture.renderTarget instanceof GPUCanvasContext
-        ? this.resolveTexture.renderTarget.getCurrentTexture().createView()
+        ? this.resolveTexture.renderTarget.getCurrentTexture().createView({
+            label: 'MSAA_rendertarget_currentrexture',
+          })
         : this.resolveTexture.renderTarget.getAsRenderTarget(this);
     obj.storeOp = 'discard';
     return obj;
