@@ -1,6 +1,6 @@
 {
   "name": "webgpu-ts",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
   "exports": "./dist/index.js",
@@ -10,8 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@webgpu/types": "0.1.51",
-    "typescript": "5.7.2"
+    "@webgpu/types": "0.1.61",
+    "typescript": "5.8.3"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "7.14.1",
@@ -23,5 +23,5 @@
     "eslint-plugin-promise": "6.1.1"
   },
   "author": "Otto-Ville Lamminpää",
-  "license": "ISC"
+  "license": "MIT"
 }
